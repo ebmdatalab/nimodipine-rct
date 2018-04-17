@@ -1,16 +1,30 @@
 from collections import OrderedDict
 
+from django.test import Client
 from django.test import TestCase
-from .models import Intervention
+from antibioticsrct.models import Intervention
 
-class InterventionTestCase(TestCase):
+class ModelTestCase(TestCase):
+    fixtures = ['interventions']
 
-    def test_url(self):
-        intervention = Intervention.objects.create(
-            intervention='A',
-            wave='1',
-            method='e',
-            practice_id='P01234',
-            measure_id='ktt9'
-        )
+    def test_url_generation(self):
+        intervention = Intervention.objects.get(pk=1)
         self.assertEqual(intervention.get_absolute_url(), '/e/1/P01234')
+
+class ViewTestCase(TestCase):
+    fixtures = ['interventions']
+    def test_target_url_redirect(self):
+        expected = ('https://openprescribing.net/practice/P01234/'
+                    '?utm_source=rct1&utm_campaign=wave1&utm_medium=email'
+                    '#ktt9')
+        client = Client()
+        response = client.get('/e/1/P01234/')
+        self.assertRedirects(response, expected, fetch_redirect_response=False)
+
+    def test_click_count(self):
+        expected = ('https://openprescribing.net/practice/P01234/'
+                    '?utm_source=rct1&utm_campaign=wave1&utm_medium=email'
+                    '#ktt9')
+        client = Client()
+        response = client.get('/e/1/P01234/')
+        self.assertRedirects(response, expected, fetch_redirect_response=False)

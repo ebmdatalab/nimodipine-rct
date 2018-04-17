@@ -3,6 +3,7 @@ from datetime import date
 from django.db import models
 from django.urls import reverse
 
+OP_HOST = "https://openprescribing.net"
 
 class Intervention(models.Model):
     INTERVENTION_CHOICES = (
@@ -29,6 +30,19 @@ class Intervention(models.Model):
 
     def get_absolute_url(self):
         return reverse('views.intervention', args=[self.method, self.wave, self.practice_id])
+
+    def get_target_url(self):
+        # XXX Maybe we should jump to https://openprescribing.net/measure/saba/ccg/11X/?
+        querystring = "utm_source=rct1&utm_campaign=wave{}&utm_medium={}".format(
+            self.wave,
+            self.get_method_display().lower()
+        )
+        return "{}/practice/{}/?{}#{}".format(
+            OP_HOST,
+            self.practice_id,
+            querystring,
+            self.measure_id)
+
 
     class Meta:
         unique_together = ('method', 'wave', 'practice_id')
