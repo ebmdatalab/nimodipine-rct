@@ -26,7 +26,7 @@ class Intervention(models.Model):
     method = models.CharField(max_length=1, choices=METHOD_CHOICES)
     practice_id = models.CharField(max_length=6)
     measure_id = models.CharField(max_length=40)
-
+    hits = models.IntegerField(default=0)
 
     def get_absolute_url(self):
         return reverse('views.intervention', args=[self.method, self.wave, self.practice_id])

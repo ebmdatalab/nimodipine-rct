@@ -22,9 +22,6 @@ class ViewTestCase(TestCase):
         self.assertRedirects(response, expected, fetch_redirect_response=False)
 
     def test_click_count(self):
-        expected = ('https://openprescribing.net/practice/P01234/'
-                    '?utm_source=rct1&utm_campaign=wave1&utm_medium=email'
-                    '#ktt9')
-        client = Client()
-        response = client.get('/e/1/P01234/')
-        self.assertRedirects(response, expected, fetch_redirect_response=False)
+        Client().get('/e/1/P01234/')
+        intervention = Intervention.objects.get(pk=1)
+        self.assertEqual(intervention.hits, 1)
