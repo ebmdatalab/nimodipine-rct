@@ -8,7 +8,60 @@
       "wave": "1",
       "method": "e",
       "practice_id": "P01234",
-      "measure_id": "ktt9"
+      "measure_id": "ktt9",
+      "contact_id": "P01234"
+    }
+  },
+  {
+    "model": "antibioticsrct.intervention",
+    "pk": 2,
+    "fields": {
+      "created_date": "2018-04-17",
+      "intervention": "A",
+      "wave": "2",
+      "method": "e",
+      "practice_id": "P01234",
+      "measure_id": "ktt9",
+      "contact_id": "P01234"
+    }
+  },
+  {
+    "model": "antibioticsrct.intervention",
+    "pk": 3,
+    "fields": {
+      "created_date": "2018-04-17",
+      "intervention": "A",
+      "wave": "3",
+      "method": "e",
+      "practice_id": "P01234",
+      "measure_id": "ktt9",
+      "contact_id": "P01234"
+    }
+  },
+  {
+    "model": "antibioticsrct.intervention",
+    "pk": 4,
+    "fields": {
+      "created_date": "2018-04-17",
+      "intervention": "B",
+      "wave": "1",
+      "method": "e",
+      "practice_id": "P01235",
+      "measure_id": "ktt9",
+      "contact_id": "P01235"
+    }
+  },
+  {
+    "model": "antibioticsrct.intervention",
+    "pk": 5,
+    "fields": {
+      "created_date": "2018-04-17",
+      "intervention": "B",
+      "wave": "2",
+      "method": "e",
+      "practice_id": "P01235",
+      "measure_id": "ktt9",
+      "contact_id": "P01235"
     }
   }
 ]

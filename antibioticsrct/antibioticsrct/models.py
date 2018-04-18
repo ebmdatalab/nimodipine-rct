@@ -3,7 +3,26 @@ from datetime import date
 from django.db import models
 from django.urls import reverse
 
+from common.utils import nhs_titlecase
+
 OP_HOST = "https://openprescribing.net"
+
+
+class InterventionContact(models.Model):
+    practice_id = models.CharField(max_length=6, primary_key=True)
+    name = models.CharField(max_length=200)
+    address1 = models.CharField(max_length=100, null=True, blank=True)
+    address2 = models.CharField(max_length=100, null=True, blank=True)
+    address3 = models.CharField(max_length=100, null=True, blank=True)
+    address4 = models.CharField(max_length=100, null=True, blank=True)
+    postcode = models.CharField(max_length=9, null=True, blank=True)
+    email = models.EmailField(max_length=200, null=True, blank=True)
+    fax = models.CharField(max_length=25, null=True, blank=True)
+
+    @property
+    def cased_name(self):
+        return nhs_titlecase(self.name)
+
 
 class Intervention(models.Model):
     INTERVENTION_CHOICES = (
@@ -27,6 +46,7 @@ class Intervention(models.Model):
     practice_id = models.CharField(max_length=6)
     measure_id = models.CharField(max_length=40)
     hits = models.IntegerField(default=0)
+    contact = models.ForeignKey(InterventionContact, on_delete=models.CASCADE)
 
     def get_absolute_url(self):
         return reverse('views.intervention', args=[self.method, self.wave, self.practice_id])

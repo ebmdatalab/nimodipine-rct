@@ -1,0 +1,30 @@
+[
+  {
+    "model": "antibioticsrct.interventioncontact",
+    "pk": "P01234",
+    "fields": {
+      "name": "THE DOVECOT SURGERY",
+      "address1": "THE HEALTH CENTRE",
+      "address2": "LAWSON STREET",
+      "address3": "STOCKTON ON TEES",
+      "address4": "CLEVELAND",
+      "postcode": "TS18 1HU",
+      "email": "simon.neil@nhs.net",
+      "fax": "01642 260897"
+    }
+  },
+  {
+    "model": "antibioticsrct.interventioncontact",
+    "pk": "P01235",
+    "fields": {
+      "name": "THE OTHER DOVECOT SURGERY",
+      "address1": "THE HEALTH CENTRE",
+      "address2": "LAWSON STREET",
+      "address3": "STOCKTON ON TEES",
+      "address4": "CLEVELAND",
+      "postcode": "TS18 1HU",
+      "email": "simon.neil@nhs.net",
+      "fax": "01642 260897"
+    }
+  }
+]
