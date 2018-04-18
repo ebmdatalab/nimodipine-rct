@@ -48,7 +48,7 @@ def get_env_setting(setting, default=None):
             error_msg = "Set the %s env variable" % setting
             raise ImproperlyConfigured(error_msg)
 
-def grab_image(url, file_path, selector, dimensions='1024x1024'):
+def grab_image(url, file_path, selector, dimensions='2000x5000'):
     # Copied from openprescribing code base
     if 'selectedTab=map' in url:
         wait = 8000
@@ -77,4 +77,4 @@ def grab_image(url, file_path, selector, dimensions='1024x1024'):
     logger.debug("Command %s completed with output %s" % (cmd, result.strip()))
     with open(file_path, "rb") as image_file:
         encoded_image = base64.b64encode(image_file.read())
-        return encoded_image
+        return encoded_image.decode('ascii')
