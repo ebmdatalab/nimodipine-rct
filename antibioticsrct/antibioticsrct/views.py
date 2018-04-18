@@ -1,9 +1,11 @@
+import tempfile
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
 from django.shortcuts import render
 
 import requests
 
+from common.utils import grab_image
 from antibioticsrct.models import Intervention
 
 
@@ -19,12 +21,6 @@ def intervention_message(request, intervention_id):
     intervention = get_object_or_404(Intervention, pk=intervention_id)
     practice_name = intervention.contact.cased_name
     # XXX also get contact details; potentially from CSV rather than OP API
-    context = {
-        'intervention': intervention,
-        'practice_name': practice_name,
-        'intervention_url': "http://www.op2.org.uk{}".format(
-            intervention.get_absolute_url())
-    }
     if intervention.intervention == 'B':
         template = 'intervention_b.html'
     else:
@@ -34,6 +30,17 @@ def intervention_message(request, intervention_id):
             # this month, savings on that measure, and "switch"
             # wording here.  Poss via API?
             pass
+    with tempfile.NamedTemporaryFile(suffix='.png') as chart_file:
+        url = "/practice/{}/".format(intervention.practice_id)
+        selector = '#' + intervention.measure_id
+        encoded_image = grab_image(url, chart_file.name, selector)
+    context = {
+        'intervention': intervention,
+        'practice_name': practice_name,
+        'intervention_url': "http://www.op2.org.uk{}".format(
+            intervention.get_absolute_url()),
+        'encoded_image': encoded_image,
+    }
     return render(
         request,
         template,

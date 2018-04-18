@@ -1,3 +1,4 @@
+from unittest.mock import patch
 import os
 
 from django.conf import settings
@@ -31,8 +32,10 @@ class ViewTestCase(TestCase):
         intervention = Intervention.objects.get(pk=1)
         self.assertEqual(intervention.hits, 1)
 
-
-    def test_intervention_message_template(self):
+    @patch('antibioticsrct.views.grab_image')
+    def test_intervention_message_template(self, mock_image):
+        img_str = '*** base64 encoded image ***'
+        mock_image.return_value = img_str
         expectations = [
             (1, 'intervention_a_1.html'),
             (2, 'intervention_a_2.html'),
@@ -46,6 +49,7 @@ class ViewTestCase(TestCase):
             self.assertEqual(response.status_code, 200)
             self.assertTemplateUsed(response, template)
             self.assertEquals(response.context['intervention'], intervention)
+            self.assertEquals(response.context['encoded_image'], img_str)
 
 
 class CommandsTestCase(TestCase):
