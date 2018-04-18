@@ -21,7 +21,9 @@ def intervention_message(request, intervention_id):
     # XXX also get contact details; potentially from CSV rather than OP API
     context = {
         'intervention': intervention,
-        'practice_name': practice_name
+        'practice_name': practice_name,
+        'intervention_url': "http://www.op2.org.uk{}".format(
+            intervention.get_absolute_url())
     }
     if intervention.intervention == 'B':
         template = 'intervention_b.html'

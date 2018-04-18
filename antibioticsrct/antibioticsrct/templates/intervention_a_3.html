@@ -1,32 +1,13 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta name="generator" content=
-  "HTML Tidy for HTML5 for Linux version 5.2.0">
-  <meta http-equiv="Content-Type" content=
-  "text/html; charset=utf-8">
-  <meta content="text/html; charset=utf-8" http-equiv=
-  "content-type">
-  <title></title>
-</head>
-<body>
-  <div>
-    <p><img alt="" src="images/image3.png" style=
-    "width: 145.50px; height: 28.60px; margin-left: -0.00px; margin-top: -0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);"
-    title=""></p>
-    <p>Nuffield Department of Primary Care Health Sciences</p>
-    <p>University of Oxford</p>
-  </div>
-  <p id="h.gjdgxs">[date]</p>
-  <p>Dear [practice_name],</p>
+{% block content %}
+{% include '_header.html' %}
+
+
   <p>You could save up to £XXXXX per year by prescribing in line
   with the most efficient practices.</p>
   <p> </p>
   <p>Check the OpenPrescribing website to see how much your
   practice could save, without increasing risk to patients, by
-  changing some prescription behaviours:<a href=
-  "https://www.google.com/url?q=https://openprescribing.net/practice/H84016/&amp;sa=D&amp;ust=1523976632872000">
-  </a>www.op2.org.uk/[method][N]/[practice_code]</p>
+  changing some prescription behaviours: {{ intervention_url }}</p>
   <p>For example, here's how your practice compares to other
   practices for prescriptions of high-cost proton-pump inhibitors
   (PPIs). You could have saved £630.80 over the last 6 months by
@@ -43,22 +24,5 @@
   practice on various prescribing measures, look at any practice or
   CCG in the country, and do bespoke data searches on any treatment
   of interest.</p>
-  <p>Please let us know if you have any feedback or want to
-  unsubscribe from these monthly communications.</p>
-  <p>Yours sincerely,</p>
-  <p>The OpenPrescribing Team</p>
-  <p>Nuffield Department of Primary Care Health Sciences</p>
-  <p>University of Oxford</p>
-  <p><a href="mailto:hello@op2.org.uk">hello@op2.org.uk</a> </p>
-  <p><a href=
-  "https://www.google.com/url?q=https://www.phc.ox.ac.uk/research/datalab&amp;sa=D&amp;ust=1523976632874000">
-  https://www.phc.ox.ac.uk/research/datalab</a></p>
-  <div>
-    <p><img alt="Oxford_Nuffield_Primary_Care_Rectangle_RGB" src=
-    "images/image2.png" style=
-    "width: 235.67px; height: 37.40px; margin-left: -0.00px; margin-top: -0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);"
-    title=""></p>
-    <p>A3 2017-12-06 v1.1</p>
-  </div>
-</body>
-</html>
+  {% include '_footer.html' %}
+{% endblock %}
