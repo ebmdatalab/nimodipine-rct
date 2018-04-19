@@ -16,6 +16,8 @@ from common import utils
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+URL_ROOT = 'http://www.op2.org.uk'
+URL_ROOT = 'http://localhost:8000'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
@@ -52,6 +54,33 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'antibioticsrct.urls'
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+        'file': {
+            'level': 'WARN',
+            'class': 'logging.FileHandler',
+            'filename': 'warn.log',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file', 'console'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'antibioticsrct': {
+            'handlers': ['file', 'console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
 
 TEMPLATES = [
     {
@@ -131,3 +160,4 @@ GRAB_HOST = "https://openprescribing.net"
 GRAB_CMD = ('/usr/local/bin/phantomjs ' +
             BASE_DIR +
             '/scripts/grab_chart.js')
+DATA_DIR = BASE_DIR + '/data/'

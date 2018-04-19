@@ -50,6 +50,13 @@ class Intervention(models.Model):
     hits = models.IntegerField(default=0)
     contact = models.ForeignKey(InterventionContact, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return "Intervention {}: wave {}, intervention {}, method {}".format(
+            self.pk,
+            self.wave,
+            self.intervention,
+            self.get_method_display().lower())
+
     def get_absolute_url(self):
         return reverse('views.intervention', args=[self.method, self.wave, self.practice_id])
 

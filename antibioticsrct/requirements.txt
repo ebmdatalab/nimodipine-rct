@@ -7,6 +7,8 @@
 cachetools==2.0.1         # via google-auth
 certifi==2018.4.16        # via requests
 chardet==3.0.4            # via requests
+cssselect==1.0.3          # via premailer
+cssutils==1.0.2           # via premailer
 django==2.0.4
 google-api-core==1.1.1    # via google-cloud-bigquery, google-cloud-core
 google-auth==1.4.1        # via google-api-core
@@ -15,6 +17,8 @@ google-cloud-core==0.28.1  # via google-cloud-bigquery
 google-resumable-media==0.3.1  # via google-cloud-bigquery
 googleapis-common-protos==1.5.3  # via google-api-core
 idna==2.6                 # via requests
+lxml==4.2.1               # via premailer
+premailer==3.2.0
 protobuf==3.5.2.post1     # via google-api-core, googleapis-common-protos
 psycopg2-binary==2.7.4
 pyasn1-modules==0.2.1     # via google-auth
@@ -22,6 +26,7 @@ pyasn1==0.4.2             # via pyasn1-modules, rsa
 pytz==2018.4              # via django, google-api-core
 requests==2.18.4
 rsa==3.4.2                # via google-auth
+selenium==3.11.0
 six==1.11.0               # via google-api-core, google-auth, google-resumable-media, protobuf
 titlecase==0.12.0
 urllib3==1.22             # via requests

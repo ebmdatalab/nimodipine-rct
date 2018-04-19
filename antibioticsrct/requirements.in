@@ -3,3 +3,5 @@ psycopg2-binary
 requests
 titlecase
 google-cloud-bigquery
+premailer
+selenium

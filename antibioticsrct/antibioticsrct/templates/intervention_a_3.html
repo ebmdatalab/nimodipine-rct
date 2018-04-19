@@ -2,21 +2,21 @@
 {% include '_header.html' %}
 
 
-  <p>You could save up to £XXXXX per year by prescribing in line
+  <p>You could save up to £{{ total_savings }} per year by prescribing in line
   with the most efficient practices.</p>
   <p> </p>
   <p>Check the OpenPrescribing website to see how much your
   practice could save, without increasing risk to patients, by
-  changing some prescription behaviours: {{ intervention_url }}</p>
-  <p>For example, here's how your practice compares to other
-  practices for prescriptions of high-cost proton-pump inhibitors
-  (PPIs). You could have saved £630.80 over the last 6 months by
-  prescribing generic-brand PPIs instead.</p>
+    changing some prescription behaviours: {{ intervention_url }}</p>
+
+  <p>
+   {% include measure_comparison %}
+  </p>
+
   <p>We understand there can be good reasons why a practice might
-  prescribe more or less of something than other
-  practices.<img alt="" src="images/image1.png" style=
-  "width: 434.50px; height: 182.55px; margin-left: -0.00px; margin-top: -0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);"
-  title=""></p>
+  prescribe more or less of something than other practices.
+    <img alt="" src="data:image/png;base64,{{ encoded_image }}">
+  </p>
   <p> </p>
   <p>OpenPrescribing is a free, publicly-funded service created by
   researchers in the University of Oxford to make national
