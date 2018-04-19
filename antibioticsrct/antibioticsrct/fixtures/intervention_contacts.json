@@ -1,7 +1,7 @@
 [
   {
     "model": "antibioticsrct.interventioncontact",
-    "pk": "P01234",
+    "pk": "A83050",
     "fields": {
       "name": "THE DOVECOT SURGERY",
       "address1": "THE HEALTH CENTRE",
@@ -15,7 +15,7 @@
   },
   {
     "model": "antibioticsrct.interventioncontact",
-    "pk": "P01235",
+    "pk": "A81025",
     "fields": {
       "name": "THE OTHER DOVECOT SURGERY",
       "address1": "THE HEALTH CENTRE",

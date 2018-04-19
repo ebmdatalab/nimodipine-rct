@@ -1,5 +1,6 @@
 from datetime import date
 
+from django.contrib.postgres.fields import JSONField
 from django.db import models
 from django.urls import reverse
 
@@ -44,7 +45,8 @@ class Intervention(models.Model):
     wave = models.CharField(max_length=1, choices=WAVE_CHOICES)
     method = models.CharField(max_length=1, choices=METHOD_CHOICES)
     practice_id = models.CharField(max_length=6)
-    measure_id = models.CharField(max_length=40)
+    measure_id = models.CharField(max_length=40, default='ktt9_cephalosporins')
+    metadata = JSONField(null=True, blank=True)
     hits = models.IntegerField(default=0)
     contact = models.ForeignKey(InterventionContact, on_delete=models.CASCADE)
 

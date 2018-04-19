@@ -14,21 +14,32 @@ class ModelTestCase(TestCase):
 
     def test_url_generation(self):
         intervention = Intervention.objects.get(pk=1)
-        self.assertEqual(intervention.get_absolute_url(), '/e/1/P01234')
+        self.assertEqual(intervention.get_absolute_url(), '/e/1/A83050')
+
+
+class BigQueryIntegrationTestCase(TestCase):
+    fixtures = ['intervention_contacts', 'interventions']
+
+    def test_metadata_setting(self):
+        from antibioticsrct.management.commands.generate_wave import set_a3_metadata
+        set_a3_metadata(allocation_table='test_allocated_practices')
+        a3_intervention = Intervention.objects.get(pk=3)
+        self.assertTrue(a3_intervention.metadata)
+        self.assertNotEqual(a3_intervention.measure_id, 'ktt9')
 
 
 class ViewTestCase(TestCase):
     fixtures = ['intervention_contacts', 'interventions']
     def test_target_url_redirect(self):
-        expected = ('https://openprescribing.net/practice/P01234/'
+        expected = ('https://openprescribing.net/practice/A83050/'
                     '?utm_source=rct1&utm_campaign=wave1&utm_medium=email'
                     '#ktt9')
         client = Client()
-        response = client.get('/e/1/P01234/')
+        response = client.get('/e/1/A83050/')
         self.assertRedirects(response, expected, fetch_redirect_response=False)
 
     def test_click_count(self):
-        Client().get('/e/1/P01234/')
+        Client().get('/e/1/A83050/')
         intervention = Intervention.objects.get(pk=1)
         self.assertEqual(intervention.hits, 1)
 

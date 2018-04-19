@@ -7,9 +7,9 @@
       "intervention": "A",
       "wave": "1",
       "method": "e",
-      "practice_id": "P01234",
+      "practice_id": "A83050",
       "measure_id": "ktt9",
-      "contact_id": "P01234"
+      "contact_id": "A83050"
     }
   },
   {
@@ -20,9 +20,9 @@
       "intervention": "A",
       "wave": "2",
       "method": "e",
-      "practice_id": "P01234",
+      "practice_id": "A83050",
       "measure_id": "ktt9",
-      "contact_id": "P01234"
+      "contact_id": "A83050"
     }
   },
   {
@@ -33,9 +33,9 @@
       "intervention": "A",
       "wave": "3",
       "method": "e",
-      "practice_id": "P01234",
+      "practice_id": "A83050",
       "measure_id": "ktt9",
-      "contact_id": "P01234"
+      "contact_id": "A83050"
     }
   },
   {
@@ -46,9 +46,9 @@
       "intervention": "B",
       "wave": "1",
       "method": "e",
-      "practice_id": "P01235",
+      "practice_id": "A81025",
       "measure_id": "ktt9",
-      "contact_id": "P01235"
+      "contact_id": "A81025"
     }
   },
   {
@@ -59,9 +59,9 @@
       "intervention": "B",
       "wave": "2",
       "method": "e",
-      "practice_id": "P01235",
+      "practice_id": "A81025",
       "measure_id": "ktt9",
-      "contact_id": "P01235"
+      "contact_id": "A81025"
     }
   }
 ]
