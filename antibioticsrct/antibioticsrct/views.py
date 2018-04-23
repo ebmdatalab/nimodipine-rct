@@ -1,4 +1,7 @@
+import base64
+import os
 import tempfile
+from django.conf import settings
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
 from django.shortcuts import render
@@ -39,6 +42,10 @@ def intervention_message(request, intervention_id):
         url = "/practice/{}/".format(intervention.practice_id)
         selector = '#' + intervention.measure_id
         encoded_image = grab_image(url, chart_file.name, selector)
+    with open(os.path.join(settings.BASE_DIR, 'antibioticsrct', 'static', 'header.png'), 'rb') as img:
+        header_image = base64.b64encode(img.read()).decode('ascii')
+    with open(os.path.join(settings.BASE_DIR, 'antibioticsrct', 'static', 'footer.png'), 'rb') as img:
+        footer_image = base64.b64encode(img.read()).decode('ascii')
     intervention_url = "http://www.op2.org.uk{}".format(intervention.get_absolute_url())
     intervention_url = '<a href="{}">{}</a>'.format(
         intervention_url, intervention_url)
@@ -47,6 +54,8 @@ def intervention_message(request, intervention_id):
         'practice_name': practice_name,
         'intervention_url': SafeText(intervention_url),
         'encoded_image': encoded_image,
+        'header_image': header_image,
+        'footer_image': footer_image
     })
     return render(
         request,
