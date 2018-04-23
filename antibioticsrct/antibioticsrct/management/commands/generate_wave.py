@@ -1,6 +1,7 @@
 import io
 import json
 import logging
+import fnmatch
 import os
 import requests
 import subprocess
@@ -13,7 +14,6 @@ from django.urls import reverse
 from google.cloud import bigquery
 from google.api_core.exceptions import NotFound
 
-from selenium import webdriver
 from premailer import Premailer
 
 from antibioticsrct.models import Intervention
@@ -78,17 +78,6 @@ def set_a3_metadata(allocation_table='allocated_practices'):
             metadata=metadata)
 
 
-def message_dir(intervention):
-    location = os.path.join(
-        settings.DATA_DIR,
-        "wave" + intervention.wave,
-        intervention.get_method_display().lower(),
-        intervention.practice_id
-    )
-    os.makedirs(location, exist_ok=True)
-    return location
-
-
 def capture_html(url, target_path):
     cmd = '{cmd} "{url}" {target_path}'
     cmd = cmd.format(
@@ -98,6 +87,22 @@ def capture_html(url, target_path):
             target_path=target_path,
     )
     subprocess.check_output(cmd, shell=True)
+
+
+def find(pattern, path):
+    result = []
+    for root, dirs, files in os.walk(path):
+        for name in files:
+            if fnmatch.fnmatch(name, pattern):
+                result.append(os.path.join(root, name))
+    return result
+
+
+def combine_letters(wave):
+    inputs = find('letter.pdf', os.path.join(settings.DATA_DIR, "wave" + wave))
+    subprocess.check_call(["gs", "-q", "-sPAPERSIZE=letter", "-dNOPAUSE",
+                           "-dBATCH", "-sDEVICE=pdfwrite", "-sOutputFile=combined_letters.pdf",
+                           *inputs])
 
 
 class Command(BaseCommand):
@@ -120,6 +125,9 @@ class Command(BaseCommand):
                             default=None,
                             help='If set, generate messages for only this practice')
 
+
+
+
     def handle(self, *args, **options):
         if options['wave'] == '3':
             logger.info('Computing cost saving measures and stats for intervention A3')
@@ -132,7 +140,7 @@ class Command(BaseCommand):
         if options['sample']:
             interventions = interventions.order_by('?')[:options['sample']]
         for intervention in interventions:
-            base = message_dir(intervention)
+            base = intervention.message_dir()
             contact = intervention.contact
             message_url = settings.URL_ROOT + reverse('views.intervention_message', args=[intervention.id])
             if intervention.method == 'e' and contact.email:  # email
@@ -165,3 +173,4 @@ class Command(BaseCommand):
                 capture_html(message_url, os.path.join(base, 'letter.pdf'))
             else:
                 logger.warn("No valid contact info: %s", intervention)
+        combine_letters(options['wave'])

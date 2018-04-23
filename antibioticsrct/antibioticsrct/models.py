@@ -1,5 +1,7 @@
 from datetime import date
+import os
 
+from django.conf import settings
 from django.contrib.postgres.fields import JSONField
 from django.db import models
 from django.urls import reverse
@@ -72,6 +74,15 @@ class Intervention(models.Model):
             querystring,
             self.measure_id)
 
+    def message_dir(self):
+        location = os.path.join(
+            settings.DATA_DIR,
+            "wave" + self.wave,
+            self.get_method_display().lower(),
+            self.practice_id
+        )
+        os.makedirs(location, exist_ok=True)
+        return location
 
     class Meta:
         unique_together = ('method', 'wave', 'practice_id')

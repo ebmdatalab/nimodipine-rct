@@ -7,6 +7,7 @@ from email.mime.image import MIMEImage
 from email.utils import unquote
 
 from django.conf import settings
+from django.core.mail import EmailMessage
 from django.core.mail import EmailMultiAlternatives
 from django.core.mail import make_msgid
 from django.core.management.base import BaseCommand
@@ -36,20 +37,43 @@ def inline_images(message, html):
 def send_email_message(msg_path, recipient=None):
     email_path = os.path.join(msg_path, 'email.html')
     metadata_path = os.path.join(msg_path, 'metadata.json')
-    body_as_text = "See HTML version"
+    from common.utils import email_as_text
     with open(email_path, 'r') as body_f, open(metadata_path, 'r') as metadata_f:
         body = body_f.read()
         metadata = json.load(metadata_f)
         metadata['to'] = 'seb.bacon+test@gmail.com'  # XXX testing
         msg = EmailMultiAlternatives(
             subject=metadata['subject'],
-            body=body_as_text,
             from_email=settings.DEFAULT_FROM_EMAIL,
             to=[metadata['to']],
             reply_to=[settings.DEFAULT_FROM_EMAIL])
         if recipient:
             msg.to = [recipient]
         msg = inline_images(msg, body)
+        msg.body = email_as_text(msg.alternatives[0][0])
+        msg.track_clicks = True
+        msg.send()
+
+def make_efax_address(fax_number):
+    fax_number = re.sub(r"[^0-9]", "", fax_number)
+    return fax_number + '@efax.com'
+
+
+def send_fax_message(msg_path, recipient=None):
+    fax_path = os.path.join(msg_path, 'fax.pdf')
+    metadata_path = os.path.join(msg_path, 'metadata.json')
+    with open(metadata_path, 'r') as metadata_f:
+        metadata = json.load(metadata_f)
+        metadata['to'] = make_efax_address('0123456567')  # XXX testing
+        msg = EmailMessage(
+            metadata['subject'],
+            "Important information from the University of Oxford about your prescribing.",
+            from_email=settings.DEFAULT_FROM_EMAIL)
+        if recipient:
+            msg.to = [make_efax_address(recipient)]
+        else:
+            msg.to = [make_efax_address(metadata['to'])]
+        msg.attach_file(fax_path)
         msg.track_clicks = True
         msg.send()
 
@@ -83,4 +107,7 @@ class Command(BaseCommand):
                 practices = glob.glob(os.path.join(base_path, '*'))
             for practice_id in practices:
                 msg_path = os.path.join(base_path, practice_id)
-                send_email_message(msg_path, options['test_recipient'])
+                if method == 'email':
+                    send_email_message(msg_path, options['test_recipient'])
+                else:
+                    send_fax_message(msg_path, options['test_recipient'])

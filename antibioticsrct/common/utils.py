@@ -4,6 +4,7 @@ import re
 import subprocess
 from os import environ
 
+import html2text
 from titlecase import titlecase
 
 from django.conf import settings
@@ -78,3 +79,14 @@ def grab_image(url, file_path, selector, dimensions='800x5000'):
     with open(file_path, "rb") as image_file:
         encoded_image = base64.b64encode(image_file.read())
         return encoded_image.decode('ascii')
+
+
+def email_as_text(html):
+    text_maker = html2text.HTML2Text()
+    text_maker.images_to_alt = True
+    text_maker.asterisk_emphasis = True
+    text_maker.wrap_links = False
+    text_maker.pad_tables = True
+    text_maker.ignore_images = True
+    text = text_maker.handle(html)
+    return text
