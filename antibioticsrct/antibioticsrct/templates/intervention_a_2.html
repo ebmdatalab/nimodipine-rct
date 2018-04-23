@@ -1,3 +1,5 @@
+{% extends "_base.html" %}
+
 {% block content %}
 {% include '_header.html' %}
 
@@ -11,15 +13,14 @@
   have made in response to this feedback — we would be very
   interested in hearing about them.</p>
 
+<div class="float-left-of-graph"><img alt="" src="data:image/png;base64,{{ encoded_image }}"></div>
 
-<p class="float-left-of-graph">As a reminder, here is
+<p>As a reminder, here is
   how <span class="your-practice">{{ practice_name }}</span> compares
   to <span class="other-practice">other practices</span> for broad
   spectrum antibiotic prescriptions such as co-amoxiclav,
   cephalosporins and quinolones as a percentage of all
-  antibiotics:</p>
-
-<img alt="" src="data:image/png;base64,{{ encoded_image }}">
+  antibiotics.</p>
 
 <p>We understand these drugs should be prescribed in some situations,
   and that it can be difficult to refuse them to patients who ask for

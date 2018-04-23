@@ -3,6 +3,7 @@ import json
 import logging
 import os
 import requests
+import subprocess
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
@@ -13,7 +14,7 @@ from google.cloud import bigquery
 from google.api_core.exceptions import NotFound
 
 from selenium import webdriver
-from premailer import transform
+from premailer import Premailer
 
 from antibioticsrct.models import Intervention
 from antibioticsrct.models import InterventionContact
@@ -88,17 +89,15 @@ def message_dir(intervention):
     return location
 
 
-def capture_html(url, target_path, width=None, height=None):
-    driver = webdriver.PhantomJS()
-    # it save service log file in same directory
-    # if you want to have log file stored else where
-    # initialize the webdriver.PhantomJS() as
-    # driver = webdriver.PhantomJS(service_log_path='/var/log/phantomjs/ghostdriver.log')
-    driver.set_script_timeout(30)
-    if width and height:
-        driver.set_window_size(width, height)
-    driver.get(url)
-    driver.save_screenshot(target_path)
+def capture_html(url, target_path):
+    cmd = '{cmd} "{url}" {target_path}'
+    cmd = cmd.format(
+            cmd=settings.PRINT_CMD,
+            host=settings.GRAB_HOST,
+            url=url,
+            target_path=target_path,
+    )
+    subprocess.check_output(cmd, shell=True)
 
 
 class Command(BaseCommand):
@@ -141,7 +140,7 @@ class Command(BaseCommand):
                 response = requests.get(message_url)
                 if response.status_code != requests.codes.ok:
                     raise Exception("bad response when trying to get {}".format(message_url))
-                html = transform(response.text)
+                html = Premailer(response.text, cssutils_logging_level=logging.ERROR).transform()
                 metadata = {
                     'subject': 'Important information about your prescribing',
                     'from': 'seb.bacon@gmail.com',
@@ -154,7 +153,7 @@ class Command(BaseCommand):
                 # XXX turn all images to be inline
             elif intervention.method == 'f' and contact.fax:  # fax
                 logger.info("Creating fax at {}".format(base))
-                capture_html(message_url, os.path.join(base, 'fax.png'))
+                capture_html(message_url, os.path.join(base, 'fax.pdf'))
                 metadata = {
                     'to': contact.fax
                 }
@@ -163,6 +162,6 @@ class Command(BaseCommand):
             elif intervention.method == 'p' and contact.address1:  # printed letter
                 # get screenshot
                 logger.info("Creating postal letter at {}".format(base))
-                capture_html(message_url, os.path.join(base, 'letter.png'))
+                capture_html(message_url, os.path.join(base, 'letter.pdf'))
             else:
                 logger.warn("No valid contact info: %s", intervention)

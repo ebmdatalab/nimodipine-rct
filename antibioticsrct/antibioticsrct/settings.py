@@ -166,6 +166,9 @@ GRAB_HOST = "https://openprescribing.net"
 GRAB_CMD = ('/usr/local/bin/phantomjs ' +
             BASE_DIR +
             '/scripts/grab_chart.js')
+PRINT_CMD = ('/usr/local/bin/phantomjs ' +
+            BASE_DIR +
+            '/scripts/print_letter.js')
 DATA_DIR = BASE_DIR + '/data/'
 
 

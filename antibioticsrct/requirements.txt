@@ -27,7 +27,6 @@ pyasn1==0.4.2             # via pyasn1-modules, rsa
 pytz==2018.4              # via django, google-api-core
 requests==2.18.4
 rsa==3.4.2                # via google-auth
-selenium==3.11.0
 six==1.11.0               # via django-anymail, google-api-core, google-auth, google-resumable-media, protobuf
 titlecase==0.12.0
 urllib3==1.22             # via requests
