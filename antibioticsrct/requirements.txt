@@ -9,6 +9,7 @@ certifi==2018.4.16        # via requests
 chardet==3.0.4            # via requests
 cssselect==1.0.3          # via premailer
 cssutils==1.0.2           # via premailer
+django-anymail[mailgun]==2.2
 django==2.0.4
 google-api-core==1.1.1    # via google-cloud-bigquery, google-cloud-core
 google-auth==1.4.1        # via google-api-core
@@ -27,6 +28,6 @@ pytz==2018.4              # via django, google-api-core
 requests==2.18.4
 rsa==3.4.2                # via google-auth
 selenium==3.11.0
-six==1.11.0               # via google-api-core, google-auth, google-resumable-media, protobuf
+six==1.11.0               # via django-anymail, google-api-core, google-auth, google-resumable-media, protobuf
 titlecase==0.12.0
 urllib3==1.22             # via requests

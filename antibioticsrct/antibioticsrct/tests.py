@@ -1,3 +1,4 @@
+from email.utils import unquote
 from unittest.mock import patch
 import os
 
@@ -63,7 +64,7 @@ class ViewTestCase(TestCase):
             self.assertEquals(response.context['encoded_image'], img_str)
 
 
-class CommandsTestCase(TestCase):
+class InterventionCommandTestCase(TestCase):
     def test_create_interventions(self):
         allocations = os.path.join(
             settings.BASE_DIR, 'antibioticsrct/fixtures/allocations.csv')
@@ -84,3 +85,30 @@ class CommandsTestCase(TestCase):
 
         # Check contact details
         self.assertEqual(ppi_interventions.first().contact.name, "THE SALTSCAR SURGERY")
+
+
+class EmailCommandTestCase(TestCase):
+    def test_email_from_html(self):
+        from antibioticsrct.management.commands.send_messages import inline_images
+        from django.core.mail import EmailMultiAlternatives
+
+        msg = EmailMultiAlternatives(subject="foo")
+        html = 'some <b>html</b> and stuff <img src="data:image/png;base64,cafe"> ting'
+        msg = inline_images(msg, html)
+        attachment = msg.attachments[0]
+        self.assertEqual(attachment.get_payload(), 'cafe')
+        cid = unquote(attachment.get('content-id'))
+        self.assertIn('<img src="cid:{}">'.format(cid), msg.alternatives[0][0])
+
+    def test_send_email(self):
+        from antibioticsrct.management.commands.send_messages import send_email_message
+        from django.core.mail import outbox
+        intervention_fixtures = os.path.join(
+            settings.BASE_DIR, 'antibioticsrct/fixtures/interventions/')
+        msg_path = os.path.join(intervention_fixtures, 'wave1', 'email', 'D83017')
+        with self.settings(DATA_DIR=intervention_fixtures):
+            send_email_message(msg_path)
+            self.assertEqual(len(outbox), 1)
+            self.assertEqual(len(outbox[0].attachments), 1)
+            self.assertEqual(outbox[0].to, ['seb.bacon+test@gmail.com'])
+            self.assertEqual(outbox[0].subject, 'Important information about your prescribing')

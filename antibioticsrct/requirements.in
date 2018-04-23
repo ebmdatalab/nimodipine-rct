@@ -5,3 +5,4 @@ titlecase
 google-cloud-bigquery
 premailer
 selenium
+django-anymail[mailgun]

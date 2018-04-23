@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'anymail',
     'antibioticsrct'
 ]
 
@@ -75,6 +76,11 @@ LOGGING = {
             'propagate': True,
         },
         'antibioticsrct': {
+            'handlers': ['file', 'console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        None: {
             'handlers': ['file', 'console'],
             'level': 'DEBUG',
             'propagate': True,
@@ -161,3 +167,14 @@ GRAB_CMD = ('/usr/local/bin/phantomjs ' +
             BASE_DIR +
             '/scripts/grab_chart.js')
 DATA_DIR = BASE_DIR + '/data/'
+
+
+# Mail settings
+
+ANYMAIL = {
+    'MAILGUN_API_KEY': utils.get_env_setting('MAILGUN_API_KEY'),
+    'MAILGUN_SENDER_DOMAIN': utils.get_env_setting('MAILGUN_SENDER_DOMAIN'),
+}
+
+EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"  # or sendgrid.EmailBackend, or...
+DEFAULT_FROM_EMAIL = "seb.bacon@gmail.com"
