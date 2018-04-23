@@ -2,6 +2,7 @@ import tempfile
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
 from django.shortcuts import render
+from django.utils.safestring import SafeText
 
 import requests
 
@@ -38,11 +39,13 @@ def intervention_message(request, intervention_id):
         url = "/practice/{}/".format(intervention.practice_id)
         selector = '#' + intervention.measure_id
         encoded_image = grab_image(url, chart_file.name, selector)
+    intervention_url = "http://www.op2.org.uk{}".format(intervention.get_absolute_url())
+    intervention_url = '<a href="{}">{}</a>'.format(
+        intervention_url, intervention_url)
     context.update({
         'intervention': intervention,
         'practice_name': practice_name,
-        'intervention_url': "http://www.op2.org.uk{}".format(
-            intervention.get_absolute_url()),
+        'intervention_url': SafeText(intervention_url),
         'encoded_image': encoded_image,
     })
     return render(

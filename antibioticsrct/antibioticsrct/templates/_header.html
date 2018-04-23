@@ -1,14 +1,19 @@
 {% load static %}
-<div>
-  <p><img src="{% static "header.png" %}" alt="OpenPrescribing logo">
-  </p>
-  <p>Nuffield Department of Primary Care Health Sciences</p>
-  <p>University of Oxford</p>
+<div id="header">
+  <div id="header__from">
+    <img src="{% static "header.png" %}" alt="OpenPrescribing logo"><br>
+    Nuffield Department of Primary Care Health Sciences<br>
+    University of Oxford<br><br>
+    <b>{% now "d F Y" %}</b>
+
+  </div>
+  <div id="header__to">
+    Address if it's a letter<br>
+    "Prescribing Lead" at top
+  </div>
 </div>
-<div>
-  Address if it's a letter<br>
-  "Prescribing Lead" at top
-</div>
-<p id="h.gjdgxs">{% now "d F Y" %}</p>
-<p>Dear {{ practice_name }},</p>
-45
+
+
+<div id="body">
+
+  <p>Dear <b>{{ practice_name }}</b>,</p>

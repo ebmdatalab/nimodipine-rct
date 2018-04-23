@@ -1,28 +1,36 @@
+{% extends "_base.html" %}
+
 {% block content %}
 {% include '_header.html' %}
 
 
-  <p>You could save up to £{{ total_savings }} in six months by
-  prescribing in line with the most efficient practices.</p>
-  <p> </p>
-  <p>Check the OpenPrescribing website to see how much your
+<p>
+  <b>You could save up to £{{ total_savings }} in six months by
+  prescribing in line with the most efficient practices.</b>
+</p>
+
+<p>Check the OpenPrescribing website to see how much your
   practice could save, without increasing risk to patients, by
-    changing some prescription behaviours: {{ intervention_url }}</p>
+  changing some prescription behaviours: {{ intervention_url }}</p>
 
-  <p>
-   {% include measure_comparison %}
-  </p>
+<p>
+  {% include measure_comparison %}
+</p>
 
-  <p>We understand there can be good reasons why a practice might
+<p><img alt="" src="data:image/png;base64,{{ encoded_image }}"></p>
+
+<p>
+  We understand there can be good reasons why a practice might
   prescribe more or less of something than other practices.
-    <img alt="" src="data:image/png;base64,{{ encoded_image }}">
-  </p>
-  <p> </p>
-  <p>OpenPrescribing is a free, publicly-funded service created by
-  researchers in the University of Oxford to make national
+</p>
+
+<p class="about-op">OpenPrescribing is a free, publicly-funded service
+  created by researchers in the University of Oxford to make national
   prescribing data more useful. You can see the performance of your
   practice on various prescribing measures, look at any practice or
-  CCG in the country, and do bespoke data searches on any treatment
-  of interest.</p>
-  {% include '_footer.html' %}
+  CCG in the country, and do bespoke data searches on any treatment of
+  interest.</p>
+
+{% include '_footer.html' %}
+
 {% endblock %}
