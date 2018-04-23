@@ -1,16 +1,34 @@
 {% load static %}
 <div id="header">
+  {% if show_header_from %}
   <div id="header__from">
     <img alt="" src="data:image/png;base64,{{ header_image }}"><br>
     Nuffield Department of Primary Care Health Sciences<br>
     University of Oxford<br><br>
     <b>{% now "d F Y" %}</b>
+  </div>
+  {% endif %}
 
-  </div>
+  {% if show_header_to %}
   <div id="header__to">
-    Address if it's a letter<br>
-    "Prescribing Lead" at top
+    PRESCRIBING LEAD<br>
+    {% if intervention.contact.address1 %}
+      {{ intervention.contact.address1 }}<br>
+    {% endif %}
+    {% if intervention.contact.address2 %}
+      {{ intervention.contact.address2 }}<br>
+    {% endif %}
+    {% if intervention.contact.address3 %}
+      {{ intervention.contact.address3 }}<br>
+    {% endif %}
+    {% if intervention.contact.address4 %}
+      {{ intervention.contact.address4 }}<br>
+    {% endif %}
+    {% if intervention.contact.postcode %}
+      {{ intervention.contact.postcode }}<br>
+    {% endif %}
   </div>
+  {% endif %}
 </div>
 
 

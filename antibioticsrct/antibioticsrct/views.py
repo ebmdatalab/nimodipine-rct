@@ -25,6 +25,15 @@ def intervention_message(request, intervention_id):
     intervention = get_object_or_404(Intervention, pk=intervention_id)
     practice_name = intervention.contact.cased_name
     context = {}
+    if intervention.method == 'p':
+        show_header_from = True
+        show_header_to = True
+    elif intervention.method == 'f':
+        show_header_from = True
+        show_header_to = False
+    else:
+        show_header_from = False
+        show_header_to = False
     if intervention.intervention == 'B':
         template = 'intervention_b.html'
     else:
@@ -55,7 +64,9 @@ def intervention_message(request, intervention_id):
         'intervention_url': SafeText(intervention_url),
         'encoded_image': encoded_image,
         'header_image': header_image,
-        'footer_image': footer_image
+        'footer_image': footer_image,
+        'show_header_from': show_header_from,
+        'show_header_to': show_header_to
     })
     return render(
         request,
