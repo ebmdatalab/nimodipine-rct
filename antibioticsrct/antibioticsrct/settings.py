@@ -80,11 +80,6 @@ LOGGING = {
             'level': 'DEBUG',
             'propagate': True,
         },
-        None: {
-            'handlers': ['file', 'console'],
-            'level': 'DEBUG',
-            'propagate': True,
-        },
     },
 }
 
