@@ -166,6 +166,10 @@ PRINT_CMD = ('/usr/local/bin/phantomjs ' +
             '/scripts/print_letter.js')
 DATA_DIR = BASE_DIR + '/data/'
 
+if DEBUG:
+    OP_HOST = "http://staging.openprescribing.net"
+else:
+    OP_HOST = "https://openprescribing.net"
 
 # Mail settings
 

@@ -8,8 +8,6 @@ from django.urls import reverse
 
 from common.utils import nhs_titlecase
 
-OP_HOST = "https://openprescribing.net"
-
 
 class InterventionContact(models.Model):
     practice_id = models.CharField(max_length=6, primary_key=True)
@@ -22,6 +20,8 @@ class InterventionContact(models.Model):
     email = models.EmailField(max_length=200, null=True, blank=True)
     fax = models.CharField(max_length=25, null=True, blank=True)
     blacklisted = models.BooleanField(default=False)
+    # "Did the message we sent give you new information about prescribing?"
+    survey_response = models.NullBooleanField(default=None)
 
     @property
     def cased_name(self):
@@ -64,12 +64,15 @@ class Intervention(models.Model):
         return reverse('views.intervention', args=[self.method, self.wave, self.practice_id])
 
     def get_target_url(self):
+        # add Google Analytics tracking
         querystring = "utm_source=rct1&utm_campaign=wave{}&utm_medium={}".format(
             self.wave,
-            self.get_method_display().lower()
-        )
+            self.get_method_display().lower())
+        # add a flag to indicate first visit, for showing questionnaire
+        if self.hits < 2:
+            querystring += "&first=1"
         target_url = "{}/practice/{}/?{}".format(
-            OP_HOST,
+            settings.OP_HOST,
             self.practice_id,
             querystring)
         if int(self.wave) < 3:

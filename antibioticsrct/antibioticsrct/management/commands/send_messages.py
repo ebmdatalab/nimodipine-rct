@@ -51,6 +51,7 @@ def send_email_message(msg_path, recipient=None):
         if recipient:
             msg.to = [recipient]
         msg = inline_images(msg, body)
+        msg.tags = ["antibioticsrct"]
         msg.body = email_as_text(msg.alternatives[0][0])
         msg.track_clicks = True
         msg.send()
