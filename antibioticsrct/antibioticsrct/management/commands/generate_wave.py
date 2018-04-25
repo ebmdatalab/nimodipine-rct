@@ -132,7 +132,8 @@ class Command(BaseCommand):
         if options['wave'] == '3':
             logger.info('Computing cost saving measures and stats for intervention A3')
             set_a3_metadata()
-        interventions = Intervention.objects.filter(wave=options['wave'])
+        interventions = Intervention.objects.filter(
+            contact__blacklisted=False, wave=options['wave'])
         if options['method']:
             interventions = interventions.filter(method=options['method'])
         if options['practice']:

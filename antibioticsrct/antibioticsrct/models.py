@@ -21,6 +21,7 @@ class InterventionContact(models.Model):
     postcode = models.CharField(max_length=9, null=True, blank=True)
     email = models.EmailField(max_length=200, null=True, blank=True)
     fax = models.CharField(max_length=25, null=True, blank=True)
+    blacklisted = models.BooleanField(default=False)
 
     @property
     def cased_name(self):
