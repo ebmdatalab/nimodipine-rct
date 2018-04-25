@@ -63,16 +63,21 @@ class Intervention(models.Model):
         return reverse('views.intervention', args=[self.method, self.wave, self.practice_id])
 
     def get_target_url(self):
-        # XXX Maybe we should jump to https://openprescribing.net/measure/saba/ccg/11X/?
         querystring = "utm_source=rct1&utm_campaign=wave{}&utm_medium={}".format(
             self.wave,
             self.get_method_display().lower()
         )
-        return "{}/practice/{}/?{}#{}".format(
+        target_url = "{}/practice/{}/?{}".format(
             OP_HOST,
             self.practice_id,
-            querystring,
-            self.measure_id)
+            querystring)
+        if int(self.wave) < 3:
+            # In the first two waves, highlight the measure being
+            # talked about.  See discussion starting here for why:
+            # https://github.com/ebmdatalab/antibiotics-rct/issues/1#issuecomment-381990733
+            target_url += '#' + self.measure_id
+        return target_url
+
 
     def message_dir(self):
         location = os.path.join(
