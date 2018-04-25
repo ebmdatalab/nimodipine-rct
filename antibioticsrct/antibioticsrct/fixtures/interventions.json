@@ -35,7 +35,8 @@
       "method": "e",
       "practice_id": "A83050",
       "measure_id": "ktt9",
-      "contact_id": "A83050"
+      "contact_id": "A83050",
+      "metadata": {"total_savings": 1, "cost_savings": 1}
     }
   },
   {

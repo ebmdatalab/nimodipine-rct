@@ -10,7 +10,8 @@
       "address4": "CLEVELAND",
       "postcode": "TS18 1HU",
       "email": "simon.neil@nhs.net",
-      "fax": "01642 260897"
+      "fax": "01642 260897",
+      "blacklisted": false
     }
   },
   {
@@ -24,7 +25,8 @@
       "address4": "CLEVELAND",
       "postcode": "TS18 1HU",
       "email": "simon.neil@nhs.net",
-      "fax": "01642 260897"
+      "fax": "01642 260897",
+      "blacklisted": false
     }
   }
 ]
