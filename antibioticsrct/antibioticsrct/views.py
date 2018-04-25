@@ -55,7 +55,7 @@ def intervention_message(request, intervention_id):
         header_image = base64.b64encode(img.read()).decode('ascii')
     with open(os.path.join(settings.BASE_DIR, 'antibioticsrct', 'static', 'footer.png'), 'rb') as img:
         footer_image = base64.b64encode(img.read()).decode('ascii')
-    intervention_url = "http://www.op2.org.uk{}".format(intervention.get_absolute_url())
+    intervention_url = "op2.org.uk{}".format(intervention.get_absolute_url())
     intervention_url = '<a href="{}">{}</a>'.format(
         intervention_url, intervention_url)
     context.update({

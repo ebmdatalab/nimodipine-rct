@@ -15,7 +15,7 @@ class ModelTestCase(TestCase):
 
     def test_url_generation(self):
         intervention = Intervention.objects.get(pk=1)
-        self.assertEqual(intervention.get_absolute_url(), '/e/1/A83050')
+        self.assertEqual(intervention.get_absolute_url(), '/e1/A83050')
 
 
 class BigQueryIntegrationTestCase(TestCase):
@@ -36,11 +36,11 @@ class ViewTestCase(TestCase):
                     '?utm_source=rct1&utm_campaign=wave1&utm_medium=email'
                     '#ktt9')
         client = Client()
-        response = client.get('/e/1/A83050/')
+        response = client.get('/e1/A83050/')
         self.assertRedirects(response, expected, fetch_redirect_response=False)
 
     def test_click_count(self):
-        Client().get('/e/1/A83050/')
+        Client().get('/e1/A83050/')
         intervention = Intervention.objects.get(pk=1)
         self.assertEqual(intervention.hits, 1)
 
