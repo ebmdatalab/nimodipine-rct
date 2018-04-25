@@ -14,6 +14,8 @@ from django.core.management.base import BaseCommand
 
 from anymail.message import attach_inline_image_file
 
+from common.utils import email_as_text
+
 
 def inline_images(message, html):
     """Given HTML with inline data images, convert these to attachments,
@@ -37,7 +39,6 @@ def inline_images(message, html):
 def send_email_message(msg_path, recipient=None):
     email_path = os.path.join(msg_path, 'email.html')
     metadata_path = os.path.join(msg_path, 'metadata.json')
-    from common.utils import email_as_text
     with open(email_path, 'r') as body_f, open(metadata_path, 'r') as metadata_f:
         body = body_f.read()
         metadata = json.load(metadata_f)
