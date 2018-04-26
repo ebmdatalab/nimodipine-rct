@@ -75,6 +75,8 @@ def send_fax_message(msg_path, recipient=None):
             msg.to = [make_efax_address(recipient)]
         else:
             msg.to = [make_efax_address(metadata['to'])]
+            # XXX remove on live
+            msg.to = [make_efax_address('01865597661')]
         msg.attach_file(fax_path)
         msg.track_clicks = True
         msg.send()
