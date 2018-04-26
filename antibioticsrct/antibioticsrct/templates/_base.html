@@ -8,9 +8,18 @@
      size: A4
     }
 
-    body, p {
+    body, p, td {
       font-family: sans-serif;
       font-size: 11pt;
+    }
+    body.method-p a, body.method-f a {
+      color: black;
+      font-weight: bold;
+      btext-decoration: none;
+    }
+
+    td {
+     vertical-align: top;
     }
 
     #header__from {
@@ -26,18 +35,18 @@
     }
 
     .your-practice {
-      color: red;
+      color: #b30000;
     }
 
     .other-practices {
-      color: blue;
+      color: #045a8d;
     }
 
     .feedback {
-      color: red;
+      color: #b30000;
     }
 
-    .float-left-of-graph {
+    .float-left {
       float: left;
     }
 
@@ -75,7 +84,7 @@
     }
   </style>
 </head>
-<body>
+<body class="method-{{ intervention.method }}">
   {% block content %}
   {% endblock %}
 </body>
