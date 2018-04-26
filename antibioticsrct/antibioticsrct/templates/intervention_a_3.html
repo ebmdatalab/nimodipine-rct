@@ -5,16 +5,18 @@
 
 
 <p>
-  <b>You could save up to £{{ total_savings }} in six months by
-  prescribing in line with the most efficient practices.</b>
+  <b>OpenPrescribing shows your practice's performance on more than 50
+  measures of prescribing safety, efficacy and cost-effectiveness.</b>
 </p>
+
+<p>Check the OpenPrescribing website to see how much your
+  practice could save, without increasing risk to patients, by
+  changing some prescription behaviours: {{ intervention_url }}</p>
 
 <table border="0" cellpadding="0" cellspacing="0">
 <tr><td style="margin-right:10px" width="30%">
 
-Check the OpenPrescribing website to see how much your
-  practice could save, without increasing risk to patients, by
-  changing some prescription behaviours: {{ intervention_url }}</p>
+  {{ measure_comparison }}
 
   </td>
 <td>
@@ -22,10 +24,6 @@ Check the OpenPrescribing website to see how much your
 </td>
 </tr>
 </table>
-
-<p>
-  {{ measure_comparison }}
-</p>
 
 <p>
   We understand there can be good reasons why a practice might
