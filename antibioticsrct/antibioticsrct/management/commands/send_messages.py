@@ -58,7 +58,9 @@ def send_email_message(msg_path, recipient=None):
 
 def make_efax_address(fax_number):
     fax_number = re.sub(r"[^0-9]", "", fax_number)
-    return fax_number + '@efax.com'
+    if fax_number[0] == '0':
+        fax_number = '44' + fax_number[1:]
+    return fax_number + '@efaxsendeu.eu'
 
 
 def send_fax_message(msg_path, recipient=None):
@@ -69,7 +71,7 @@ def send_fax_message(msg_path, recipient=None):
         metadata['to'] = make_efax_address('0123456567')  # XXX testing
         msg = EmailMessage(
             "Important information from the University of Oxford about your prescribing.",
-            "FAO Prescribing Lead\n\nImportant information from the University of Oxford about your prescribing.",
+            "{nocoverpage}",
             from_email=settings.DEFAULT_FROM_EMAIL)
         if recipient:
             msg.to = [make_efax_address(recipient)]

@@ -82,7 +82,6 @@ def capture_html(url, target_path):
     cmd = '{cmd} "{url}" {target_path}'
     cmd = cmd.format(
             cmd=settings.PRINT_CMD,
-            host=settings.GRAB_HOST,
             url=url,
             target_path=target_path,
     )
