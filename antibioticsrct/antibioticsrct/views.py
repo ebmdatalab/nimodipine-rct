@@ -30,6 +30,13 @@ def measure_redirect(request, method, wave, practice_id):
     return redirect(intervention.get_target_url())
 
 
+def random_intervention_message(request):
+    """Return a random intervention message. Useful for testing.
+    """
+    return intervention_message(
+        request, Intervention.objects.order_by('?')[0].pk)
+
+
 def intervention_message(request, intervention_id):
     intervention = get_object_or_404(Intervention, pk=intervention_id)
     practice_name = intervention.contact.cased_name
