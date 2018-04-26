@@ -21,7 +21,7 @@ CODE_MAPPING = {
     'f': ('f', '3'),  # fax, wave 3
     'g': ('p', '1'),  # post, wave 1
     'h': ('p', '2'),  # post, wave 2
-    'i': ('p', '3')   # post, wave 3
+    'k': ('p', '3')   # post, wave 3
 }
 
 def decode(code):
