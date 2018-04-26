@@ -67,8 +67,10 @@ def intervention_message(request, intervention_id):
         template = "intervention_a_{}.html".format(intervention.wave)
         if intervention.wave == '3':
             md = intervention.metadata
-            context['total_savings'] = round(md['total_savings'])
-            context['cost_savings'] = round(md['cost_savings'])
+            if md['total_savings']:
+                context['total_savings'] = round(md['total_savings'])
+            if md['cost_savings']:
+                context['cost_savings'] = round(md['cost_savings'])
             context['measure_comparison'] = get_measure_comparison(intervention.measure_id, context)
     with tempfile.NamedTemporaryFile(suffix='.png') as chart_file:
         url = "/practice/{}/".format(intervention.practice_id)
