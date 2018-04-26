@@ -5,12 +5,16 @@ from django.conf import settings
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
 from django.shortcuts import render
+from django.template import Context
+from django.template import Template
+from django.template.loader import render_to_string
 from django.utils.safestring import SafeText
 
 import requests
 
 from common.utils import grab_image
 from antibioticsrct.models import Intervention
+from antibioticsrct.models import get_measure_data
 
 
 def measure_redirect(request, method, wave, practice_id):
@@ -36,6 +40,11 @@ def random_intervention_message(request):
     return intervention_message(
         request, Intervention.objects.order_by('?')[0].pk)
 
+def get_measure_comparison(measure, context):
+    measure_data = get_measure_data()
+    template = Template(measure_data[measure])
+    return template.render(Context(context))
+
 
 def intervention_message(request, intervention_id):
     intervention = get_object_or_404(Intervention, pk=intervention_id)
@@ -55,14 +64,10 @@ def intervention_message(request, intervention_id):
     else:
         template = "intervention_a_{}.html".format(intervention.wave)
         if intervention.wave == '3':
-            # XXX Cost saving measure. Work out total possible savings
-            # this month, savings on that measure, and "switch"
-            # wording here.  Poss via API?
             md = intervention.metadata
             context['total_savings'] = round(md['total_savings'])
             context['cost_savings'] = round(md['cost_savings'])
-            context['measure_comparison'] = "_{}_comparison.html".format(
-                intervention.measure_id)
+            context['measure_comparison'] = get_measure_comparison(intervention.measure_id, context)
     with tempfile.NamedTemporaryFile(suffix='.png') as chart_file:
         url = "/practice/{}/".format(intervention.practice_id)
         selector = '#' + intervention.measure_id
