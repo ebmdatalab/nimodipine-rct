@@ -8,6 +8,7 @@ from django.db import models
 from django.urls import reverse
 
 from common.utils import nhs_titlecase
+from common.utils import encode
 
 
 class InterventionContact(models.Model):
@@ -62,7 +63,7 @@ class Intervention(models.Model):
             self.get_method_display().lower())
 
     def get_absolute_url(self):
-        return reverse('views.intervention', args=[self.method, self.wave, self.practice_id])
+        return reverse('views.intervention', args=[encode(self.method, self.wave), self.practice_id])
 
     def get_target_url(self):
         # add Google Analytics tracking

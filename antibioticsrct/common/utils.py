@@ -12,6 +12,27 @@ from django.core.exceptions import ImproperlyConfigured
 
 logger = logging.getLogger(__name__)
 
+CODE_MAPPING = {
+    'a': ('e', '1'),  # email, wave 1
+    'b': ('e', '2'),  # email, wave 2
+    'c': ('e', '3'),  # email, wave 3
+    'd': ('f', '1'),  # fax, wave 1
+    'e': ('f', '2'),  # fax, wave 2
+    'f': ('f', '3'),  # fax, wave 3
+    'g': ('p', '1'),  # post, wave 1
+    'h': ('p', '2'),  # post, wave 2
+    'i': ('p', '3')   # post, wave 3
+}
+
+def decode(code):
+    return CODE_MAPPING[code]
+
+
+def encode(method, wave):
+    for code, decoded in CODE_MAPPING.items():
+        if decoded == (method, wave):
+            return code
+
 
 def nhs_abbreviations(word, **kwargs):
     if len(word) == 2 and word.lower() not in [

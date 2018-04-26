@@ -13,11 +13,13 @@ from django.utils.safestring import SafeText
 import requests
 
 from common.utils import grab_image
+from common.utils import decode
 from antibioticsrct.models import Intervention
 from antibioticsrct.models import get_measure_data
 
 
-def measure_redirect(request, method, wave, practice_id):
+def measure_redirect(request, code, practice_id):
+    method, wave = decode(code)
     intervention = Intervention.objects.get(
         method=method, wave=wave, practice_id=practice_id)
     if request.POST:

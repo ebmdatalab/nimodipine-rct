@@ -15,7 +15,7 @@ class ModelTestCase(TestCase):
 
     def test_url_generation(self):
         intervention = Intervention.objects.get(pk=1)
-        self.assertEqual(intervention.get_absolute_url(), '/e1/A83050')
+        self.assertEqual(intervention.get_absolute_url(), '/a/A83050')
 
 
 class BigQueryIntegrationTestCase(TestCase):
@@ -33,7 +33,7 @@ class ViewTestCase(TestCase):
     fixtures = ['intervention_contacts', 'interventions']
     def test_target_url_questionnaire(self):
         client = Client()
-        response = client.get('/e1/A83050')
+        response = client.get('/a/A83050')
         self.assertTemplateUsed(response, 'questionnaire.html')
 
     def test_target_url_questionnaire_post(self):
@@ -41,7 +41,7 @@ class ViewTestCase(TestCase):
                     '?utm_source=rct1&utm_campaign=wave1&utm_medium=email'
                     '#ktt9_antibiotics'.format(settings.OP_HOST))
         client = Client()
-        response = client.post('/e1/A83050', {'survey_response':'Yes'})
+        response = client.post('/a/A83050', {'survey_response':'Yes'})
         self.assertRedirects(response, expected, fetch_redirect_response=False)
         intervention = Intervention.objects.get(practice_id='A83050', method='e', wave='1')
         self.assertTrue(intervention.contact.survey_response)
@@ -52,11 +52,11 @@ class ViewTestCase(TestCase):
                     '?utm_source=rct1&utm_campaign=wave2&utm_medium=email'
                     '#ktt9_antibiotics'.format(settings.OP_HOST))
         client = Client()
-        response = client.get('/e2/A83050')
+        response = client.get('/b/A83050')
         self.assertRedirects(response, expected, fetch_redirect_response=False)
 
     def test_click_count(self):
-        Client().get('/e1/A83050/')
+        Client().get('/a/A83050/')
         intervention = Intervention.objects.get(pk=1)
         self.assertEqual(intervention.hits, 1)
 
