@@ -3,18 +3,16 @@
 -- for all of the measures where we have calculated potential savings.
 -- The date range is hard coded for the third intervention, Nov-April.
 
-SELECT
-  *
-FROM (
+WITH savings AS (
   SELECT
     practice,
     measure,
     cost_savings,
     spend,
     SUM(cost_savings) OVER (PARTITION BY practice) AS total_savings,
-    ROW_NUMBER() OVER (PARTITION BY practice ORDER BY cost_savings DESC) AS measure_rank -- use row number so there will only be a single row per practice numbered "1"
+    ROW_NUMBER() OVER (PARTITION BY practice ORDER BY cost_savings DESC) AS savings_rank -- use row number so there will only be a single row per practice numbered "1"
   FROM
-    tmp_eu.{allocation_table} p
+    tmp_eu.allocated_practices p
   LEFT JOIN (
     SELECT
       'ace' AS measure,
@@ -127,20 +125,21 @@ FROM (
     GROUP BY
       practice_id) s
   ON
-    p.practice_id = s.practice_id
+    p.practice = s.practice_id
     AND cost_savings > 300 ),
   -- non-cost measures ----------------------------------------------------------------------------
   measures AS (
   SELECT
-    p.practice_id,
+    p.practice,
     m.measure AS non_cost_measure,
     m.avg_percentile,
     m.numerator,
     m.denominator,
     m.measure,
-    ROW_NUMBER() OVER (PARTITION BY p.practice_id ORDER BY m.avg_percentile DESC) AS percentile_rank
+    ROW_NUMBER() OVER (PARTITION BY p.practice ORDER BY m.avg_percentile DESC) AS percentile_rank
   FROM
-    ebmdatalab.helen.allocated_pracs_for_cephs_test p
+    tmp_eu.allocated_practices p
+
   LEFT JOIN (
     SELECT
       'ciclosporin' AS measure,
@@ -442,6 +441,12 @@ FROM (
     GROUP BY
       practice_id ) m
   ON
-    p.practice_id = m.practice_id
+    p.practice = m.practice_id
   WHERE
     numerator > 6 )
+
+SELECT s.*, m.non_cost_measure, m.numerator, m.denominator, m.avg_percentile FROM
+savings s LEFT JOIN measures m ON s.practice = m.practice AND m.percentile_rank = 1
+WHERE savings_rank =1
+
+ORDER BY cost_savings, non_cost_measure

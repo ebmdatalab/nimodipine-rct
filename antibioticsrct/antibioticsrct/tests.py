@@ -31,12 +31,28 @@ class BigQueryIntegrationTestCase(TestCase):
 
 class ViewTestCase(TestCase):
     fixtures = ['intervention_contacts', 'interventions']
-    def test_target_url_redirect(self):
-        expected = ('https://openprescribing.net/practice/A83050/'
-                    '?utm_source=rct1&utm_campaign=wave1&utm_medium=email'
-                    '#ktt9')
+    def test_target_url_questionnaire(self):
         client = Client()
-        response = client.get('/e1/A83050/')
+        response = client.get('/e1/A83050')
+        self.assertTemplateUsed(response, 'questionnaire.html')
+
+    def test_target_url_questionnaire_post(self):
+        expected = ('{}/practice/A83050/'
+                    '?utm_source=rct1&utm_campaign=wave1&utm_medium=email'
+                    '#ktt9_antibiotics'.format(settings.OP_HOST))
+        client = Client()
+        response = client.post('/e1/A83050', {'survey_response':'Yes'})
+        self.assertRedirects(response, expected, fetch_redirect_response=False)
+        intervention = Intervention.objects.get(practice_id='A83050', method='e', wave='1')
+        self.assertTrue(intervention.contact.survey_response)
+        self.assertEquals(intervention.hits, 0)  # don't increment the counter on POSTs
+
+    def test_target_url_redirect_when_already_visited(self):
+        expected = ('{}/practice/A83050/'
+                    '?utm_source=rct1&utm_campaign=wave2&utm_medium=email'
+                    '#ktt9_antibiotics'.format(settings.OP_HOST))
+        client = Client()
+        response = client.get('/e2/A83050')
         self.assertRedirects(response, expected, fetch_redirect_response=False)
 
     def test_click_count(self):
