@@ -1,9 +1,9 @@
--- Find the measure, measure savings, and total savings for each
--- practice in a sample table of practices, compared to 10th centile,
--- for all of the measures where we have calculated potential savings.
--- The date range is hard coded for the third intervention, Nov-April.
-
-WITH savings AS (
+  -- Find the measure, measure savings, and total savings for each
+  -- practice in a sample table of practices, compared to 10th centile,
+  -- for all of the measures where we have calculated potential savings.
+  -- The date range is hard coded for the third intervention, Nov-April.
+WITH
+  savings AS (
   SELECT
     practice,
     measure,
@@ -12,7 +12,7 @@ WITH savings AS (
     SUM(cost_savings) OVER (PARTITION BY practice) AS total_savings,
     ROW_NUMBER() OVER (PARTITION BY practice ORDER BY cost_savings DESC) AS savings_rank -- use row number so there will only be a single row per practice numbered "1"
   FROM
-    tmp_eu.allocated_practices p
+    tmp_eu.{allocation_table} p
   LEFT JOIN (
     SELECT
       'ace' AS measure,
@@ -21,14 +21,16 @@ WITH savings AS (
       SUM(numerator) AS numerator,
       SUM(denominator) AS denominator,
       SUM(cost_savings_10) AS cost_savings,
-      SUM(COALESCE(num_cost,0)) AS spend
+      SUM(COALESCE(num_cost,
+          0)) AS spend
     FROM
       `ebmdatalab.measures.practice_data_ace`
     WHERE
       month BETWEEN '2017-11-01'
       AND '2018-04-01'
     GROUP BY
-      practice_id UNION ALL
+      practice_id
+    UNION ALL
     SELECT
       'arb' AS measure,
       practice_id,
@@ -36,14 +38,16 @@ WITH savings AS (
       SUM(numerator) AS numerator,
       SUM(denominator) AS denominator,
       SUM(cost_savings_10) AS cost_savings,
-      SUM(COALESCE(num_cost,0)) AS spend
+      SUM(COALESCE(num_cost,
+          0)) AS spend
     FROM
       `ebmdatalab.measures.practice_data_arb`
     WHERE
       month BETWEEN '2017-11-01'
       AND '2018-04-01'
     GROUP BY
-      practice_id UNION ALL
+      practice_id
+    UNION ALL
     SELECT
       'quetiapine' AS measure,
       practice_id,
@@ -51,14 +55,16 @@ WITH savings AS (
       SUM(numerator) AS numerator,
       SUM(denominator) AS denominator,
       SUM(cost_savings_10) AS cost_savings,
-      SUM(COALESCE(num_cost,0)) AS spend
+      SUM(COALESCE(num_cost,
+          0)) AS spend
     FROM
       `ebmdatalab.measures.practice_data_quetiapine`
     WHERE
       month BETWEEN '2017-11-01'
       AND '2018-04-01'
     GROUP BY
-      practice_id UNION ALL
+      practice_id
+    UNION ALL
     SELECT
       'keppra' AS measure,
       practice_id,
@@ -66,14 +72,16 @@ WITH savings AS (
       SUM(numerator) AS numerator,
       SUM(denominator) AS denominator,
       SUM(cost_savings_10) AS cost_savings,
-      SUM(COALESCE(num_cost,0)) AS spend
+      SUM(COALESCE(num_cost,
+          0)) AS spend
     FROM
       `ebmdatalab.measures.practice_data_keppra`
     WHERE
       month BETWEEN '2017-11-01'
       AND '2018-04-01'
     GROUP BY
-      practice_id UNION ALL
+      practice_id
+    UNION ALL
     SELECT
       'desogestrel' AS measure,
       practice_id,
@@ -81,14 +89,16 @@ WITH savings AS (
       SUM(numerator) AS numerator,
       SUM(denominator) AS denominator,
       SUM(cost_savings_10) AS cost_savings,
-      SUM(COALESCE(num_cost,0)) AS spend
+      SUM(COALESCE(num_cost,
+          0)) AS spend
     FROM
       `ebmdatalab.measures.practice_data_desogestrel`
     WHERE
       month BETWEEN '2017-11-01'
       AND '2018-04-01'
     GROUP BY
-      practice_id UNION ALL
+      practice_id
+    UNION ALL
     SELECT
       'ppi' AS measure,
       practice_id,
@@ -96,7 +106,8 @@ WITH savings AS (
       SUM(numerator) AS numerator,
       SUM(denominator) AS denominator,
       SUM(cost_savings_10) AS cost_savings,
-      SUM(COALESCE(num_cost,0)) AS spend
+      SUM(COALESCE(num_cost,
+          0)) AS spend
     FROM
       `ebmdatalab.measures.practice_data_ppi`
     WHERE
@@ -108,7 +119,7 @@ WITH savings AS (
       --SELECT  'statins' as measure, practice_id, AVG(percentile) AS avg_percentile, SUM(numerator) as numerator, SUM(denominator) AS denominator, SUM(cost_savings_10) AS cost_savings, SUM(COALESCE(num_cost,0)) AS spend FROM `ebmdatalab.measures.practice_data_statins`
       --WHERE month BETWEEN '2017-11-01' AND '2018-04-01'
       --GROUP BY practice_id
-      UNION ALL
+    UNION ALL
     SELECT
       'lyrica' AS measure,
       practice_id,
@@ -116,7 +127,8 @@ WITH savings AS (
       SUM(numerator) AS numerator,
       SUM(denominator) AS denominator,
       SUM(cost_savings_10) AS cost_savings,
-      SUM(COALESCE(num_cost,0)) AS spend
+      SUM(COALESCE(num_cost,
+          0)) AS spend
     FROM
       `ebmdatalab.measures.practice_data_lyrica`
     WHERE
@@ -138,8 +150,7 @@ WITH savings AS (
     m.measure,
     ROW_NUMBER() OVER (PARTITION BY p.practice ORDER BY m.avg_percentile DESC) AS percentile_rank
   FROM
-    tmp_eu.allocated_practices p
-
+    tmp_eu.{allocation_table} p
   LEFT JOIN (
     SELECT
       'ciclosporin' AS measure,
@@ -153,7 +164,8 @@ WITH savings AS (
       month BETWEEN '2017-11-01'
       AND '2018-04-01'
     GROUP BY
-      practice_id UNION ALL
+      practice_id
+    UNION ALL
     SELECT
       'coproxamol' AS measure,
       practice_id,
@@ -166,7 +178,8 @@ WITH savings AS (
       month BETWEEN '2017-11-01'
       AND '2018-04-01'
     GROUP BY
-      practice_id UNION ALL
+      practice_id
+    UNION ALL
     SELECT
       'desogestrel' AS measure,
       practice_id,
@@ -179,7 +192,8 @@ WITH savings AS (
       month BETWEEN '2017-11-01'
       AND '2018-04-01'
     GROUP BY
-      practice_id UNION ALL
+      practice_id
+    UNION ALL
     SELECT
       'diltiazem' AS measure,
       practice_id,
@@ -192,7 +206,8 @@ WITH savings AS (
       month BETWEEN '2017-11-01'
       AND '2018-04-01'
     GROUP BY
-      practice_id UNION ALL
+      practice_id
+    UNION ALL
     SELECT
       'dipyridamole' AS measure,
       practice_id,
@@ -205,7 +220,8 @@ WITH savings AS (
       month BETWEEN '2017-11-01'
       AND '2018-04-01'
     GROUP BY
-      practice_id UNION ALL
+      practice_id
+    UNION ALL
     SELECT
       'fungal' AS measure,
       practice_id,
@@ -218,7 +234,8 @@ WITH savings AS (
       month BETWEEN '2017-11-01'
       AND '2018-04-01'
     GROUP BY
-      practice_id UNION ALL
+      practice_id
+    UNION ALL
     SELECT
       'glaucoma' AS measure,
       practice_id,
@@ -231,7 +248,8 @@ WITH savings AS (
       month BETWEEN '2017-11-01'
       AND '2018-04-01'
     GROUP BY
-      practice_id UNION ALL
+      practice_id
+    UNION ALL
     SELECT
       'icsdose' AS measure,
       practice_id,
@@ -244,7 +262,8 @@ WITH savings AS (
       month BETWEEN '2017-11-01'
       AND '2018-04-01'
     GROUP BY
-      practice_id UNION ALL
+      practice_id
+    UNION ALL
     SELECT
       'ktt12_diabetes_insulin' AS measure,
       practice_id,
@@ -257,7 +276,8 @@ WITH savings AS (
       month BETWEEN '2017-11-01'
       AND '2018-04-01'
     GROUP BY
-      practice_id UNION ALL
+      practice_id
+    UNION ALL
     SELECT
       'ktt13_nsaids_ibuprofen' AS measure,
       practice_id,
@@ -270,7 +290,8 @@ WITH savings AS (
       month BETWEEN '2017-11-01'
       AND '2018-04-01'
     GROUP BY
-      practice_id UNION ALL
+      practice_id
+    UNION ALL
     SELECT
       'lipid_modifying_drugs' AS measure,
       practice_id,
@@ -283,7 +304,8 @@ WITH savings AS (
       month BETWEEN '2017-11-01'
       AND '2018-04-01'
     GROUP BY
-      practice_id UNION ALL
+      practice_id
+    UNION ALL
     SELECT
       'methotrexate' AS measure,
       practice_id,
@@ -296,7 +318,8 @@ WITH savings AS (
       month BETWEEN '2017-11-01'
       AND '2018-04-01'
     GROUP BY
-      practice_id UNION ALL
+      practice_id
+    UNION ALL
     SELECT
       'nebivolol' AS measure,
       practice_id,
@@ -309,7 +332,8 @@ WITH savings AS (
       month BETWEEN '2017-11-01'
       AND '2018-04-01'
     GROUP BY
-      practice_id UNION ALL
+      practice_id
+    UNION ALL
     SELECT
       'opioidome' AS measure,
       practice_id,
@@ -322,7 +346,8 @@ WITH savings AS (
       month BETWEEN '2017-11-01'
       AND '2018-04-01'
     GROUP BY
-      practice_id UNION ALL
+      practice_id
+    UNION ALL
     SELECT
       'opioidper1000' AS measure,
       practice_id,
@@ -335,7 +360,8 @@ WITH savings AS (
       month BETWEEN '2017-11-01'
       AND '2018-04-01'
     GROUP BY
-      practice_id UNION ALL
+      practice_id
+    UNION ALL
     SELECT
       'opioidspercent' AS measure,
       practice_id,
@@ -348,7 +374,8 @@ WITH savings AS (
       month BETWEEN '2017-11-01'
       AND '2018-04-01'
     GROUP BY
-      practice_id UNION ALL
+      practice_id
+    UNION ALL
     SELECT
       'ppidose' AS measure,
       practice_id,
@@ -361,7 +388,8 @@ WITH savings AS (
       month BETWEEN '2017-11-01'
       AND '2018-04-01'
     GROUP BY
-      practice_id UNION ALL
+      practice_id
+    UNION ALL
     SELECT
       'saba' AS measure,
       practice_id,
@@ -374,7 +402,8 @@ WITH savings AS (
       month BETWEEN '2017-11-01'
       AND '2018-04-01'
     GROUP BY
-      practice_id UNION ALL
+      practice_id
+    UNION ALL
     SELECT
       'silver' AS measure,
       practice_id,
@@ -387,7 +416,8 @@ WITH savings AS (
       month BETWEEN '2017-11-01'
       AND '2018-04-01'
     GROUP BY
-      practice_id UNION ALL
+      practice_id
+    UNION ALL
     SELECT
       'solublepara' AS measure,
       practice_id,
@@ -400,7 +430,8 @@ WITH savings AS (
       month BETWEEN '2017-11-01'
       AND '2018-04-01'
     GROUP BY
-      practice_id UNION ALL
+      practice_id
+    UNION ALL
     SELECT
       'statinintensity' AS measure,
       practice_id,
@@ -413,7 +444,8 @@ WITH savings AS (
       month BETWEEN '2017-11-01'
       AND '2018-04-01'
     GROUP BY
-      practice_id UNION ALL
+      practice_id
+    UNION ALL
     SELECT
       'tramadol' AS measure,
       practice_id,
@@ -426,7 +458,8 @@ WITH savings AS (
       month BETWEEN '2017-11-01'
       AND '2018-04-01'
     GROUP BY
-      practice_id UNION ALL
+      practice_id
+    UNION ALL
     SELECT
       'vitb' AS measure,
       practice_id,
@@ -444,9 +477,25 @@ WITH savings AS (
     p.practice = m.practice_id
   WHERE
     numerator > 6 )
-
-SELECT s.*, m.non_cost_measure, m.numerator, m.denominator, m.avg_percentile FROM
-savings s LEFT JOIN measures m ON s.practice = m.practice AND m.percentile_rank = 1
-WHERE savings_rank =1
-
-ORDER BY cost_savings, non_cost_measure
+SELECT
+  s.practice,
+  s.cost_savings,
+  s.spend,
+  s.total_savings,
+  COALESCE(s.measure,
+    m.non_cost_measure) AS measure,
+  m.numerator,
+  m.denominator,
+  m.avg_percentile
+FROM
+  savings s
+LEFT JOIN
+  measures m
+ON
+  s.practice = m.practice
+  AND m.percentile_rank = 1
+WHERE
+  savings_rank =1
+ORDER BY
+  cost_savings,
+  non_cost_measure

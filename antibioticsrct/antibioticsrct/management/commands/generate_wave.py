@@ -130,7 +130,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         if options['wave'] == '3':
-            logger.info('Computing cost saving measures and stats for intervention A3')
+            logger.info('Computing customised measures and stats for intervention A3')
             set_a3_metadata()
         interventions = Intervention.objects.filter(
             contact__blacklisted=False, wave=options['wave'])

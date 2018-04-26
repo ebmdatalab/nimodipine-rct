@@ -38,16 +38,13 @@ class Command(BaseCommand):
                 for a in csv.DictReader(f):
                     if a['allocation'] != 'con':  # not a control
                         for wave in waves:
-                            if wave == '3' and a['group_ab'] == 'A':
-                                measure_id = a['cost_saving_measure']
-                            else:
-                                measure_id = 'ktt9_cephalosporins'
                             for method in methods:
                                 Intervention.objects.create(
                                     intervention=a['group_ab'],
                                     wave=wave,
                                     method=method,
                                     practice_id=a['practice_id'],
-                                    measure_id=measure_id,
+                                    # altered for A3 when wave generated:
+                                    measure_id='ktt9_cephalosporins',
                                     contact_id=a['practice_id'],
                                 )
