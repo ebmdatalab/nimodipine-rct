@@ -1,0 +1,24 @@
+{% extends "_base.html" %}
+
+{% block content %}
+<div id="questionnaire" class="modal" style="z-index: 100000; position: fixed">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-body">
+
+        <form method="post">
+          {% csrf_token %}
+          <p>
+            Before you continue, we'd appreciate your time answering one simple question:
+          </p>
+          <p><b>Did the message we sent give you new information about
+            your prescribing?</b>
+          </p>
+          <input type="submit" name="survey_response" value="Yes" class="btn btn-default">
+          <input type="submit" name="survey_response" value="No" class="btn btn-default">
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -16,8 +16,17 @@ from antibioticsrct.models import Intervention
 def measure_redirect(request, method, wave, practice_id):
     intervention = Intervention.objects.get(
         method=method, wave=wave, practice_id=practice_id)
-    intervention.hits += 1
-    intervention.save()
+    if request.POST:
+        if request.POST['survey_response'].lower() == 'yes':
+            intervention.contact.survey_response = True
+        elif request.POST['survey_response'].lower() == 'no':
+            intervention.contact.survey_response = False
+        intervention.contact.save()
+    else:
+        intervention.hits += 1
+        intervention.save()
+        if intervention.hits == 1:
+            return render(request, 'questionnaire.html')
     return redirect(intervention.get_target_url())
 
 
@@ -56,7 +65,7 @@ def intervention_message(request, intervention_id):
     with open(os.path.join(settings.BASE_DIR, 'antibioticsrct', 'static', 'footer.png'), 'rb') as img:
         footer_image = base64.b64encode(img.read()).decode('ascii')
     intervention_url = "op2.org.uk{}".format(intervention.get_absolute_url())
-    intervention_url = '<a href="{}">{}</a>'.format(
+    intervention_url = '<a href="http://{}">{}</a>'.format(
         intervention_url, intervention_url)
     context.update({
         'intervention': intervention,

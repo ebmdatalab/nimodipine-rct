@@ -7,16 +7,20 @@
     @page {
      size: A4
     }
+
     body, p {
-    font-family: sans-serif;
-    font-size: 11pt;
+      font-family: sans-serif;
+      font-size: 11pt;
     }
+
     #header__from {
       text-align: right;
     }
+
     #header__to {
       /* UK: The window on a DL envelope should be 93 x 39 mm large, and located 20 mm from the left and 53 mm from the top of the envelope. */
     }
+
     .about-op {
       font-style: italic;
     }
@@ -35,6 +39,39 @@
 
     .float-left-of-graph {
       float: left;
+    }
+
+    /* questionnaire styles */
+    #questionnaire {
+       margin:auto;
+       margin-top: 20px;
+       width: 400px;
+       position:fixed;
+       top:0;
+       bottom:0;
+       left:0;
+       right:0;
+    }
+
+    .modal-body {
+      padding: 15px;
+    }
+
+    .modal-dialog {
+    }
+
+    .modal-content {
+       -webkit-box-shadow: 0 5px 15px rgba(0,0,0,.5);
+       box-shadow: 0 5px 15px rgba(0,0,0,.5);
+       position: relative;
+       background-color: #fff;
+       -webkit-background-clip: padding-box;
+       background-clip: padding-box;
+       border: 1px solid #999;
+       border: 1px solid rgba(0,0,0,.2);
+       border-radius: 6px;
+       outline: 0;
+       padding: 10px;
     }
   </style>
 </head>

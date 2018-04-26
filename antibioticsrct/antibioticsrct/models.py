@@ -68,9 +68,6 @@ class Intervention(models.Model):
         querystring = "utm_source=rct1&utm_campaign=wave{}&utm_medium={}".format(
             self.wave,
             self.get_method_display().lower())
-        # add a flag to indicate first visit, for showing questionnaire
-        if self.hits < 2:
-            querystring += "&first=1"
         target_url = "{}/practice/{}/?{}".format(
             settings.OP_HOST,
             self.practice_id,
