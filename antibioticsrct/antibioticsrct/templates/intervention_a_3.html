@@ -1,0 +1,42 @@
+{% extends "_base.html" %}
+
+{% block content %}
+{% include '_header.html' %}
+
+
+<p>
+  <b>OpenPrescribing shows your practice's performance on more than 50
+  measures of prescribing safety, efficacy and cost-effectiveness.</b>
+</p>
+
+<p>Check the OpenPrescribing website to see how much your
+  practice could save, without increasing risk to patients, by
+  changing some prescription behaviours: {{ intervention_url }}</p>
+
+<table border="0" cellpadding="0" cellspacing="0">
+<tr><td style="margin-right:10px" width="30%">
+
+  {{ measure_comparison }}
+
+  </td>
+<td>
+<img alt="" src="data:image/png;base64,{{ encoded_image }}">
+</td>
+</tr>
+</table>
+
+<p>
+  We understand there can be good reasons why a practice might
+  prescribe more or less of something than other practices.
+</p>
+
+<p class="about-op">OpenPrescribing is a free, publicly-funded service
+  created by researchers in the University of Oxford to make national
+  prescribing data more useful. You can see the performance of your
+  practice on various prescribing measures, look at any practice or
+  CCG in the country, and do bespoke data searches on any treatment of
+  interest.</p>
+
+{% include '_footer.html' %}
+
+{% endblock %}

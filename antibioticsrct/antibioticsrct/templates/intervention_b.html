@@ -1,0 +1,45 @@
+{% extends '_base.html' %}
+
+{% block content %}
+{% include '_header.html' %}
+
+<p>OpenPrescribing is a free, publicly funded service to make the
+  national GP prescribing data more useful. We have graphs and data on
+  all prescribing at {{ practice_name }} online and viewable by
+  anybody at this link: {{ intervention_url }}.</p>
+
+<p>Your practice was in the top 20% of practices for prescribing a
+  high proportion of broad spectrum antibiotics based upon the latest
+  available six months of data.</p>
+
+<table border="0" cellpadding="0" cellspacing="0">
+<tr><td style="margin-right:10px" width="30%">
+
+    This chart shows how <span class="your-practice">your
+    practice</span> compares to <span class="other-practices">other
+    practices</span> on % antibiotics prescribed which were broad
+    spectrum:
+
+
+  </td>
+<td>
+<img alt="" src="data:image/png;base64,{{ encoded_image }}">
+</td>
+</tr>
+</table>
+
+<p>Broad spectrum antibiotics (co-amoxiclav, cephalosporins and quinolones) must be used sparingly to avoid drug-resistant bacteria developing.</p>
+
+<p>See more on your prescribing data online at this link:
+  {{ intervention_url }}. You can see your practice's performance on
+  various prescribing measures, and do bespoke data searches on any
+  treatment of interest. You can also view the prescribing of your
+  neighbours, and any practice or CCG in the country.
+</p>
+
+<p>These are intended as helpful indications - we appreciate that
+  there are many reasons to prescribe different drugs in certain
+  cases.</p>
+
+  {% include '_footer.html' %}
+{% endblock %}
