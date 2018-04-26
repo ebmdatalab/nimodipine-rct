@@ -68,8 +68,8 @@ def send_fax_message(msg_path, recipient=None):
         metadata = json.load(metadata_f)
         metadata['to'] = make_efax_address('0123456567')  # XXX testing
         msg = EmailMessage(
-            metadata['subject'],
             "Important information from the University of Oxford about your prescribing.",
+            "FAO Prescribing Lead\n\nImportant information from the University of Oxford about your prescribing.",
             from_email=settings.DEFAULT_FROM_EMAIL)
         if recipient:
             msg.to = [make_efax_address(recipient)]
