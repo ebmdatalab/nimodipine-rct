@@ -100,9 +100,9 @@ def find(pattern, path):
 
 def combine_letters(wave):
     inputs = find('letter.pdf', os.path.join(settings.DATA_DIR, "wave" + wave))
-    subprocess.check_call(["gs", "-q", "-sPAPERSIZE=letter", "-dNOPAUSE",
-                           "-dBATCH", "-sDEVICE=pdfwrite", "-sOutputFile=combined_letters.pdf",
-                           *inputs])
+    subprocess.check_call([
+        "gs", "-q", "-sPAPERSIZE=letter", "-dNOPAUSE",
+        "-dBATCH", "-sDEVICE=pdfwrite", "-sOutputFile=combined_letters.pdf"] + inputs)
 
 
 class Command(BaseCommand):
