@@ -106,6 +106,13 @@ def combine_letters(wave):
         "-sOutputFile={}/combined_letters.pdf".format(wave_dir)] + inputs)
 
 
+def not_empty(cell):
+    cell = cell.strip()
+    if cell and cell not in ['#N/A', 'FALSE']:
+        return True
+    return False
+
+
 class Command(BaseCommand):
     help = '''Load interventions from practice allocations'''
 
@@ -145,7 +152,7 @@ class Command(BaseCommand):
             base = intervention.message_dir()
             contact = intervention.contact
             message_url = settings.URL_ROOT + reverse('views.intervention_message', args=[intervention.id])
-            if intervention.method == 'e' and contact.email:  # email
+            if intervention.method == 'e' and not_empty(contact.email):  # email
                 logger.info("Creating email at {}".format(base))
                 response = requests.get(message_url)
                 if response.status_code != requests.codes.ok:
@@ -161,7 +168,7 @@ class Command(BaseCommand):
                 with open(os.path.join(base, 'email.html'), 'w') as f:
                     f.write(html)
                 # XXX turn all images to be inline
-            elif intervention.method == 'f' and contact.fax:  # fax
+            elif intervention.method == 'f' and not_empty(contact.fax):  # fax
                 logger.info("Creating fax at {}".format(base))
                 capture_html(message_url, os.path.join(base, 'fax.pdf'))
                 metadata = {
