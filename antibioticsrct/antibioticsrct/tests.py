@@ -144,13 +144,9 @@ class InterventionCommandTestCase(TestCase):
         self.assertEqual(Intervention.objects.count(), 18)
         # Final email, fax, and post for 2 non-control practices
         self.assertEqual(len(Intervention.objects.filter(wave='3')), 6)
-        # Final wave of email, fax and post for the 1 practice assigned intervention A
-        ppi_interventions = Intervention.objects.filter(measure_id='ppi')
-        self.assertTrue(all([x.wave == '3' for x in ppi_interventions]))
-        self.assertEqual(len(ppi_interventions), 3)
 
         # Check contact details
-        self.assertEqual(ppi_interventions.first().contact.name, "THE SALTSCAR SURGERY")
+        self.assertEqual(Intervention.objects.first().contact.name, "THE SALTSCAR SURGERY")
 
 
 class EmailCommandTestCase(TestCase):
