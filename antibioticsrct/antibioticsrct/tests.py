@@ -8,6 +8,7 @@ from django.test import Client
 from django.test import TestCase
 
 from antibioticsrct.models import Intervention
+from antibioticsrct.models import InterventionContact
 
 
 class ModelTestCase(TestCase):
@@ -16,6 +17,20 @@ class ModelTestCase(TestCase):
     def test_url_generation(self):
         intervention = Intervention.objects.get(pk=1)
         self.assertEqual(intervention.get_absolute_url(), '/a/A83050')
+
+    def test_normalised_fax(self):
+        expectations = [
+            ("(01234) 56789", "44123456789"),
+            ("#NA", ""),
+            ("FALSE", ""),
+            ("4412345678", "4412345678"),
+            ("1", "1"),
+        ]
+        contact = InterventionContact.objects.first()
+        for raw, expected in expectations:
+            contact.fax = raw
+            contact.save()
+            self.assertEqual(contact.normalised_fax, expected)
 
 
 class BigQueryIntegrationTestCase(TestCase):
@@ -78,6 +93,41 @@ class ViewTestCase(TestCase):
             self.assertTemplateUsed(response, template)
             self.assertEquals(response.context['intervention'], intervention)
             self.assertEquals(response.context['encoded_image'], img_str)
+
+    def test_fax_receipt_success(self):
+        data = {
+            'sender': 'seb',
+            'recipient': 'kim',
+            'subject': 'Successful transmission to 441642260897. Re: message about your prescribing - 1',
+            'strippted-text': 'Some stuff'
+        }
+        response = Client().post('/fax_receipt', data)
+        intervention = Intervention.objects.get(pk=6)
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(intervention.receipt)
+
+    def test_fax_receipt_fail(self):
+        data = {
+            'sender': 'seb',
+            'recipient': 'kim',
+            'subject': 'Unuccessful transmission to 441642260897. Re: message about your prescribing - 1',
+            'strippted-text': 'Some stuff'
+        }
+        response = Client().post('/fax_receipt', data)
+        intervention = Intervention.objects.get(pk=6)
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(intervention.receipt)
+
+    def test_unknown_intervention_fax_receipt(self):
+        data = {
+            'sender': 'seb',
+            'recipient': 'kim',
+            'subject': 'Unuccessful transmission to 0123456. Re: message about your prescribing - 1',
+            'strippted-text': 'Some stuff'
+        }
+        response = Client().post('/fax_receipt', data)
+        Intervention.objects.get(pk=6)
+        self.assertEqual(response.status_code, 404)
 
 
 class InterventionCommandTestCase(TestCase):

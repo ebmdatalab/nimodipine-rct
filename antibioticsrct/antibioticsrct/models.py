@@ -1,6 +1,7 @@
 from datetime import date
 import csv
 import os
+import re
 
 from django.conf import settings
 from django.contrib.postgres.fields import JSONField
@@ -21,6 +22,7 @@ class InterventionContact(models.Model):
     postcode = models.CharField(max_length=9, null=True, blank=True)
     email = models.EmailField(max_length=200, null=True, blank=True)
     fax = models.CharField(max_length=25, null=True, blank=True)
+    normalised_fax = models.CharField(max_length=25, null=True, blank=True)
     blacklisted = models.BooleanField(default=False)
     # "Did the message we sent give you new information about prescribing?"
     survey_response = models.NullBooleanField(default=None)
@@ -28,6 +30,13 @@ class InterventionContact(models.Model):
     @property
     def cased_name(self):
         return nhs_titlecase(self.name)
+
+    def save(self, *args, **kwargs):
+        fax_number = re.sub(r"[^0-9]", "", self.fax)
+        if fax_number and fax_number[0] == '0':
+            fax_number = '44' + fax_number[1:]
+        self.normalised_fax = fax_number
+        super(InterventionContact, self).save(*args, **kwargs)
 
 
 class Intervention(models.Model):
@@ -53,6 +62,7 @@ class Intervention(models.Model):
     measure_id = models.CharField(max_length=40, default='ktt9_cephalosporins')
     metadata = JSONField(null=True, blank=True)
     hits = models.IntegerField(default=0)
+    receipt = models.BooleanField(default=False)
     contact = models.ForeignKey(InterventionContact, on_delete=models.CASCADE)
 
     def __str__(self):

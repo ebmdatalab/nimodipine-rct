@@ -151,6 +151,7 @@ class Command(BaseCommand):
         for intervention in interventions:
             base = intervention.message_dir()
             contact = intervention.contact
+            metadata = {'wave': options['wave']}
             message_url = settings.URL_ROOT + reverse('views.intervention_message', args=[intervention.id])
             if intervention.method == 'e' and not_empty(contact.email):  # email
                 logger.info("Creating email at {}".format(base))
@@ -158,22 +159,21 @@ class Command(BaseCommand):
                 if response.status_code != requests.codes.ok:
                     raise Exception("bad response when trying to get {}".format(message_url))
                 html = Premailer(response.text, cssutils_logging_level=logging.ERROR).transform()
-                metadata = {
+                metadata.update({
                     'subject': 'Important information about your prescribing',
                     'from': 'seb.bacon@gmail.com',
                     'to': contact.email
-                }
+                })
                 with open(os.path.join(base, 'metadata.json'), 'w') as f:
                     json.dump(metadata, f)
                 with open(os.path.join(base, 'email.html'), 'w') as f:
                     f.write(html)
-                # XXX turn all images to be inline
             elif intervention.method == 'f' and not_empty(contact.fax):  # fax
                 logger.info("Creating fax at {}".format(base))
                 capture_html(message_url, os.path.join(base, 'fax.pdf'))
-                metadata = {
-                    'to': contact.fax
-                }
+                metadata.update({
+                    'to': contact.normalised_fax
+                })
                 with open(os.path.join(base, 'metadata.json'), 'w') as f:
                     json.dump(metadata, f)
             elif intervention.method == 'p' and contact.address1:  # printed letter

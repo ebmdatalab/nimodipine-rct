@@ -57,9 +57,6 @@ def send_email_message(msg_path, recipient=None):
         msg.send()
 
 def make_efax_address(fax_number):
-    fax_number = re.sub(r"[^0-9]", "", fax_number)
-    if fax_number[0] == '0':
-        fax_number = '44' + fax_number[1:]
     return fax_number + '@efaxsendeu.eu'
 
 
@@ -68,9 +65,9 @@ def send_fax_message(msg_path, recipient=None):
     metadata_path = os.path.join(msg_path, 'metadata.json')
     with open(metadata_path, 'r') as metadata_f:
         metadata = json.load(metadata_f)
-        metadata['to'] = make_efax_address('0123456567')  # XXX testing
         msg = EmailMessage(
-            "Important information from the University of Oxford about your prescribing.",
+            ("Important information from the University of Oxford "
+             "about your prescribing - {}".format(metadata['wave'])),
             "{nocoverpage}",
             from_email=settings.DEFAULT_FROM_EMAIL)
         if recipient:
@@ -78,7 +75,7 @@ def send_fax_message(msg_path, recipient=None):
         else:
             msg.to = [make_efax_address(metadata['to'])]
             # XXX remove on live
-            msg.to = [make_efax_address('01865597661')]
+            msg.to = [make_efax_address('441865597661')]
         msg.attach_file(fax_path)
         msg.track_clicks = True
         msg.send()

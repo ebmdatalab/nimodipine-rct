@@ -1,7 +1,11 @@
 import base64
+import logging
 import os
+import re
 import tempfile
+
 from django.conf import settings
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
 from django.shortcuts import render
@@ -9,6 +13,7 @@ from django.template import Context
 from django.template import Template
 from django.template.loader import render_to_string
 from django.utils.safestring import SafeText
+from django.views.decorators.csrf import csrf_exempt
 
 import requests
 
@@ -16,6 +21,32 @@ from common.utils import grab_image
 from common.utils import decode
 from antibioticsrct.models import Intervention
 from antibioticsrct.models import get_measure_data
+
+logger = logging.getLogger(__name__)
+
+@csrf_exempt
+def fax_receipt(request):
+    if request.method == 'POST':
+        sender    = request.POST.get('sender')
+        recipient = request.POST.get('recipient')
+        subject   = request.POST.get('subject', '')
+        body_without_quotes = request.POST.get('stripped-text', '')
+        recipient = re.findall(r"(\d{7,})", subject)
+        wave = re.findall(r"about your prescribing - (\d{1})", subject)
+        logger.info("Received email: %s %s %s %s", sender, recipient, subject, body_without_quotes)
+        if recipient and wave:
+            intervention = get_object_or_404(
+                Intervention,
+                contact__normalised_fax=recipient[0], method='f', wave=wave[0])
+            if 'Successful' in subject:
+                intervention.receipt = True
+                logger.info("Intervention %s marked as received", intervention)
+                intervention.save()
+            else:
+                logger.warn("Problem sending fax for intervention %s", intervention)
+        else:
+            logger.warn("Unable to parse intervention")
+        return HttpResponse('OK')
 
 
 def measure_redirect(request, code, practice_id):

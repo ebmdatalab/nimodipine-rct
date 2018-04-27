@@ -65,5 +65,18 @@
       "measure_id": "ktt9_antibiotics",
       "contact_id": "A81025"
     }
+  },
+  {
+    "model": "antibioticsrct.intervention",
+    "pk": 6,
+    "fields": {
+      "created_date": "2018-04-17",
+      "intervention": "B",
+      "wave": "1",
+      "method": "f",
+      "practice_id": "A81025",
+      "measure_id": "ktt9_antibiotics",
+      "contact_id": "A81025"
+    }
   }
 ]
