@@ -59,6 +59,11 @@ ROOT_URLCONF = 'antibioticsrct.urls'
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+        }
+    },
     'handlers': {
         'console': {
             'class': 'logging.StreamHandler',
@@ -67,6 +72,7 @@ LOGGING = {
             'level': 'WARN',
             'class': 'logging.FileHandler',
             'filename': 'warn.log',
+            'formatter': 'verbose'
         },
     },
     'loggers': {
