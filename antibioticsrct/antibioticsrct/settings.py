@@ -179,4 +179,5 @@ ANYMAIL = {
 }
 
 EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"  # or sendgrid.EmailBackend, or...
+FAX_FROM_EMAIL = "fax@openprescribing.net"
 DEFAULT_FROM_EMAIL = "seb.bacon@gmail.com"

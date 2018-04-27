@@ -69,7 +69,7 @@ def send_fax_message(msg_path, recipient=None):
             ("Important information from the University of Oxford "
              "about your prescribing - {}".format(metadata['wave'])),
             "{nocoverpage}",
-            from_email=settings.DEFAULT_FROM_EMAIL)
+            from_email=settings.FAX_FROM_EMAIL)
         if recipient:
             msg.to = [make_efax_address(recipient)]
         else:
