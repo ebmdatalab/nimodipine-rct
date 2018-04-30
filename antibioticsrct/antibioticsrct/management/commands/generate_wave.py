@@ -107,7 +107,7 @@ def combine_letters(wave):
 
 
 def not_empty(cell):
-    cell = cell.strip().lower()
+    cell = cell and cell.strip().lower()
     if cell and (cell[0] != '#' and cell != 'false' and cell != 'n/a'):
         return True
     return False
