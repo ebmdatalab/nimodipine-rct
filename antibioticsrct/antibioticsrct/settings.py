@@ -11,13 +11,16 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 """
 
 import os
+import socket
 from common import utils
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-URL_ROOT = 'http://www.op2.org.uk'
-URL_ROOT = 'http://localhost:8000'
+if 'ebmdatalab.net' in socket.getfqdn():
+    URL_ROOT = 'http://op2.org.uk'
+else:
+    URL_ROOT = 'http://localhost:8000'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
