@@ -107,15 +107,15 @@ def combine_letters(wave):
 
 
 def not_empty(cell):
-    cell = cell.strip()
-    if cell and cell not in ['#N/A', 'FALSE']:
+    cell = cell.strip().lower()
+    if cell and (cell[0] != '#' and cell != 'false' and cell != 'n/a'):
         return True
     return False
 
 
 class Command(BaseCommand):
     help = '''Load interventions from practice allocations'''
-
+    # The source of the CSV is https://docs.google.com/spreadsheets/d/1iVtlo-qGaK9KT35FaX94Gu0azei-TLIZZI52TZWvxMg
     def add_arguments(self, parser):
         parser.add_argument('--wave', type=str)
         parser.add_argument('--practices', type=str,
@@ -132,8 +132,6 @@ class Command(BaseCommand):
                             type=str,
                             default=None,
                             help='If set, generate messages for only this practice')
-
-
 
 
     def handle(self, *args, **options):
@@ -168,7 +166,7 @@ class Command(BaseCommand):
                     json.dump(metadata, f)
                 with open(os.path.join(base, 'email.html'), 'w') as f:
                     f.write(html)
-            elif intervention.method == 'f' and not_empty(contact.fax):  # fax
+            elif intervention.method == 'f' and not_empty(contact.normalised_fax):  # fax
                 logger.info("Creating fax at {}".format(base))
                 capture_html(message_url, os.path.join(base, 'fax.pdf'))
                 metadata.update({
