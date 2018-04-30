@@ -72,9 +72,9 @@ LOGGING = {
             'class': 'logging.StreamHandler',
         },
         'file': {
-            'level': 'WARN',
+            'level': 'INFO',
             'class': 'logging.FileHandler',
-            'filename': 'warn.log',
+            'filename': 'info.log',
             'formatter': 'verbose'
         },
     },
