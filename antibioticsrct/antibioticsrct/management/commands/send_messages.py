@@ -69,13 +69,13 @@ def send_fax_message(msg_path, recipient=None):
     metadata_path = os.path.join(msg_path, 'metadata.json')
     with open(metadata_path, 'r') as metadata_f:
         metadata = json.load(metadata_f)
-        logger.info(
-            "Sending fax to %s for wave %s", metadata['to'], metadata['wave'])
         if recipient:
             to = recipient
         else:
             to = metadata['to']
-            to = '441865597661'  # XXX remove on live
+        to = '00441865289412'  # XXX remove on live
+        logger.info(
+            "Sending fax to %s for wave %s", to, metadata['wave'])
         subject = ("Important information from the University of Oxford "
                    "about your prescribing - {}".format(metadata['wave']))
         kwargs = {
