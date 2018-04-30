@@ -139,7 +139,7 @@ class Command(BaseCommand):
             logger.info('Computing customised measures and stats for intervention A3')
             set_a3_metadata()
         interventions = Intervention.objects.filter(
-            contact__blacklisted=False, wave=options['wave'])
+            contact__blacklisted=False, wave=options['wave']).order_by('?')
         if options['method']:
             interventions = interventions.filter(method=options['method'])
         if options['practice']:
