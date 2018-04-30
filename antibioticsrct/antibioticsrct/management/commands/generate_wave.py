@@ -144,14 +144,15 @@ class Command(BaseCommand):
             interventions = interventions.filter(method=options['method'])
         if options['practice']:
             interventions = interventions.filter(practice_id=options['practice'])
-        for n, intervention in enumerate(interventions):
-            if n >= options['sample']:
+        saved = 0
+        for intervention in interventions:
+            if saved >= options['sample']:
                 break
-            base = intervention.message_dir()
             contact = intervention.contact
             metadata = {'wave': options['wave']}
             message_url = settings.URL_ROOT + reverse('views.intervention_message', args=[intervention.id])
             if intervention.method == 'e' and not_empty(contact.email):  # email
+                base = intervention.message_dir()
                 logger.info("Creating email at {}".format(base))
                 response = requests.get(message_url)
                 if response.status_code != requests.codes.ok:
@@ -166,7 +167,9 @@ class Command(BaseCommand):
                     json.dump(metadata, f)
                 with open(os.path.join(base, 'email.html'), 'w') as f:
                     f.write(html)
+                saved += 1
             elif intervention.method == 'f' and not_empty(contact.normalised_fax):  # fax
+                base = intervention.message_dir()
                 logger.info("Creating fax at {}".format(base))
                 capture_html(message_url, os.path.join(base, 'fax.pdf'))
                 metadata.update({
@@ -174,10 +177,13 @@ class Command(BaseCommand):
                 })
                 with open(os.path.join(base, 'metadata.json'), 'w') as f:
                     json.dump(metadata, f)
+                saved += 1
             elif intervention.method == 'p' and contact.address1:  # printed letter
+                base = intervention.message_dir()
                 # get screenshot
                 logger.info("Creating postal letter at {}".format(base))
                 capture_html(message_url, os.path.join(base, 'letter.pdf'))
+                saved += 1
             else:
                 logger.warn("No valid contact info: %s", intervention)
         combine_letters(options['wave'])
