@@ -89,7 +89,7 @@ def intervention_message(request, intervention_id):
         show_header_from = True
         show_header_to = False
     else:
-        show_header_from = False
+        show_header_from = True
         show_header_to = False
     if intervention.intervention == 'B':
         template = 'intervention_b.html'
