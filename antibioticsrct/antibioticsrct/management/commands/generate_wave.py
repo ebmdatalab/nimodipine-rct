@@ -185,5 +185,5 @@ class Command(BaseCommand):
                 capture_html(message_url, os.path.join(base, 'letter.pdf'))
                 saved += 1
             else:
-                logger.warn("No valid contact info: %s", intervention)
+                logger.info("No valid contact info: %s", intervention)
         combine_letters(options['wave'])
