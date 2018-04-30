@@ -33,8 +33,6 @@ class InterventionContact(models.Model):
 
     def save(self, *args, **kwargs):
         fax_number = re.sub(r"[^0-9]", "", self.fax)
-        if fax_number and fax_number[0] == '0':
-            fax_number = '44' + fax_number[1:]
         self.normalised_fax = fax_number
         super(InterventionContact, self).save(*args, **kwargs)
 

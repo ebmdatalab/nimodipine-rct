@@ -20,7 +20,7 @@ class ModelTestCase(TestCase):
 
     def test_normalised_fax(self):
         expectations = [
-            ("(01234) 56789", "44123456789"),
+            ("(01234) 56789", "0123456789"),
             ("#NA", ""),
             ("FALSE", ""),
             ("4412345678", "4412345678"),
