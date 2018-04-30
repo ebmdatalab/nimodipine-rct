@@ -146,9 +146,9 @@ class Command(BaseCommand):
             interventions = interventions.filter(method=options['method'])
         if options['practice']:
             interventions = interventions.filter(practice_id=options['practice'])
-        if options['sample']:
-            interventions = interventions.order_by('?')[:options['sample']]
-        for intervention in interventions:
+        for n, intervention in enumerate(interventions):
+            if n >= options['sample']:
+                break
             base = intervention.message_dir()
             contact = intervention.contact
             metadata = {'wave': options['wave']}
