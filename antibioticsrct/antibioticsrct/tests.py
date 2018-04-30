@@ -96,10 +96,9 @@ class ViewTestCase(TestCase):
 
     def test_fax_receipt_success(self):
         data = {
-            'sender': 'seb',
-            'recipient': 'kim',
-            'subject': 'Successful transmission to 441642260897. Re: message about your prescribing - 1',
-            'strippted-text': 'Some stuff'
+            'DestinationFax': '441642260897',
+            'Subject': 'message about your prescribing - 1',
+            'Status': '0',
         }
         response = Client().post('/fax_receipt', data)
         intervention = Intervention.objects.get(pk=6)
@@ -108,10 +107,9 @@ class ViewTestCase(TestCase):
 
     def test_fax_receipt_fail(self):
         data = {
-            'sender': 'seb',
-            'recipient': 'kim',
-            'subject': 'Unuccessful transmission to 441642260897. Re: message about your prescribing - 1',
-            'strippted-text': 'Some stuff'
+            'DestinationFax': '441642260897',
+            'Subject': 'message about your prescribing - 1',
+            'Status': '1',
         }
         response = Client().post('/fax_receipt', data)
         intervention = Intervention.objects.get(pk=6)
@@ -120,10 +118,9 @@ class ViewTestCase(TestCase):
 
     def test_unknown_intervention_fax_receipt(self):
         data = {
-            'sender': 'seb',
-            'recipient': 'kim',
-            'subject': 'Unuccessful transmission to 0123456. Re: message about your prescribing - 1',
-            'strippted-text': 'Some stuff'
+            'DestinationFax': '12345',
+            'Subject': 'message about your prescribing - 1',
+            'Status': '0',
         }
         response = Client().post('/fax_receipt', data)
         Intervention.objects.get(pk=6)

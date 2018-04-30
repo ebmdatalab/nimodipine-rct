@@ -1,5 +1,6 @@
 import glob
 import json
+import logging
 import os
 import re
 
@@ -13,8 +14,11 @@ from django.core.mail import make_msgid
 from django.core.management.base import BaseCommand
 
 from anymail.message import attach_inline_image_file
+from interfax import InterFAX
 
 from common.utils import email_as_text
+
+logger = logging.getLogger(__name__)
 
 
 def inline_images(message, html):
@@ -65,20 +69,27 @@ def send_fax_message(msg_path, recipient=None):
     metadata_path = os.path.join(msg_path, 'metadata.json')
     with open(metadata_path, 'r') as metadata_f:
         metadata = json.load(metadata_f)
-        msg = EmailMessage(
-            ("Important information from the University of Oxford "
-             "about your prescribing - {}".format(metadata['wave'])),
-            "{nocoverpage}",
-            from_email=settings.FAX_FROM_EMAIL)
         if recipient:
-            msg.to = [make_efax_address(recipient)]
+            to = recipient
         else:
-            msg.to = [make_efax_address(metadata['to'])]
-            # XXX remove on live
-            msg.to = [make_efax_address('441865597661')]
-        msg.attach_file(fax_path)
-        msg.track_clicks = True
-        msg.send()
+            to = metadata['to']
+            to = '441865597661'  # XXX remove on live
+        subject = ("Important information from the University of Oxford "
+                   "about your prescribing - {}".format(metadata['wave']))
+        kwargs = {
+            'page_header': "To: {To} From: {From} Pages: {TotalPages}",
+            'reference': subject,
+            'reply_address': settings.FAX_FROM_EMAIL,
+            'page_size': 'A4',
+            'page_orientation': 'portrait',
+            'resolution': 'fine',
+            'rendering': 'greyscale',
+            'contact': 'Prescribing Lead'}
+        interfax = InterFAX(
+            username=settings.INTERFAX_USER, password=settings.INTERFAX_PASS)
+        fax = interfax.deliver(to, files=[fax_path], **kwargs)
+        fax = fax.reload()
+        logger.info("Sent fax id %s, status %s", fax.id, fax.status)
 
 
 class Command(BaseCommand):

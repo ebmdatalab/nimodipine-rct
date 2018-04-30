@@ -7,3 +7,6 @@ google-cloud-bigquery
 premailer
 html2text
 django-anymail[mailgun]
+jupyter
+pandas-gbq
+interfax

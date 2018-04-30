@@ -27,18 +27,17 @@ logger = logging.getLogger(__name__)
 @csrf_exempt
 def fax_receipt(request):
     if request.method == 'POST':
-        sender    = request.POST.get('sender')
-        recipient = request.POST.get('recipient')
-        subject   = request.POST.get('subject', '')
-        body_without_quotes = request.POST.get('stripped-text', '')
-        recipient = re.findall(r"(\d{7,})", subject)
+        # https://www.interfax.net/en/dev/dev-guide/receive-sent-fax-confirmations-via-callback
+        recipient = request.POST.get('DestinationFax')
+        subject   = request.POST.get('Subject', '')
+        status = request.POST.get('Status', '')
         wave = re.findall(r"about your prescribing - (\d{1})", subject)
-        logger.info("Received email: %s %s %s %s", sender, recipient, subject, body_without_quotes)
+        logger.info("Received fax callback: to <%s>, subject <%s>, status <%s>", recipient, subject, status)
         if recipient and wave:
             intervention = get_object_or_404(
                 Intervention,
-                contact__normalised_fax=recipient[0], method='f', wave=wave[0])
-            if 'Successful' in subject:
+                contact__normalised_fax=recipient, method='f', wave=wave[0])
+            if status == '0':
                 intervention.receipt = True
                 logger.info("Intervention %s marked as received", intervention)
                 intervention.save()
