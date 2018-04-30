@@ -76,8 +76,8 @@ def send_fax_message(msg_path, recipient=None):
         to = '00441865289412'  # XXX remove on live
         logger.info(
             "Sending fax to %s for wave %s", to, metadata['wave'])
-        subject = ("Important information from the University of Oxford "
-                   "about your prescribing - {}".format(metadata['wave']))
+        # Interfax has 60 character limit on subject
+        subject = ("about your prescribing - {}".format(metadata['wave']))
         kwargs = {
             'page_header': "To: {To} From: {From} Pages: {TotalPages}",
             'reference': subject,
