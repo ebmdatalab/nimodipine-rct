@@ -46,6 +46,8 @@ def send_email_message(msg_path, recipient=None):
     with open(email_path, 'r') as body_f, open(metadata_path, 'r') as metadata_f:
         body = body_f.read()
         metadata = json.load(metadata_f)
+        logger.info(
+            "Sending email message to %s for wave %s", metadata['to'], metadata['wave'])
         metadata['to'] = 'seb.bacon+test@gmail.com'  # XXX testing
         msg = EmailMultiAlternatives(
             subject=metadata['subject'],
@@ -60,15 +62,14 @@ def send_email_message(msg_path, recipient=None):
         msg.track_clicks = True
         msg.send()
 
-def make_efax_address(fax_number):
-    return fax_number + '@efaxsendeu.eu'
-
 
 def send_fax_message(msg_path, recipient=None):
     fax_path = os.path.join(msg_path, 'fax.pdf')
     metadata_path = os.path.join(msg_path, 'metadata.json')
     with open(metadata_path, 'r') as metadata_f:
         metadata = json.load(metadata_f)
+        logger.info(
+            "Sending fax to %s for wave %s", metadata['to'], metadata['wave'])
         if recipient:
             to = recipient
         else:
