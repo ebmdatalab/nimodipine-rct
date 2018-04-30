@@ -12,6 +12,7 @@ from django.core.mail import EmailMessage
 from django.core.mail import EmailMultiAlternatives
 from django.core.mail import make_msgid
 from django.core.management.base import BaseCommand
+from django.core.management.base import CommandError
 
 from anymail.message import attach_inline_image_file
 from interfax import InterFAX
@@ -124,5 +125,7 @@ class Command(BaseCommand):
                 msg_path = os.path.join(base_path, practice_id)
                 if method == 'email':
                     send_email_message(msg_path, options['test_recipient'])
-                else:
+                elif method == 'fax':
                     send_fax_message(msg_path, options['test_recipient'])
+                else:
+                    raise CommandError("method must be 'fax' or 'email'")
