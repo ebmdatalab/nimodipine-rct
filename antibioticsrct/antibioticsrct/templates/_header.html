@@ -12,7 +12,8 @@
   {% if show_header_to %}
   <div id="header__to">
     PRESCRIBING LEAD<br>
-    {% if intervention.contact.address1 %}
+    {{ practice_name }}<br>
+    {% if intervention.contact.address1 != intervention.contact.name %}
       {{ intervention.contact.address1 }}<br>
     {% endif %}
     {% if intervention.contact.address2 %}

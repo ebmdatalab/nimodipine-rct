@@ -159,8 +159,8 @@ class Command(BaseCommand):
                     raise Exception("bad response when trying to get {}".format(message_url))
                 html = Premailer(response.text, cssutils_logging_level=logging.ERROR).transform()
                 metadata.update({
-                    'subject': 'Important information about your prescribing',
-                    'from': 'seb.bacon@gmail.com',
+                    'subject': 'Information about your prescribing from OpenPrescribing.net',
+                    'from': settings.DEFAULT_FROM_EMAIL,
                     'to': contact.email
                 })
                 with open(os.path.join(base, 'metadata.json'), 'w') as f:
