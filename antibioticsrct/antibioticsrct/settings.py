@@ -191,4 +191,4 @@ EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
 FAX_FROM_EMAIL = "fax@openprescribing.net"
 INTERFAX_USER = utils.get_env_setting('INTERFAX_USER')
 INTERFAX_PASS = utils.get_env_setting('INTERFAX_PASS')
-DEFAULT_FROM_EMAIL = "seb.bacon@gmail.com"
+DEFAULT_FROM_EMAIL = "hello@openprescribing.net"
