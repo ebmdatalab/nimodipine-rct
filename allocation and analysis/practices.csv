@@ -1,4 +1,4 @@
-code,name,CCG,,address1,address2,address3,address4,postcode,email,fax,scrape-email,merge-email,scrape-fax,merged faxes
+practice,practice_name,ccg_code,ccg,address1,address2,address3,address4,postcode,Email,Fax,scrape-email,merged emails,scrape-fax,merged faxes
 A81001,THE DENSHAM SURGERY,00K,,THE HEALTH CENTRE,LAWSON STREET,STOCKTON-ON-TEES,CLEVELAND,TS18 1HU,,,,FALSE,01642 618112,01642 618112
 A81002,QUEENS PARK MEDICAL CENTRE,00K,,QUEENS PARK MEDICAL CTR,FARRER STREET,STOCKTON ON TEES,CLEVELAND,TS18 2AW,,,,FALSE,01642 677124,01642 677124
 A81004,BLUEBELL MEDICAL CENTRE,00M,,TRIMDON AVENUE,ACKLAM,MIDDLESBROUGH,,TS5 8SB,,,STCCG.bluebellmedicalcentre@nhs.net,STCCG.bluebellmedicalcentre@nhs.net,01642 529049,01642 529049
