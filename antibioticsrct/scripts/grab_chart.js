@@ -57,8 +57,7 @@ if (system.args.length < 6) {
           return page.evaluate(function(s) {
             // trigger scroll-related events in measures pages.
             // without this, we'd be screenshotting undrawn charts
-            $('body').scrollTop(1);
-            console.log(9)
+             $('body').scrollTop(1);
             return $(s).is(':visible');
           }, selector);
         },
