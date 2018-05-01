@@ -26,7 +26,7 @@ server {
     }
 
     location /static {
-        alias   /var/www/antibioticsrct/antibiotics-rct/antibioticsrct;
+        alias   /var/www/antibioticsrct/antibiotics-rct/antibioticsrct/antibioticsrct/static;
         expires max;
         access_log off;
     }
