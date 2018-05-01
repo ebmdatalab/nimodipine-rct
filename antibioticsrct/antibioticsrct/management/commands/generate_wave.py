@@ -146,7 +146,7 @@ class Command(BaseCommand):
             interventions = interventions.filter(practice_id=options['practice'])
         saved = 0
         for intervention in interventions:
-            if saved >= options['sample']:
+            if options['sample'] and saved >= options['sample']:
                 break
             contact = intervention.contact
             metadata = {'wave': options['wave']}
