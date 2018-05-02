@@ -14,7 +14,7 @@ cssselect==1.0.3          # via premailer
 cssutils==1.0.2           # via premailer
 decorator==4.3.0          # via ipython, traitlets
 django-anymail[mailgun]==2.2
-django==2.0.4
+django==2.0.5
 entrypoints==0.2.3        # via nbconvert
 google-api-core==1.1.1    # via google-cloud-bigquery, google-cloud-core
 google-auth-oauthlib==0.2.0  # via pandas-gbq
