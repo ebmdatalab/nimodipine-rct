@@ -48,9 +48,10 @@ def update_from_git(branch):
 
 def setup_nginx():
     sudo('%s/%s/deploy/setup_nginx.sh %s %s' % (git_project, django_app, env.path, env.environment))
-    # This sometimes fails, but works when you do it again; maybe needs a pause?
-    sudo('/etc/init.d/supervisor stop')
-    sudo('/etc/init.d/supervisor start')
+    # https://stackoverflow.com/a/33881057/559140
+    sudo('/etc/init.d/supervisor force-stop && '
+         '/etc/init.d/supervisor stop && '
+         '/etc/init.d/supervisor start')
 
 def setup_django():
     with prefix('source /var/www/%s/venv/bin/activate' % env.app):
