@@ -10,3 +10,6 @@ URL_ROOT = 'http://op2.org.uk'
 
 # Where we redirect users after they've done the questionnaire
 OP_HOST = "https://openprescribing.net"
+
+
+DATA_DIR = '/mnt/database/antibiotics-rct-data/interventions/'
