@@ -29,7 +29,7 @@ else:
 SECRET_KEY = utils.get_env_setting('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = utils.get_env_setting('ANTIBIOTICSRCT_DEBUG') == 'True'
 
 ALLOWED_HOSTS = ['localhost', 'op2.org.uk', 'www.op2.org.uk', 'staging.op2.org.uk']
 
