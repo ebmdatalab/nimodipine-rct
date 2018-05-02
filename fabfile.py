@@ -54,8 +54,8 @@ def setup_nginx():
 
 def setup_django():
     with prefix('source /var/www/%s/venv/bin/activate' % env.app):
-        run('cd %s/%s/ && python manage.py collectstatic --noinput --settings=antibioticsrct.settings' % (git_project, django_app))
-        run('cd %s/%s/ && python manage.py migrate --settings=antibioticsrct.settings' % (git_project, django_app))
+        run('cd %s/%s/ && python manage.py collectstatic --noinput ' % (git_project, django_app))
+        run('cd %s/%s/ && python manage.py migrate' % (git_project, django_app))
 
 def restart_gunicorn():
     sudo("%s/%s/deploy/restart.sh %s" % (git_project, django_app, env.app))

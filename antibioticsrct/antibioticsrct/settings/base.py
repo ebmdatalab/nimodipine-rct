@@ -15,23 +15,13 @@ import socket
 from common import utils
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-if 'ebmdatalab.net' in socket.getfqdn():
-    URL_ROOT = 'http://op2.org.uk'
-else:
-    URL_ROOT = 'http://localhost:8000'
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = utils.get_env_setting('SECRET_KEY')
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = utils.get_env_setting('ANTIBIOTICSRCT_DEBUG') == 'True'
-
-ALLOWED_HOSTS = ['localhost', 'op2.org.uk', 'www.op2.org.uk', 'staging.op2.org.uk']
 
 
 # Application definition
@@ -174,11 +164,6 @@ PRINT_CMD = ('/usr/local/bin/phantomjs ' +
             BASE_DIR +
             '/scripts/print_letter.js')
 DATA_DIR = BASE_DIR + '/data/'
-
-if DEBUG:
-    OP_HOST = "http://staging.openprescribing.net"
-else:
-    OP_HOST = "https://openprescribing.net"
 
 # Mail settings
 
