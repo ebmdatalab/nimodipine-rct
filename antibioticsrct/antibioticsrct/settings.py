@@ -192,3 +192,10 @@ FAX_FROM_EMAIL = "fax@openprescribing.net"
 INTERFAX_USER = utils.get_env_setting('INTERFAX_USER')
 INTERFAX_PASS = utils.get_env_setting('INTERFAX_PASS')
 DEFAULT_FROM_EMAIL = "hello@openprescribing.net"
+
+# When in debug mode, if no test-recipient is specified when sending
+# messages, we override the real recipients with these values.  This
+# is belt-and-brances to ensure we never send messages to real users
+# when testing.
+TEST_FAX_TO = '00441865289412'
+TEST_EMAIL_TO = 'seb.bacon+test@gmail.com'

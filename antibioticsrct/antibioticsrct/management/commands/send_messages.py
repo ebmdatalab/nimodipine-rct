@@ -49,7 +49,10 @@ def send_email_message(msg_path, recipient=None):
         metadata = json.load(metadata_f)
         logger.info(
             "Sending email message to %s for wave %s", metadata['to'], metadata['wave'])
-        metadata['to'] = 'seb.bacon+test@gmail.com'  # XXX testing
+        if settings.DEBUG:
+            # Belt-and-braces to ensure we don't accidentally send to
+            # real users
+            metadata['to'] = settings.TEST_EMAIL_TO
         msg = EmailMultiAlternatives(
             subject=metadata['subject'],
             from_email=settings.DEFAULT_FROM_EMAIL,
@@ -69,13 +72,12 @@ def send_fax_message(msg_path, recipient=None):
     metadata_path = os.path.join(msg_path, 'metadata.json')
     with open(metadata_path, 'r') as metadata_f:
         metadata = json.load(metadata_f)
+        if settings.DEBUG:
+            metadata['to'] = settings.TEST_FAX_TO
         if recipient:
-            to = recipient
-        else:
-            to = metadata['to']
-        to = '00441865289412'  # XXX remove on live
+            metadata['to'] = recipient
         logger.info(
-            "Sending fax to %s for wave %s", to, metadata['wave'])
+            "Sending fax to %s for wave %s", metadata['to'], metadata['wave'])
         # Interfax has 60 character limit on subject
         subject = ("about your prescribing - {}".format(metadata['wave']))
         kwargs = {
@@ -89,7 +91,7 @@ def send_fax_message(msg_path, recipient=None):
             'contact': 'Prescribing Lead'}
         interfax = InterFAX(
             username=settings.INTERFAX_USER, password=settings.INTERFAX_PASS)
-        fax = interfax.deliver(to, files=[fax_path], **kwargs)
+        fax = interfax.deliver(metadata['to'], files=[fax_path], **kwargs)
         fax = fax.reload()
         logger.info("Sent fax id %s, status %s", fax.id, fax.status)
 
