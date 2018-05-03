@@ -110,11 +110,8 @@ def combine_letters(wave):
 
 class Command(BaseCommand):
     help = '''Load interventions from practice allocations'''
-    # The source of the CSV is https://docs.google.com/spreadsheets/d/1iVtlo-qGaK9KT35FaX94Gu0azei-TLIZZI52TZWvxMg
     def add_arguments(self, parser):
         parser.add_argument('--wave', type=str)
-        parser.add_argument('--practices', type=str,
-                            help='CSV of allocated practices')
         parser.add_argument('--sample',
                             type=int,
                             default=0,
@@ -148,7 +145,7 @@ class Command(BaseCommand):
             message_url = settings.URL_ROOT + reverse('views.intervention_message', args=[intervention.id])
             if intervention.method == 'e' and not_empty(contact.email):  # email
                 base = intervention.message_dir()
-                logger.info("Creating email at {}".format(base))
+                logger.info("Creating email at {} via URL {}".format(base, message_url))
                 response = requests.get(message_url)
                 if response.status_code != requests.codes.ok:
                     raise Exception("bad response when trying to get {}".format(message_url))
@@ -165,7 +162,7 @@ class Command(BaseCommand):
                 saved += 1
             elif intervention.method == 'f' and not_empty(contact.normalised_fax):  # fax
                 base = intervention.message_dir()
-                logger.info("Creating fax at {}".format(base))
+                logger.info("Creating fax at {} via URL {}".format(base, message_url))
                 capture_html(message_url, os.path.join(base, 'fax.pdf'))
                 metadata.update({
                     'to': contact.normalised_fax
