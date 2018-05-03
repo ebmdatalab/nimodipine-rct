@@ -36,7 +36,7 @@ class Migration(migrations.Migration):
                 name='MailLog',
                 fields=[],
                 options={
-                    'db_table': 'frontend_maillog',
+                    'db_table': 'delete_me',
                 },
             ),
         ]
