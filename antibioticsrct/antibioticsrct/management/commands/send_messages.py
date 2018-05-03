@@ -18,6 +18,8 @@ from anymail.message import attach_inline_image_file
 from interfax import InterFAX
 
 from common.utils import email_as_text
+from antibioticsrct.models import Intervention
+
 
 logger = logging.getLogger(__name__)
 
@@ -61,10 +63,17 @@ def send_email_message(msg_path, recipient=None):
         if recipient:
             msg.to = [recipient]
         msg = inline_images(msg, body)
-        msg.tags = ["antibioticsrct"]
+        msg.tags = ["antibioticsrct", "wave{}".format(metadata['wave'])]
         msg.body = email_as_text(msg.alternatives[0][0])
         msg.track_clicks = True
         msg.send()
+        intervention = Intervention.objects.get(
+            contact__email=metadata['to'],
+            wave=metadata['wave'],
+            method='e'
+        )
+        intervention.sent = True
+        intervention.save()
 
 
 def send_fax_message(msg_path, recipient=None):
@@ -93,6 +102,13 @@ def send_fax_message(msg_path, recipient=None):
             username=settings.INTERFAX_USER, password=settings.INTERFAX_PASS)
         fax = interfax.deliver(metadata['to'], files=[fax_path], **kwargs)
         fax = fax.reload()
+        intervention = Intervention.objects.get(
+            contact__normalised_fax=metadata['to'],
+            wave=metadata['wave'],
+            method='f'
+        )
+        intervention.sent = True
+        intervention.save()
         logger.info("Sent fax id %s, status %s", fax.id, fax.status)
 
 

@@ -18,6 +18,8 @@ from premailer import Premailer
 
 from antibioticsrct.models import Intervention
 from antibioticsrct.models import InterventionContact
+from common.utils import not_empty
+
 
 logger = logging.getLogger(__name__)
 
@@ -104,13 +106,6 @@ def combine_letters(wave):
         "gs", "-q", "-sPAPERSIZE=letter", "-dNOPAUSE",
         "-dBATCH", "-sDEVICE=pdfwrite",
         "-sOutputFile={}/combined_letters.pdf".format(wave_dir)] + inputs)
-
-
-def not_empty(cell):
-    cell = cell and cell.strip().lower()
-    if cell and (cell[0] != '#' and cell != 'false' and cell != 'n/a'):
-        return True
-    return False
 
 
 class Command(BaseCommand):

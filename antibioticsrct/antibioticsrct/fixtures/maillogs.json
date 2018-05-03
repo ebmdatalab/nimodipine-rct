@@ -1,0 +1,50 @@
+[
+  {
+    "model": "antibioticsrct.maillog",
+    "pk": 1,
+    "fields": {
+      "metadata": {},
+      "recipient": "simon.neil@nhs.net",
+      "tags": ["wave1", "antibioticsrct"],
+      "reject_reason": null,
+      "event_type": "delivered",
+      "timestamp": null
+    }
+  },
+  {
+    "model": "antibioticsrct.maillog",
+    "pk": 2,
+    "fields": {
+      "metadata": {},
+      "recipient": "simon.neil@nhs.net",
+      "tags": ["wave2", "antibioticsrct"],
+      "reject_reason": null,
+      "event_type": "bounced",
+      "timestamp": null
+    }
+  },
+  {
+    "model": "antibioticsrct.maillog",
+    "pk": 3,
+    "fields": {
+      "metadata": {},
+      "recipient": "simon.neil@nhs.net",
+      "tags": ["wave3", "antibioticsrct"],
+      "reject_reason": null,
+      "event_type": "clicked",
+      "timestamp": null
+    }
+  },
+  {
+    "model": "antibioticsrct.maillog",
+    "pk": 4,
+    "fields": {
+      "metadata": {},
+      "recipient": "simon.neil2@nhs.net",
+      "tags": ["wave1", "tofurct"],
+      "reject_reason": null,
+      "event_type": "delivered",
+      "timestamp": null
+    }
+  }
+]

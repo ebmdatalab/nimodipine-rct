@@ -4,12 +4,16 @@ import os
 import re
 
 from django.conf import settings
+from django.contrib.postgres.fields import ArrayField
 from django.contrib.postgres.fields import JSONField
 from django.db import models
 from django.urls import reverse
 
+from anymail.signals import EventType
+
 from common.utils import nhs_titlecase
 from common.utils import encode
+from common.utils import not_empty
 
 
 class InterventionContact(models.Model):
@@ -62,7 +66,8 @@ class Intervention(models.Model):
     measure_id = models.CharField(max_length=40, default='ktt9_cephalosporins')
     metadata = JSONField(null=True, blank=True)
     hits = models.IntegerField(default=0)
-    receipt = models.BooleanField(default=False)
+    sent = models.BooleanField(default=False)
+    receipt = models.NullBooleanField(default=None)
     contact = models.ForeignKey(InterventionContact, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -71,6 +76,11 @@ class Intervention(models.Model):
             self.wave,
             self.intervention,
             self.get_method_display().lower())
+
+    def contactable(self):
+        if self.method == 'p':
+            return True
+        return not_empty(self.contact.email)
 
     def get_absolute_url(self):
         return reverse('views.intervention', args=[encode(self.method, self.wave), self.practice_id])
@@ -91,6 +101,20 @@ class Intervention(models.Model):
             target_url += '#' + self.measure_id
         return target_url
 
+    def mail_logs(self):
+        return MailLog.objects.filter(
+            tags__contained_by=['antibioticsrct', "wave{}".format(self.wave)],
+            recipient=self.contact.email)
+
+    def set_receipt(self):
+        if self.method == 'e':
+            found = self.mail_logs()
+            if found:
+                if found[0].event_type == 'delivered':
+                    self.receipt = True
+                elif found[0].event_type in ['bounced', 'rejected']:
+                    self.receipt = False
+                self.save()
 
     def message_dir(self):
         location = os.path.join(
@@ -105,6 +129,32 @@ class Intervention(models.Model):
     class Meta:
         unique_together = ('method', 'wave', 'practice_id')
         ordering = ['created_date', 'intervention', 'method', 'wave', 'practice_id']
+
+
+# Copied from openprescribing, where this model is created via mailgun
+# callbacks
+class MailLog(models.Model):
+    EVENT_TYPE_CHOICES = [
+        (value, value)
+        for name, value in vars(EventType).items()
+        if not name.startswith('_')]
+    metadata = JSONField(null=True, blank=True)
+    recipient = models.CharField(max_length=254, db_index=True)
+    tags = ArrayField(
+        models.CharField(max_length=100, db_index=True),
+        null=True
+    )
+    reject_reason = models.CharField(max_length=15, null=True, blank=True)
+    event_type = models.CharField(
+        max_length=15,
+        choices=EVENT_TYPE_CHOICES,
+        db_index=True)
+    timestamp = models.DateTimeField(null=True, blank=True)
+    # message = models.ForeignKey(EmailMessage, null=True, db_constraint=False)
+
+    class Meta:
+        db_table = 'frontend_maillog'
+        managed = False
 
 
 measure_data = {}

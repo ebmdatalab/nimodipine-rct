@@ -184,3 +184,9 @@ DEFAULT_FROM_EMAIL = "hello@openprescribing.net"
 # when testing.
 TEST_FAX_TO = '00441865289412'
 TEST_EMAIL_TO = 'seb.bacon+test@gmail.com'
+
+
+# This app queries the maillog model in OP.  When testing or in dev
+# mode, we want to create it locally in migrations.  Otherwise, we
+# don't.
+CREATE_MAILLOG_TABLE = True

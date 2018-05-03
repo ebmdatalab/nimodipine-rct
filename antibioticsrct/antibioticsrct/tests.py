@@ -33,6 +33,31 @@ class ModelTestCase(TestCase):
             self.assertEqual(contact.normalised_fax, expected)
 
 
+class ReceiptTestCase(TestCase):
+    fixtures = ['intervention_contacts', 'interventions', 'maillogs']
+
+    def test_email_receipt(self):
+        intervention = Intervention.objects.get(pk=1)
+        self.assertEquals(intervention.receipt, None)
+        intervention.set_receipt()
+        self.assertTrue(intervention.receipt)
+
+    def test_email_failure(self):
+        intervention = Intervention.objects.get(pk=2)
+        intervention.set_receipt()
+        self.assertFalse(intervention.receipt)
+
+    def test_email_other(self):
+        intervention = Intervention.objects.get(pk=3)
+        intervention.set_receipt()
+        self.assertFalse(intervention.receipt)
+
+    def test_email_no_maillog(self):
+        intervention = Intervention.objects.get(pk=4)
+        intervention.set_receipt()
+        self.assertEquals(intervention.receipt, None)
+
+
 class BigQueryIntegrationTestCase(TestCase):
     fixtures = ['intervention_contacts', 'interventions']
 
@@ -169,5 +194,5 @@ class EmailCommandTestCase(TestCase):
             send_email_message(msg_path)
             self.assertEqual(len(outbox), 1)
             self.assertEqual(len(outbox[0].attachments), 1)
-            self.assertEqual(outbox[0].to, ['seb.bacon+test@gmail.com'])
+            self.assertEqual(outbox[0].to, ['seb.bacon@gmail.com'])
             self.assertEqual(outbox[0].subject, 'Important information about your prescribing')
