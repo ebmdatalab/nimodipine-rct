@@ -1,7 +1,10 @@
-  -- Find the measure, measure savings, and total savings for each
-  -- practice in a sample table of practices, compared to 10th centile,
-  -- for all of the measures where we have calculated potential savings.
-  -- The date range is hard coded for the third intervention, Nov-April.
+-- Allocation SQL designed by RCT author - see discussion here
+-- https://github.com/ebmdatalab/antibiotics-rct/issues/6
+
+-- Find the measure, measure savings, and total savings for each
+-- practice in a sample table of practices, compared to 10th centile,
+-- for all of the measures where we have calculated potential savings.
+-- The date range is hard coded for the third intervention, Nov-April.
 WITH
   savings AS (
   SELECT

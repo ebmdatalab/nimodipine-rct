@@ -16,7 +16,7 @@ env.user = 'hello'
 
 environments = {
     'live': 'antibioticsrct',
-    'staging': 'antibioticsrct',
+    'staging': 'antibioticsrct-staging',
 }
 
 def make_directory():
@@ -30,7 +30,11 @@ def venv_init():
 
 def pip_install():
     with prefix('source /var/www/%s/venv/bin/activate' % env.app):
-        run('pip install --upgrade pip setuptools')
+        sudo("chmod  g+w %s" % env.path)
+        # We have to bootstrap pip this way because of issues in the Debian-provided python3.4
+        # In python 3.6 we could remove the --without-pip above.
+        run('wget https://bootstrap.pypa.io/get-pip.py && python get-pip.py')
+        run('rm get-pip.py*')
         run('pip install -q -r %s/%s/requirements.txt' % (git_project, django_app))
 
 def update_from_git(branch):
@@ -40,14 +44,19 @@ def update_from_git(branch):
     with cd(git_project):
         run("git fetch --all")
         run("git reset --hard origin/{}".format(branch))
+        run("chmod 775 */*.log")
 
 def setup_nginx():
-    sudo('%s/%s/deploy/setup_nginx.sh %s %s' % (git_project, django_app, env.path, env.app))
+    sudo('%s/%s/deploy/setup_nginx.sh %s %s' % (git_project, django_app, env.path, env.environment))
+    # https://stackoverflow.com/a/33881057/559140
+    sudo('/etc/init.d/supervisor force-stop && '
+         '/etc/init.d/supervisor stop && '
+         '/etc/init.d/supervisor start')
 
 def setup_django():
     with prefix('source /var/www/%s/venv/bin/activate' % env.app):
-        run('cd %s/%s/ && python manage.py collectstatic --noinput --settings=antibioticsrct.settings' % (git_project, django_app))
-        run('cd %s/%s/ && python manage.py migrate --settings=antibioticsrct.settings' % (git_project, django_app))
+        run('cd %s/%s/ && python manage.py collectstatic --noinput ' % (git_project, django_app))
+        run('cd %s/%s/ && python manage.py migrate' % (git_project, django_app))
 
 def restart_gunicorn():
     sudo("%s/%s/deploy/restart.sh %s" % (git_project, django_app, env.app))

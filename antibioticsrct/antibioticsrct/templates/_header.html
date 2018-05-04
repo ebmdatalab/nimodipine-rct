@@ -2,7 +2,7 @@
 <div id="header">
   {% if show_header_from %}
   <div id="header__from">
-    <img alt="" src="data:image/png;base64,{{ header_image }}"><br>
+    <img alt="" src="data:image/png;base64,{{ header_image }}"><br><br>
     Nuffield Department of Primary Care Health Sciences<br>
     University of Oxford<br><br>
     <b>{% now "d F Y" %}</b>
@@ -11,8 +11,8 @@
 
   {% if show_header_to %}
   <div id="header__to">
-    PRESCRIBING LEAD<br>
-    {% if intervention.contact.address1 %}
+    PRESCRIBING LEAD, {{ intervention.contact.name }}<br>
+    {% if intervention.contact.address1 != intervention.contact.name %}
       {{ intervention.contact.address1 }}<br>
     {% endif %}
     {% if intervention.contact.address2 %}

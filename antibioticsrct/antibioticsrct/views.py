@@ -41,8 +41,17 @@ def fax_receipt(request):
                 intervention.receipt = True
                 logger.info("Intervention %s marked as received", intervention)
                 intervention.save()
+            elif int(status) > 0:
+                intervention.receipt = False
+                logger.warn(
+                    "Problem sending fax for intervention %s (status %s)",
+                    intervention,
+                    status)
             else:
-                logger.warn("Problem sending fax for intervention %s", intervention)
+                logger.info(
+                    "Received temporary fax status for intervention %s (status %s)",
+                    intervention,
+                    status)
         else:
             logger.warn("Unable to parse intervention")
         return HttpResponse('OK')
@@ -53,6 +62,8 @@ def measure_redirect(request, code, practice_id):
     intervention = Intervention.objects.get(
         method=method, wave=wave, practice_id=practice_id)
     if request.POST:
+        # The user has filled out the one-off interstitial
+        # questionnaire
         if request.POST['survey_response'].lower() == 'yes':
             intervention.contact.survey_response = True
         elif request.POST['survey_response'].lower() == 'no':
@@ -82,14 +93,10 @@ def intervention_message(request, intervention_id):
     intervention = get_object_or_404(Intervention, pk=intervention_id)
     practice_name = intervention.contact.cased_name
     context = {}
+    show_header_from = True
     if intervention.method == 'p':
-        show_header_from = True
         show_header_to = True
-    elif intervention.method == 'f':
-        show_header_from = True
-        show_header_to = False
     else:
-        show_header_from = True
         show_header_to = False
     if intervention.intervention == 'B':
         template = 'intervention_b.html'

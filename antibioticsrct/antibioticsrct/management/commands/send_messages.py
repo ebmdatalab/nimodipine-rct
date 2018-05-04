@@ -18,6 +18,8 @@ from anymail.message import attach_inline_image_file
 from interfax import InterFAX
 
 from common.utils import email_as_text
+from antibioticsrct.models import Intervention
+
 
 logger = logging.getLogger(__name__)
 
@@ -47,21 +49,35 @@ def send_email_message(msg_path, recipient=None):
     with open(email_path, 'r') as body_f, open(metadata_path, 'r') as metadata_f:
         body = body_f.read()
         metadata = json.load(metadata_f)
+        intervention = Intervention.objects.get(
+            contact__email=metadata['to'],
+            wave=metadata['wave'],
+            method='e'
+        )
+        if intervention.sent:
+            print("Refusing to resend intervention {}".format(intervention))
+            return
         logger.info(
             "Sending email message to %s for wave %s", metadata['to'], metadata['wave'])
-        metadata['to'] = 'seb.bacon+test@gmail.com'  # XXX testing
+        if settings.DEBUG:
+            # Belt-and-braces to ensure we don't accidentally send to
+            # real users
+            metadata['to'] = settings.TEST_EMAIL_TO
         msg = EmailMultiAlternatives(
             subject=metadata['subject'],
             from_email=settings.DEFAULT_FROM_EMAIL,
             to=[metadata['to']],
             reply_to=[settings.DEFAULT_FROM_EMAIL])
         if recipient:
+            # Always allow overriding the test fax recipient
             msg.to = [recipient]
         msg = inline_images(msg, body)
-        msg.tags = ["antibioticsrct"]
+        msg.tags = ["antibioticsrct", "wave{}".format(metadata['wave'])]
         msg.body = email_as_text(msg.alternatives[0][0])
         msg.track_clicks = True
         msg.send()
+        intervention.sent = True
+        intervention.save()
 
 
 def send_fax_message(msg_path, recipient=None):
@@ -69,13 +85,21 @@ def send_fax_message(msg_path, recipient=None):
     metadata_path = os.path.join(msg_path, 'metadata.json')
     with open(metadata_path, 'r') as metadata_f:
         metadata = json.load(metadata_f)
+        intervention = Intervention.objects.get(
+            contact__normalised_fax=metadata['to'],
+            wave=metadata['wave'],
+            method='f'
+        )
+        if intervention.sent:
+            print("Refusing to resend intervention {}".format(intervention))
+            return
+        if settings.DEBUG:
+            metadata['to'] = settings.TEST_FAX_TO
         if recipient:
-            to = recipient
-        else:
-            to = metadata['to']
-        to = '00441865289412'  # XXX remove on live
+            # Always allow overriding the test fax recipient
+            metadata['to'] = recipient
         logger.info(
-            "Sending fax to %s for wave %s", to, metadata['wave'])
+            "Sending fax to %s for wave %s", metadata['to'], metadata['wave'])
         # Interfax has 60 character limit on subject
         subject = ("about your prescribing - {}".format(metadata['wave']))
         kwargs = {
@@ -89,8 +113,10 @@ def send_fax_message(msg_path, recipient=None):
             'contact': 'Prescribing Lead'}
         interfax = InterFAX(
             username=settings.INTERFAX_USER, password=settings.INTERFAX_PASS)
-        fax = interfax.deliver(to, files=[fax_path], **kwargs)
+        fax = interfax.deliver(metadata['to'], files=[fax_path], **kwargs)
         fax = fax.reload()
+        intervention.sent = True
+        intervention.save()
         logger.info("Sent fax id %s, status %s", fax.id, fax.status)
 
 
@@ -115,17 +141,23 @@ class Command(BaseCommand):
             methods = [options['method']]
         else:
             methods = ['email', 'fax']
-        for method in methods:
-            base_path = os.path.join(settings.DATA_DIR, wave, method)
-            if options['practice']:
-                practices = [os.path.join(base_path, options['practice'])]
-            else:
-                practices = glob.glob(os.path.join(base_path, '*'))
-            for practice_id in practices:
-                msg_path = os.path.join(base_path, practice_id)
-                if method == 'email':
-                    send_email_message(msg_path, options['test_recipient'])
-                elif method == 'fax':
-                    send_fax_message(msg_path, options['test_recipient'])
+        prompt = "Sending messages in wave {} using method(s) {}".format(wave, methods)
+        if options['test_recipient']:
+            prompt += " to test recipient {}".format(options['test_recipient'])
+        prompt += ". Continue? (y/N)"
+        really = input(prompt)
+        if really.strip().lower() == 'y':
+            for method in methods:
+                base_path = os.path.join(settings.DATA_DIR, wave, method)
+                if options['practice']:
+                    practices = [os.path.join(base_path, options['practice'])]
                 else:
-                    raise CommandError("method must be 'fax' or 'email'")
+                    practices = glob.glob(os.path.join(base_path, '*'))
+                for practice_id in practices:
+                    msg_path = os.path.join(base_path, practice_id)
+                    if method == 'email':
+                        send_email_message(msg_path, options['test_recipient'])
+                    elif method == 'fax':
+                        send_fax_message(msg_path, options['test_recipient'])
+                    else:
+                        raise CommandError("method must be 'fax' or 'email'")

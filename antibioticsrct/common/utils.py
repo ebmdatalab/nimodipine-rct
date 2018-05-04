@@ -24,6 +24,15 @@ CODE_MAPPING = {
     'k': ('p', '3')   # post, wave 3
 }
 
+
+def not_empty(cell):
+    "Is a Google Sheets cell truthy?"
+    cell = cell and cell.strip().lower()
+    if cell and (cell[0] != '#' and cell != 'false' and cell != 'n/a'):
+        return True
+    return False
+
+
 def decode(code):
     return CODE_MAPPING[code]
 

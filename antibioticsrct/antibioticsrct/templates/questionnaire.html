@@ -1,6 +1,10 @@
 {% extends "_base.html" %}
+{% load static %}
 
 {% block content %}
+<img src="{% static "header.png" %}" alt="University of Oxford"/>
+<img src="{% static "footer.png" %}" alt="OpenPrescribing"/>
+
 <div id="questionnaire" class="modal" style="z-index: 100000; position: fixed">
   <div class="modal-dialog modal-sm">
     <div class="modal-content">
@@ -21,4 +25,7 @@
     </div>
   </div>
 </div>
+
+
+
 {% endblock %}
