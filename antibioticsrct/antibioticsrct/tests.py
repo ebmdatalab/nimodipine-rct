@@ -172,6 +172,7 @@ class InterventionCommandTestCase(TestCase):
 
 
 class EmailCommandTestCase(TestCase):
+    fixtures = ['intervention_contacts', 'interventions']
     def test_email_from_html(self):
         from antibioticsrct.management.commands.send_messages import inline_images
         from django.core.mail import EmailMultiAlternatives
@@ -194,5 +195,5 @@ class EmailCommandTestCase(TestCase):
             send_email_message(msg_path)
             self.assertEqual(len(outbox), 1)
             self.assertEqual(len(outbox[0].attachments), 1)
-            self.assertEqual(outbox[0].to, ['seb.bacon@gmail.com'])
+            self.assertEqual(outbox[0].to, ['simon.neil@nhs.net'])
             self.assertEqual(outbox[0].subject, 'Important information about your prescribing')

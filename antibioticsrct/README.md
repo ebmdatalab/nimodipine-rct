@@ -55,7 +55,7 @@ When a wave has been generated, archive it in github. On `largeweb2` it's in `/m
 
 When the postal letters have been sent, manually mark them as such:
 
-    Intervention.objects.filter(wave='1', method='p')
+    Intervention.objects.filter(wave='1', method='p').update(sent=True)
 
 Send the faxes and emails:
 

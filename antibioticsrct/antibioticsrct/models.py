@@ -70,7 +70,13 @@ class Intervention(models.Model):
     receipt = models.NullBooleanField(default=None)
     contact = models.ForeignKey(InterventionContact, on_delete=models.CASCADE)
 
+    class Meta:
+        unique_together = ('method', 'wave', 'practice_id')
+        ordering = ['created_date', 'intervention', 'method', 'wave', 'practice_id']
+        
     def __str__(self):
+        # Wondering hat get_method_display is? See
+        # https://docs.djangoproject.com/en/2.0/ref/models/instances/#django.db.models.Model.get_FOO_display
         return "Intervention {}: wave {}, intervention {}, method {}".format(
             self.pk,
             self.wave,
@@ -126,9 +132,6 @@ class Intervention(models.Model):
         os.makedirs(location, exist_ok=True)
         return location
 
-    class Meta:
-        unique_together = ('method', 'wave', 'practice_id')
-        ordering = ['created_date', 'intervention', 'method', 'wave', 'practice_id']
 
 
 # Copied from openprescribing, where this model is created via mailgun
