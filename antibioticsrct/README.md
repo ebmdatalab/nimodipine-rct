@@ -1,8 +1,7 @@
 This is a Django application to track interventions in our Antibiotics RCT.
 
-Each intervention is to a single practice, either by fax, post, or
-email. All practices get all three eventually, in random orders, 1 of
-each over 3 months.
+Each intervention is to a single practice, by fax, post, and
+email. All practices get all three each month, for 3 months.
 
 The intervention takes the form of a letter telling them hopefully
 interesting things, with a URL for them to follow.
