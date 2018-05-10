@@ -1,4 +1,5 @@
 from email.utils import unquote
+from unittest.mock import Mock
 from unittest.mock import patch
 import os
 
@@ -43,28 +44,27 @@ class ReceiptTestCase(TestCase):
         self.assertTrue(intervention.receipt)
 
     def test_email_failure(self):
-        intervention = Intervention.objects.get(pk=2)
-        intervention.set_receipt()
-        self.assertFalse(intervention.receipt)
-
-    def test_email_other(self):
         intervention = Intervention.objects.get(pk=3)
         intervention.set_receipt()
         self.assertFalse(intervention.receipt)
 
-    def test_email_no_maillog(self):
+    def test_email_other(self):
         intervention = Intervention.objects.get(pk=4)
+        intervention.set_receipt()
+        self.assertFalse(intervention.receipt)
+
+    def test_email_no_maillog(self):
+        intervention = Intervention.objects.get(pk=5)
         intervention.set_receipt()
         self.assertEquals(intervention.receipt, None)
 
 
 class BigQueryIntegrationTestCase(TestCase):
     fixtures = ['intervention_contacts', 'interventions']
-
     def test_metadata_setting(self):
         from antibioticsrct.management.commands.generate_wave import set_a3_metadata
         set_a3_metadata(allocation_table='test_allocated_practices')
-        a3_intervention = Intervention.objects.get(pk=3)
+        a3_intervention = Intervention.objects.get(pk=4)
         self.assertTrue(a3_intervention.metadata)
         self.assertNotEqual(a3_intervention.measure_id, 'ktt9')
 
@@ -106,10 +106,10 @@ class ViewTestCase(TestCase):
         mock_image.return_value = img_str
         expectations = [
             (1, 'intervention_a_1.html'),
-            (2, 'intervention_a_2.html'),
-            (3, 'intervention_a_3.html'),
-            (4, 'intervention_b.html'),
-            (5, 'intervention_b.html')
+            (3, 'intervention_a_2.html'),
+            (4, 'intervention_a_3.html'),
+            (5, 'intervention_b.html'),
+            (6, 'intervention_b.html')
         ]
         for pk, template in expectations:
             intervention = Intervention.objects.get(pk=pk)
@@ -121,23 +121,23 @@ class ViewTestCase(TestCase):
 
     def test_fax_receipt_success(self):
         data = {
-            'DestinationFax': '441642260897',
+            'DestinationFax': '00441642260897',
             'Subject': 'message about your prescribing - 1',
             'Status': '0',
         }
         response = Client().post('/fax_receipt', data)
-        intervention = Intervention.objects.get(pk=6)
+        intervention = Intervention.objects.get(pk=2)
         self.assertEqual(response.status_code, 200)
         self.assertTrue(intervention.receipt)
 
     def test_fax_receipt_fail(self):
         data = {
-            'DestinationFax': '441642260897',
+            'DestinationFax': '00441642260897',
             'Subject': 'message about your prescribing - 1',
             'Status': '1',
         }
         response = Client().post('/fax_receipt', data)
-        intervention = Intervention.objects.get(pk=6)
+        intervention = Intervention.objects.get(pk=2)
         self.assertEqual(response.status_code, 200)
         self.assertFalse(intervention.receipt)
 
@@ -148,7 +148,7 @@ class ViewTestCase(TestCase):
             'Status': '0',
         }
         response = Client().post('/fax_receipt', data)
-        Intervention.objects.get(pk=6)
+        Intervention.objects.get(pk=2)
         self.assertEqual(response.status_code, 404)
 
 
@@ -190,10 +190,64 @@ class EmailCommandTestCase(TestCase):
         from django.core.mail import outbox
         intervention_fixtures = os.path.join(
             settings.BASE_DIR, 'antibioticsrct/fixtures/interventions/')
-        msg_path = os.path.join(intervention_fixtures, 'wave1', 'email', 'D83017')
+        msg_path = os.path.join(intervention_fixtures, 'wave1', 'email', 'A83050')
         with self.settings(DATA_DIR=intervention_fixtures):
+            self.assertFalse(Intervention.objects.get(pk=1).sent)
             send_email_message(msg_path)
+            self.assertTrue(Intervention.objects.get(pk=1).sent)
             self.assertEqual(len(outbox), 1)
             self.assertEqual(len(outbox[0].attachments), 1)
             self.assertEqual(outbox[0].to, ['simon.neil@nhs.net'])
-            self.assertEqual(outbox[0].subject, 'Important information about your prescribing')
+            self.assertEqual(
+                outbox[0].subject,
+                'Information about your prescribing from OpenPrescribing.net')
+
+    def test_email_dry_run(self):
+        from antibioticsrct.management.commands.send_messages import send_email_message
+        from django.core.mail import outbox
+        intervention_fixtures = os.path.join(
+            settings.BASE_DIR, 'antibioticsrct/fixtures/interventions/')
+        msg_path = os.path.join(intervention_fixtures, 'wave1', 'email', 'A83050')
+        with self.settings(DATA_DIR=intervention_fixtures):
+            send_email_message(msg_path, dry_run=True)
+            self.assertEqual(len(outbox), 0)
+
+
+class FaxCommandTestCase(TestCase):
+    fixtures = ['intervention_contacts', 'interventions']
+    @patch('antibioticsrct.management.commands.send_messages.InterFAX')
+    def test_send_fax(self, mock_interfax):
+        from antibioticsrct.management.commands.send_messages import send_fax_message
+        mock_interfax_instance = Mock()
+        mock_interfax.return_value = mock_interfax_instance
+        intervention_fixtures = os.path.join(
+            settings.BASE_DIR, 'antibioticsrct/fixtures/interventions/')
+        msg_path = os.path.join(intervention_fixtures, 'wave1', 'fax', 'A83050')
+        with self.settings(DATA_DIR=intervention_fixtures):
+            self.assertFalse(Intervention.objects.get(pk=2).sent)
+            send_fax_message(msg_path)
+            self.assertTrue(Intervention.objects.get(pk=2).sent)
+            mock_interfax_instance.deliver.assert_called_with(
+                '00441642260897',
+                contact='Prescribing Lead',
+                files=[os.path.join(msg_path, 'fax.pdf')],
+                page_header='To: {To} From: {From} Pages: {TotalPages}',
+                page_orientation='portrait',
+                page_size='A4',
+                reference='about your prescribing - 1',
+                rendering='greyscale',
+                reply_address=settings.FAX_FROM_EMAIL,
+                resolution='fine')
+
+    @patch('antibioticsrct.management.commands.send_messages.InterFAX')
+    def test_fax_dry_run(self, mock_interfax):
+        from antibioticsrct.management.commands.send_messages import send_fax_message
+        mock_interfax_instance = Mock()
+        mock_interfax.return_value = mock_interfax_instance
+        intervention_fixtures = os.path.join(
+            settings.BASE_DIR, 'antibioticsrct/fixtures/interventions/')
+        msg_path = os.path.join(intervention_fixtures, 'wave1', 'fax', 'A83050')
+        with self.settings(DATA_DIR=intervention_fixtures):
+            send_fax_message(msg_path, dry_run=True)
+            to = "j"
+            mock_interfax_instance.deliver.assert_not_called()

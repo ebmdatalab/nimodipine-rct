@@ -141,7 +141,6 @@ class Command(BaseCommand):
             if options['sample'] and saved >= options['sample']:
                 break
             contact = intervention.contact
-            metadata = {'wave': options['wave']}
             message_url = settings.URL_ROOT + reverse('views.intervention_message', args=[intervention.id])
             if intervention.method == 'e' and not_empty(contact.email):  # email
                 base = intervention.message_dir()
@@ -150,13 +149,6 @@ class Command(BaseCommand):
                 if response.status_code != requests.codes.ok:
                     raise Exception("bad response when trying to get {}".format(message_url))
                 html = Premailer(response.text, cssutils_logging_level=logging.ERROR).transform()
-                metadata.update({
-                    'subject': 'Information about your prescribing from OpenPrescribing.net',
-                    'from': settings.DEFAULT_FROM_EMAIL,
-                    'to': contact.email
-                })
-                with open(os.path.join(base, 'metadata.json'), 'w') as f:
-                    json.dump(metadata, f)
                 with open(os.path.join(base, 'email.html'), 'w') as f:
                     f.write(html)
                 saved += 1
@@ -164,11 +156,6 @@ class Command(BaseCommand):
                 base = intervention.message_dir()
                 logger.info("Creating fax at {} via URL {}".format(base, message_url))
                 capture_html(message_url, os.path.join(base, 'fax.pdf'))
-                metadata.update({
-                    'to': contact.normalised_fax
-                })
-                with open(os.path.join(base, 'metadata.json'), 'w') as f:
-                    json.dump(metadata, f)
                 saved += 1
             elif intervention.method == 'p' and contact.address1:  # printed letter
                 base = intervention.message_dir()

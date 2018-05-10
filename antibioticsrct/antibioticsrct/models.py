@@ -73,15 +73,21 @@ class Intervention(models.Model):
     class Meta:
         unique_together = ('method', 'wave', 'practice_id')
         ordering = ['created_date', 'intervention', 'method', 'wave', 'practice_id']
-        
+
     def __str__(self):
         # Wondering hat get_method_display is? See
         # https://docs.djangoproject.com/en/2.0/ref/models/instances/#django.db.models.Model.get_FOO_display
-        return "Intervention {}: wave {}, intervention {}, method {}".format(
-            self.pk,
+        if self.method == 'e':
+            recipient = self.contact.email
+        elif self.method == 'f':
+            recipient = self.contact.fax
+        else:
+            recipient = self.contact.name
+        return "wave {}, intervention {}, method {}, to {}".format(
             self.wave,
             self.intervention,
-            self.get_method_display().lower())
+            self.get_method_display().lower(),
+            recipient)
 
     def contactable(self):
         if self.method == 'p':
