@@ -22,9 +22,10 @@ class ModelTestCase(TestCase):
     def test_normalised_fax(self):
         expectations = [
             ("(01234) 56789", "0044123456789"),
+            ("123456789", "0044123456789"),
             ("#NA", ""),
             ("FALSE", ""),
-            ("4412345678", "4412345678"),
+            ("4412345678", "004412345678"),
             ("1", "1"),
         ]
         contact = InterventionContact.objects.first()

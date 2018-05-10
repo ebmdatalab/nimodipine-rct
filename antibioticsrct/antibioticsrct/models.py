@@ -37,8 +37,13 @@ class InterventionContact(models.Model):
 
     def save(self, *args, **kwargs):
         fax_number = re.sub(r"[^0-9]", "", self.fax)
-        if fax_number and fax_number[0] == '0':
-            fax_number = '0044' + fax_number[1:]
+        if fax_number and re.search(r"[0-9]{8}", fax_number):
+            if fax_number[0] == '0':
+                fax_number = fax_number[1:]
+            if fax_number[:2] == '44':
+                fax_number = '00' + fax_number
+            else:
+                fax_number = '0044' + fax_number
         self.normalised_fax = fax_number
         super(InterventionContact, self).save(*args, **kwargs)
 
