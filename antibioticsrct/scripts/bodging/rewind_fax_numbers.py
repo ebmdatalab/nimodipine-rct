@@ -19,7 +19,7 @@ def rewind_numbers():
         open(os.path.join(BASE_DIR, "practices-pre-binleys.csv"), "r"))
     with transaction.atomic():
         for row in old_practice_data:
-            contact = InterventionContact.objects.get(practice_id = row['code'])
+            contact = InterventionContact.objects.get(practice_id=row['code'])
             contact.fax = row['merged faxes']
             contact.save()
 
@@ -70,24 +70,29 @@ def set_newer_numbers():
         for intervention in interventions:
             new_fax = faxes.get(intervention.practice_id, None)
             if new_fax:
-                print(intervention)
-                intervention.fax = new_fax
+                contact = intervention.contact
+                if new_fax != contact.fax:
+                    print("New intervention {}".format(contact))
+                else:
+                    print("Existing intervention {}".format(contact))
+                contact.fax = new_fax
                 # set their 'sent' flag to false so we can resend them
-                intervention.sent = False
-                intervention.save()
+                contact.sent = False
+                contact.save()
 
 
 def generate_and_send():
     print("generating and sending")
-    interventions = Intervention.objects.filter(
-        sent=False, contact__normalised_fax__isnull=False)
+    query = Q(wave='1', method='f', sent=False, contact__normalised_fax__isnull=False) & Q(~contact__normalised_fax="")
+
+    interventions = Intervention.objects.filter(query)
     for intervention in interventions[0:1]:
         print(intervention)
         message_url = settings.URL_ROOT + reverse('views.intervention_message', args=[intervention.id])
         base = intervention.message_dir()
         print("Creating fax at {} via URL {}".format(base, message_url))
         capture_html(message_url, os.path.join(base, 'fax.pdf'))
-        send_fax_message(base, dry_run=True)
+        send_fax_message(base)
 
 def run():
     rewind_numbers()
