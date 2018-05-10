@@ -7,6 +7,7 @@ import tempfile
 from django.conf import settings
 from django.http import HttpResponse
 from django.http import Http404
+from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
 from django.shortcuts import render
 from django.template import Context
