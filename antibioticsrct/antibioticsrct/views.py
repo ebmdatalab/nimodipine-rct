@@ -6,7 +6,7 @@ import tempfile
 
 from django.conf import settings
 from django.http import HttpResponse
-from django.shortcuts import get_object_or_404
+from django.http import Http404
 from django.shortcuts import redirect
 from django.shortcuts import render
 from django.template import Context
@@ -34,23 +34,25 @@ def fax_receipt(request):
         wave = re.findall(r"about your prescribing - (\d{1})", subject)
         logger.info("Received fax callback: to <%s>, subject <%s>, status <%s>", recipient, subject, status)
         if recipient and wave:
-            intervention = get_object_or_404(
-                Intervention,
+            # It is possible for more than one survey to share a fax machine
+            interventions = Intervention.objects.filter(
                 contact__normalised_fax=recipient, method='f', wave=wave[0])
+            ids = [x.pk for x in interventions]
+            if len(ids) == 0:
+                raise Http404()
             if status == '0':
-                intervention.receipt = True
-                logger.info("Intervention %s marked as received", intervention)
-                intervention.save()
+                interventions.update(receipt=True)
+                logger.info("Intervention %s marked as received", ids)
             elif int(status) > 0:
-                intervention.receipt = False
+                interventions.update(receipt=False)
                 logger.warn(
                     "Problem sending fax for intervention %s (status %s)",
-                    intervention,
+                    ids,
                     status)
             else:
                 logger.info(
                     "Received temporary fax status for intervention %s (status %s)",
-                    intervention,
+                    ids,
                     status)
         else:
             logger.warn("Unable to parse intervention")
