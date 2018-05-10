@@ -76,7 +76,7 @@ def setup(environment, branch='master'):
 
 
 @task
-def deploy(environment, branch='master'):
+def deploy(environment, branch='master', git_only=False):
     env = setup(environment, branch)
     make_directory()
     with cd(env.path):
@@ -85,8 +85,9 @@ def deploy(environment, branch='master'):
         with prefix("source /etc/profile.d/antibioticsrct_%s.sh" % env.environment):
             venv_init()
             update_from_git(branch)
-            pip_install()
-            setup_django()
-            setup_nginx()
-            restart_gunicorn()
-            reload_nginx()
+            if not git_only:
+                pip_install()
+                setup_django()
+                setup_nginx()
+                restart_gunicorn()
+                reload_nginx()
