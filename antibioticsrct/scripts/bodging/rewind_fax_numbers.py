@@ -29,6 +29,7 @@ def set_receipts():
     logs = csv.DictReader(
         open(os.path.join(BASE_DIR, "transactions.csv"), "r"))
     with transaction.atomic():
+        errors = []
         for line in logs:
             recipient = line['DestinationFax'].strip()
             status = line['Status']
@@ -40,8 +41,11 @@ def set_receipts():
                 else:
                     interventions.update(receipt=False)
             else:
-                print(recipient, "does not exist")
-                raise
+                errors.append(recipient)
+        if errors:
+            print("\n".join(errors))
+            raise
+
 
 
 def set_newer_numbers():
