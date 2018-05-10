@@ -86,7 +86,7 @@ def generate_and_send():
     query = Q(wave='1', method='f', sent=False, contact__normalised_fax__isnull=False) & ~Q(contact__normalised_fax="")
 
     interventions = Intervention.objects.filter(query)
-    for intervention in interventions[0:1]:
+    for intervention in interventions:
         print(intervention)
         message_url = settings.URL_ROOT + reverse('views.intervention_message', args=[intervention.id])
         base = intervention.message_dir()
