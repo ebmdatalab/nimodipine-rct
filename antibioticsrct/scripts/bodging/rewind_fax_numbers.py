@@ -83,7 +83,7 @@ def set_newer_numbers():
 
 def generate_and_send():
     print("generating and sending")
-    query = Q(wave='1', method='f', sent=False, contact__normalised_fax__isnull=False) & Q(~contact__normalised_fax="")
+    query = Q(wave='1', method='f', sent=False, contact__normalised_fax__isnull=False) & ~Q(contact__normalised_fax="")
 
     interventions = Intervention.objects.filter(query)
     for intervention in interventions[0:1]:
