@@ -32,15 +32,14 @@ def set_receipts():
         for line in logs:
             recipient = line['DestinationFax'].strip()
             status = line['Status']
-            try:
-                interventions = Intervention.objects.filter(
-                    contact__normalised_fax=recipient, wave='1', method='f')
-                print(interventions)
+            interventions = Intervention.objects.filter(
+                contact__normalised_fax=recipient, wave='1', method='f')
+            if interventions.count() > 0:
                 if status == '0':
                     interventions.update(receipt=True)
                 else:
                     interventions.update(receipt=False)
-            except Intervention.DoesNotExist:
+            else:
                 print(recipient, "does not exist")
                 raise
 
@@ -48,7 +47,8 @@ def set_receipts():
 def set_newer_numbers():
     print("setting newer numbers")
     faxes = {}
-    new_practice_data = csv.DictReader(open("practices-post-binleys.csv", "r"))
+    new_practice_data = csv.DictReader(
+        open(os.path.join(BASE_DIR, "practices-post-binleys.csv"), "r"))
     for row in new_practice_data:
         faxes[row['practice']] = row['merged faxes']
 
