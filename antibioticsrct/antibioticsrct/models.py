@@ -122,9 +122,9 @@ class Intervention(models.Model):
         if self.method == 'e':
             found = self.mail_logs()
             if found:
-                if found[0].event_type == 'delivered':
+                if found.filter(event_type='delivered'):
                     self.receipt = True
-                elif found[0].event_type in ['bounced', 'rejected']:
+                elif found.filter(event_type__in=['bounced', 'rejected']):
                     self.receipt = False
                 self.save()
 
