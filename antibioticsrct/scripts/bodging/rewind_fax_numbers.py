@@ -32,6 +32,9 @@ def set_receipts():
         errors = []
         for line in logs:
             recipient = line['DestinationFax'].strip()
+            if recipient == '00441769579312':
+                # This was a test to rich. Skip.
+                continue
             status = line['Status']
             interventions = Intervention.objects.filter(
                 contact__normalised_fax=recipient, wave='1', method='f')
