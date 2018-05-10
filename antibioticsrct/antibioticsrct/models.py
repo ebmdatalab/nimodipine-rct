@@ -116,7 +116,7 @@ class Intervention(models.Model):
     def mail_logs(self):
         return MailLog.objects.filter(
             tags__contained_by=['antibioticsrct', "wave{}".format(self.wave)],
-            recipient=self.contact.email)
+            recipient__iexact=self.contact.email)
 
     def set_receipt(self):
         if self.method == 'e':

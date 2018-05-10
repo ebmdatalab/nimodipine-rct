@@ -4,7 +4,7 @@
     "pk": 1,
     "fields": {
       "metadata": {},
-      "recipient": "simon.neil@nhs.net",
+      "recipient": "simon.neil@NHS.net",
       "tags": ["wave1", "antibioticsrct"],
       "reject_reason": null,
       "event_type": "delivered",
@@ -16,7 +16,7 @@
     "pk": 2,
     "fields": {
       "metadata": {},
-      "recipient": "simon.neil@nhs.net",
+      "recipient": "simon.neil@NHS.net",
       "tags": ["wave2", "antibioticsrct"],
       "reject_reason": null,
       "event_type": "bounced",
@@ -28,7 +28,7 @@
     "pk": 3,
     "fields": {
       "metadata": {},
-      "recipient": "simon.neil@nhs.net",
+      "recipient": "simon.neil@NHS.net",
       "tags": ["wave3", "antibioticsrct"],
       "reject_reason": null,
       "event_type": "clicked",
@@ -40,7 +40,7 @@
     "pk": 4,
     "fields": {
       "metadata": {},
-      "recipient": "simon.neil2@nhs.net",
+      "recipient": "simon.neil2@NHS.net",
       "tags": ["wave1", "tofurct"],
       "reject_reason": null,
       "event_type": "delivered",
