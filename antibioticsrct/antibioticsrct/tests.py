@@ -26,6 +26,7 @@ class ModelTestCase(TestCase):
             ("#NA", ""),
             ("FALSE", ""),
             ("4412345678", "004412345678"),
+            ("00442073726138", "00442073726138"),
             ("1", "1"),
         ]
         contact = InterventionContact.objects.first()
