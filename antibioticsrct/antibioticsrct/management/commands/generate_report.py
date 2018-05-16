@@ -35,7 +35,7 @@ class Command(BaseCommand):
 
         f = open('intervention_report.csv', 'w')
         writer = csv.writer(f)
-        header = ['practice_id', 'wave', 'method', 'contactable', 'sent', 'delivery_success']
+        header = ['practice_id', 'wave', 'method', 'contactable', 'sent', 'delivery_success', 'hits']
         writer.writerow(header)
         for i in Intervention.objects.all():
             row = [
@@ -44,7 +44,8 @@ class Command(BaseCommand):
                 i.method,
                 numeric_truth(i.contactable()),
                 numeric_truth(i.sent),
-                numeric_truth(i.receipt)
+                numeric_truth(i.receipt),
+                i.hits
             ]
             writer.writerow(row)
         print("Intervention report written to {}".format(f.name))
