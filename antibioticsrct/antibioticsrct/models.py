@@ -73,6 +73,7 @@ class Intervention(models.Model):
     metadata = JSONField(null=True, blank=True)
     hits = models.IntegerField(default=0)
     sent = models.BooleanField(default=False)
+    generated = models.BooleanField(default=False)
     receipt = models.NullBooleanField(default=None)
     contact = models.ForeignKey(InterventionContact, on_delete=models.CASCADE)
 
@@ -144,6 +145,26 @@ class Intervention(models.Model):
         os.makedirs(location, exist_ok=True)
         return location
 
+    def message_path(self):
+        if self.method == 'p':
+            filename = 'letter.pdf'
+        elif self.method == 'f':
+            filename = 'fax.pdf'
+        elif self.method == 'e':
+            filename = 'email.html'
+        return os.path.join(self.message_dir(), filename)
+
+    def is_generated(self):
+        if self.generated:
+            if os.path.exists(self.message_path()):
+                return True
+            else:
+                raise StandardError(
+                    "Intervention {} supposedly generated "
+                    "but no file at {}".format(
+                        self,
+                        self.message_path()
+                    ))
 
 
 # Copied from openprescribing, where this model is created via mailgun
