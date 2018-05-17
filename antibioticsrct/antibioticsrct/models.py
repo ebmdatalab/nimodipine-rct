@@ -31,6 +31,9 @@ class InterventionContact(models.Model):
     # "Did the message we sent give you new information about prescribing?"
     survey_response = models.NullBooleanField(default=None)
 
+    def __str__(self):
+        return "{} ({})".format(self.name, self.practice_id)
+
     @property
     def cased_name(self):
         return nhs_titlecase(self.name)
@@ -81,7 +84,7 @@ class Intervention(models.Model):
         ordering = ['created_date', 'intervention', 'method', 'wave', 'practice_id']
 
     def __str__(self):
-        # Wondering hat get_method_display is? See
+        # Wondering what get_method_display is? See
         # https://docs.djangoproject.com/en/2.0/ref/models/instances/#django.db.models.Model.get_FOO_display
         if self.method == 'e':
             recipient = self.contact.email
@@ -89,11 +92,13 @@ class Intervention(models.Model):
             recipient = self.contact.fax
         else:
             recipient = self.contact.name
-        return "wave {}, intervention {}, method {}, to {}".format(
+        return "wave {}, intervention {}, method {}, to {} ({})".format(
             self.wave,
             self.intervention,
             self.get_method_display().lower(),
-            recipient)
+            self.practice_id,
+            "contactable" if self.contactable() else "uncontactable"
+        )
 
     def contactable(self):
         if self.method == 'p':
@@ -170,6 +175,9 @@ class MailLog(models.Model):
     class Meta:
         db_table = 'frontend_maillog'
         managed = False
+
+    def __str__(self):
+        return "{}: <{}> {}".format(self.timestampe, self.recipient, self.event_type)
 
 
 measure_data = {}
