@@ -1,0 +1,29 @@
+language: python
+python:
+- '3.5'
+addons:
+  postgresql: "9.6"
+env:
+  global:
+    - DB_NAME=openprescribing
+    - DB_USER=postgres
+    - DB_PASS=
+    - DB_HOST=localhost
+    - SECRET_KEY=xxx
+    - GOOGLE_APPLICATION_CREDENTIALS=/home/travis/build/ebmdatalab/antibiotics-rct/antibioticsrct/google-credentials.json
+    - MAILGUN_API_KEY=xxx
+    - MAILGUN_SENDER_DOMAIN=openprescribing.net
+    - INTERFAX_USER=embdatalab
+    - INTERFAX_PASS=xxx
+install:
+- pip install -r antibioticsrct/requirements.txt
+before_script:
+- psql -c 'create database openprescribing_test;' -U postgres
+script:
+- cd antibioticsrct && python manage.py test
+notifications:
+  email:
+  - tech@ebmdatalab.net
+before_install:
+- openssl aes-256-cbc -K $encrypted_007dbf2932e9_key -iv $encrypted_007dbf2932e9_iv
+  -in antibioticsrct/google-credentials.json.enc -out antibioticsrct/google-credentials.json -d
