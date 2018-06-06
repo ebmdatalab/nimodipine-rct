@@ -15,9 +15,8 @@ Intervention `A` varies the content of the email on each wave. `B` is
 the same on each wave, but with fresh data each time. Examples are
 given in the "intervention" PDFs found in the protocol folder.
 
-
 Practices will receive three waves of communications over three
-months.
+months, on 2018-05-07, 2018-06-11, and 2018-07-16.
 
 All recipients will receive an email, a letter, and a fax.  The
 message they receive will include a link which is coded to include
