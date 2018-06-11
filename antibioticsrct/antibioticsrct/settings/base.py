@@ -106,7 +106,7 @@ WSGI_APPLICATION = 'antibioticsrct.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'ENGINE': 'django.db.backends.postgresql',
         'NAME': utils.get_env_setting('DB_NAME'),
         'USER': utils.get_env_setting('DB_USER'),
         'PASSWORD': utils.get_env_setting('DB_PASS'),
