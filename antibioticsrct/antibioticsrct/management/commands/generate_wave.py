@@ -179,8 +179,8 @@ class Command(BaseCommand):
                 intervention.save()
                 saved += 1
             elif intervention.method == 'f' and not_empty(contact.normalised_fax):  # fax
-                base = intervention.message_dir()
-                logger.info("Creating fax at {} via URL {}".format(base, message_url))
+                destination = intervention.message_path()
+                logger.info("Creating fax at {} via URL {}".format(destination, message_url))
                 capture_html(message_url, destination)
                 intervention.generated = True
                 intervention.save()

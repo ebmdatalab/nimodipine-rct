@@ -164,7 +164,7 @@ class Intervention(models.Model):
             if os.path.exists(self.message_path()):
                 return True
             else:
-                raise StandardError(
+                raise Exception(
                     "Intervention {} supposedly generated "
                     "but no file at {}".format(
                         self,
