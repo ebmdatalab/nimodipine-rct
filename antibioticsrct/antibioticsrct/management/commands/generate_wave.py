@@ -120,11 +120,11 @@ def count_expected(wave):
             generated_count += 1
         else:
             not_generated.append(intervention)
-        print("{}% of wave {} generated".format(
-            (generated_count/this_wave.count()) * 100, wave))
-        if this_wave.count() < generated_count:
-            print("Missing:")
-            print(not_generated)
+    print("{}% of wave {} generated".format(
+        (generated_count/this_wave.count()) * 100, wave))
+    if this_wave.count() < generated_count:
+        print("Missing:")
+        print(not_generated)
 
 
 class Command(BaseCommand):
