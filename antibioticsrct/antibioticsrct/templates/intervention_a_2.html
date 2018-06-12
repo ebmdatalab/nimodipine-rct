@@ -19,7 +19,7 @@
 
   As a reminder, here is how
   <span class="your-practice">{{practice_name }}</span> compares
-  to <span class="other-practice">other practices</span> for broad
+  to <span class="other-practices">other practices</span> for broad
   spectrum antibiotic prescriptions such as co-amoxiclav,
   cephalosporins and quinolones as % of all antibiotics:
 
@@ -42,6 +42,6 @@ other practices at {{ intervention_url }}</p>
   of Oxford to make national prescribing data more useful to
   GPs.</p>
 
-{% include '_footer.html' %}
+{% include '_footer.html' with is_a2="yes" %}
 
 {% endblock %}
