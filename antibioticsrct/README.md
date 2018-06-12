@@ -47,7 +47,9 @@ Once at the start of each wave (as soon as possible following a
 monthly import to OpenPrescribing), create all the letters for that
 wave:
 
-    python manage.py generate_wave --wave=1
+    python manage.py generate_wave --wave=1 --method=p
+    python manage.py generate_wave --wave=1 --method=f
+    python manage.py generate_wave --wave=1 --method=e
 
 When a wave has been generated, archive it in github. On `largeweb2` it's in `/mnt/database/antibiotics-rct-data/` -- you can just do a `git commit -am "wave <n> letters" && git push`
 
