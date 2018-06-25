@@ -106,7 +106,8 @@ def intervention_message(request, intervention_id):
     else:
         template = "intervention_a_{}.html".format(intervention.wave)
         if intervention.wave == '3':
-            md = intervention.metadata
+            md = intervention.metadata  # generated in the generate_wave command
+            context['lp_focus_url'] = intervention.get_lp_focus_url()
             if md['total_savings']:
                 context['total_savings'] = round(md['total_savings'])
             if md['cost_savings']:
