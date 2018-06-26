@@ -10,10 +10,10 @@
 
 WITH savings AS (
 
-SELECT p.practice_id AS practice, s.measure AS measure, s.cost_savings, s.spend, SUM(s.cost_savings) OVER (PARTITION BY p.practice_id) AS total_savings,
+SELECT p.practice_id, s.measure AS cost_measure, s.cost_savings, s.spend, SUM(s.cost_savings) OVER (PARTITION BY p.practice_id) AS total_savings,
 ROW_NUMBER() OVER (PARTITION BY p.practice_id ORDER BY s.cost_savings DESC) AS savings_rank -- use row number so there will only be a single row per practice numbered "1"
 
-FROM tmp_eu.{allocation_table} p
+FROM ebmdatalab.helen.practice_allocations_final p
 
 LEFT JOIN
 (SELECT 'ace' as measure, practice_id, AVG(percentile) AS avg_percentile, SUM(numerator) as numerator, SUM(denominator) AS denominator, SUM(cost_savings_10) AS cost_savings, SUM(COALESCE(num_cost,0)) AS spend FROM `ebmdatalab.measures.practice_data_ace`
@@ -65,7 +65,7 @@ GROUP BY practice_id)
 SELECT s.*, lp.numerator AS lp_spend, lp.calc_value/1000 AS lp_cost_per_person, prac.total_list_size,
 s.cost_savings/prac.total_list_size AS measures_savings_per_person, total_savings/prac.total_list_size AS total_savings_per_person,
 CASE WHEN  s.total_savings/prac.total_list_size > 0.05 AND total_savings > 250  THEN s.cost_measure
-ELSE "low-priority" END AS selected_measure,
+ELSE "low-priority" END AS measure,
 CASE WHEN  s.total_savings/prac.total_list_size > 0.05 AND total_savings > 250  THEN "cost_measure"
 ELSE "low-priority" END AS selected_measure_type
 FROM savings s
