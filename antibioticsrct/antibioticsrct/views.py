@@ -5,6 +5,7 @@ import re
 import tempfile
 
 from django.conf import settings
+from django.db.models import Sum
 from django.http import HttpResponse
 from django.http import Http404
 from django.shortcuts import get_object_or_404
@@ -75,7 +76,8 @@ def measure_redirect(request, code, practice_id):
     else:
         intervention.hits += 1
         intervention.save()
-        if intervention.hits == 1:
+        if intervention.contact.intervention_set.aggregate(
+                Sum('hits'))['hits__sum'] == 1:
             return render(request, 'questionnaire.html')
     return redirect(intervention.get_target_url())
 

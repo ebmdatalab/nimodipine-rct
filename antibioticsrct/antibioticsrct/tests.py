@@ -65,7 +65,7 @@ class ViewTestCase(TestCase):
     fixtures = ['intervention_contacts', 'interventions']
     def test_target_url_questionnaire(self):
         client = Client()
-        response = client.get('/a/A83050')
+        response = client.get('/a/A81025')
         self.assertTemplateUsed(response, 'questionnaire.html')
 
     def test_target_url_questionnaire_post(self):
@@ -85,6 +85,14 @@ class ViewTestCase(TestCase):
                     '#ktt9_antibiotics'.format(settings.OP_HOST))
         client = Client()
         response = client.get('/b/A83050')
+        self.assertRedirects(response, expected, fetch_redirect_response=False)
+
+    def test_target_url_redirect_when_already_visited_in_other_wave(self):
+        expected = ('{}/practice/A83050/'
+                    '?utm_source=rct1&utm_campaign=wave1&utm_medium=email'
+                    '#ktt9_antibiotics'.format(settings.OP_HOST))
+        client = Client()
+        response = client.get('/a/A83050')
         self.assertRedirects(response, expected, fetch_redirect_response=False)
 
     def test_click_count(self):
