@@ -106,8 +106,12 @@ class Intervention(models.Model):
             return True
         return not_empty(self.contact.email)
 
-    def get_absolute_url(self):
-        return reverse('views.intervention', args=[encode(self.method, self.wave), self.practice_id])
+    def get_absolute_url(self, lp_focus=False):
+        if lp_focus:
+            view = 'views.intervention_lowpriority'
+        else:
+            view = 'views.intervention'
+        return reverse(view, args=[encode(self.method, self.wave), self.practice_id])
 
     def get_target_url(self, lp_focus=False):
         # add Google Analytics tracking
