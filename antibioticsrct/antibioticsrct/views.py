@@ -76,7 +76,8 @@ def measure_redirect(request, code, practice_id, lp_focus=False):
         intervention.hits += 1
         intervention.save()
         if intervention.hits == 1:
-            return render(request, 'questionnaire.html')
+            return render(
+                request, 'questionnaire.html', {'lp_focus': lp_focus})
     if lp_focus:
         # A special URL that drills down to the individual "low
         # priority" measures
