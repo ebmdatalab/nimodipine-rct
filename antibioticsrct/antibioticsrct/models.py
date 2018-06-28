@@ -106,14 +106,20 @@ class Intervention(models.Model):
             return True
         return not_empty(self.contact.email)
 
-    def get_absolute_url(self):
-        return reverse('views.intervention', args=[encode(self.method, self.wave), self.practice_id])
+    def get_absolute_url(self, lp_focus=False):
+        if lp_focus:
+            view = 'views.intervention_lowpriority'
+        else:
+            view = 'views.intervention'
+        return reverse(view, args=[encode(self.method, self.wave), self.practice_id])
 
-    def get_target_url(self):
+    def get_target_url(self, lp_focus=False):
         # add Google Analytics tracking
         querystring = "utm_source=rct1&utm_campaign=wave{}&utm_medium={}".format(
             self.wave,
             self.get_method_display().lower())
+        if lp_focus:
+            querystring += '&tags=lowpriority'
         target_url = "{}/practice/{}/?{}".format(
             settings.OP_HOST,
             self.practice_id,
@@ -124,6 +130,9 @@ class Intervention(models.Model):
             # https://github.com/ebmdatalab/antibiotics-rct/issues/1#issuecomment-381990733
             target_url += '#' + self.measure_id
         return target_url
+
+    def get_lp_focus_url(self):
+        return self.get_target_url(lp_focus=True)
 
     def mail_logs(self):
         return MailLog.objects.filter(

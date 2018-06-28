@@ -79,7 +79,9 @@ class GenerateImageTestCase(SimpleTestCase):
             if e.errno != errno.ENOENT:
                 raise
 
-    def test_image_generated(self):
+    def xxx_test_image_generated(self):
+        """Not currently running this due to issue #77
+        """
         with self.settings(GRAB_HOST='http://localhost'):
             encoded_image = utils.grab_image(
                 self.url, self.file_path, self.selector)

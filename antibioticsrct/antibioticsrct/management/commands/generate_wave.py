@@ -166,8 +166,8 @@ class Command(BaseCommand):
                 continue
             contact = intervention.contact
             message_url = settings.URL_ROOT + reverse('views.intervention_message', args=[intervention.id])
+            destination = intervention.message_path()
             if intervention.method == 'e' and not_empty(contact.email):  # email
-                destination = intervention.message_path()
                 logger.info("Creating email at {} via URL {}".format(destination, message_url))
                 response = requests.get(message_url)
                 if response.status_code != requests.codes.ok:
@@ -179,7 +179,6 @@ class Command(BaseCommand):
                 intervention.save()
                 saved += 1
             elif intervention.method == 'f' and not_empty(contact.normalised_fax):  # fax
-                destination = intervention.message_path()
                 logger.info("Creating fax at {} via URL {}".format(destination, message_url))
                 capture_html(message_url, destination)
                 intervention.generated = True
