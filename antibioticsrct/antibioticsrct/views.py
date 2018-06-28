@@ -118,7 +118,7 @@ def intervention_message(request, intervention_id):
             md = intervention.metadata  # generated in the generate_wave command
             if md['total_savings']:
                 context['total_savings'] = round(md['total_savings'])
-            if md['lp_spend']:
+            if 'lp_spend' in md:
                 # We assume all spend on LP stuff can be stopped. This
                 # is an overestimate: Only 14 of them are "don't use"
                 # recommendations and the others would require some
