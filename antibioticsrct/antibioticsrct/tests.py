@@ -69,15 +69,20 @@ class ViewTestCase(TestCase):
         self.assertTemplateUsed(response, 'questionnaire.html')
 
     def test_target_url_questionnaire_post(self):
-        expected = ('{}/practice/A83050/'
+        """Check that when we fill out a questionnaire for an intervention for
+        a practice which has never previously had any vists, we
+        redirect to the practice page.
+        """
+        expected = ('{}/practice/A81025/'
                     '?utm_source=rct1&utm_campaign=wave1&utm_medium=email'
                     '#ktt9_antibiotics'.format(settings.OP_HOST))
         client = Client()
-        response = client.post('/a/A83050', {'survey_response':'Yes'})
+        response = client.post('/a/A81025', {'survey_response':'Yes'})
         self.assertRedirects(response, expected, fetch_redirect_response=False)
-        intervention = Intervention.objects.get(practice_id='A83050', method='e', wave='1')
+        intervention = Intervention.objects.get(practice_id='A81025', method='e', wave='1')
         self.assertTrue(intervention.contact.survey_response)
-        self.assertEquals(intervention.hits, 0)  # don't increment the counter on POSTs
+        # don't increment the counter on POSTs
+        self.assertEquals(intervention.hits, 0)
 
     def test_target_url_redirect_when_already_visited(self):
         """This is a request for an intervention in wave *2*.  In the
