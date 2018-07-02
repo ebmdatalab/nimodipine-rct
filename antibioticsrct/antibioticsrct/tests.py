@@ -65,7 +65,7 @@ class ViewTestCase(TestCase):
     fixtures = ['intervention_contacts', 'interventions']
     def test_target_url_questionnaire(self):
         client = Client()
-        response = client.get('/a/A81025')
+        response = client.get('/a/A81025')  # No questionnaire hits in any wave
         self.assertTemplateUsed(response, 'questionnaire.html')
 
     def test_target_url_questionnaire_post(self):
@@ -80,6 +80,11 @@ class ViewTestCase(TestCase):
         self.assertEquals(intervention.hits, 0)  # don't increment the counter on POSTs
 
     def test_target_url_redirect_when_already_visited(self):
+        """This is a request for an intervention in wave *2*.  In the
+        fixtures, this wave is associated with someone having
+        previously visited the questionnaire page."
+
+        """
         expected = ('{}/practice/A83050/'
                     '?utm_source=rct1&utm_campaign=wave2&utm_medium=email'
                     '#ktt9_antibiotics'.format(settings.OP_HOST))
@@ -88,6 +93,11 @@ class ViewTestCase(TestCase):
         self.assertRedirects(response, expected, fetch_redirect_response=False)
 
     def test_target_url_redirect_when_already_visited_in_other_wave(self):
+        """This is a request for an intervention in wave *1*.  In the
+        fixtures, wave *2* is associated with someone having
+        previously visited the questionnaire page."
+
+        """
         expected = ('{}/practice/A83050/'
                     '?utm_source=rct1&utm_campaign=wave1&utm_medium=email'
                     '#ktt9_antibiotics'.format(settings.OP_HOST))
