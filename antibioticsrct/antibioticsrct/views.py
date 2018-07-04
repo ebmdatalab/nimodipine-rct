@@ -75,7 +75,7 @@ def measure_redirect(request, code, practice_id, lp_focus=False):
     else:
         intervention.hits += 1
         intervention.save()
-        if intervention.hits == 1:
+        if intervention.contact.total_hits() == 1:
             return render(
                 request, 'questionnaire.html', {'lp_focus': lp_focus})
     if lp_focus:

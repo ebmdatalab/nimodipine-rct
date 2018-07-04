@@ -7,6 +7,7 @@ from django.conf import settings
 from django.contrib.postgres.fields import ArrayField
 from django.contrib.postgres.fields import JSONField
 from django.db import models
+from django.db.models import Sum
 from django.urls import reverse
 
 from anymail.signals import EventType
@@ -37,6 +38,9 @@ class InterventionContact(models.Model):
     @property
     def cased_name(self):
         return nhs_titlecase(self.name)
+
+    def total_hits(self):
+        return self.intervention_set.aggregate(Sum('hits'))['hits__sum']
 
     def save(self, *args, **kwargs):
         fax_number = re.sub(r"[^0-9]", "", self.fax)

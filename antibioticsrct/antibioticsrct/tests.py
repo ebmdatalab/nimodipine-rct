@@ -65,26 +65,49 @@ class ViewTestCase(TestCase):
     fixtures = ['intervention_contacts', 'interventions']
     def test_target_url_questionnaire(self):
         client = Client()
-        response = client.get('/a/A83050')
+        response = client.get('/a/A81025')  # No questionnaire hits in any wave
         self.assertTemplateUsed(response, 'questionnaire.html')
 
     def test_target_url_questionnaire_post(self):
-        expected = ('{}/practice/A83050/'
+        """Check that when we fill out a questionnaire for an intervention for
+        a practice which has never previously had any vists, we
+        redirect to the practice page.
+        """
+        expected = ('{}/practice/A81025/'
                     '?utm_source=rct1&utm_campaign=wave1&utm_medium=email'
                     '#ktt9_antibiotics'.format(settings.OP_HOST))
         client = Client()
-        response = client.post('/a/A83050', {'survey_response':'Yes'})
+        response = client.post('/a/A81025', {'survey_response':'Yes'})
         self.assertRedirects(response, expected, fetch_redirect_response=False)
-        intervention = Intervention.objects.get(practice_id='A83050', method='e', wave='1')
+        intervention = Intervention.objects.get(practice_id='A81025', method='e', wave='1')
         self.assertTrue(intervention.contact.survey_response)
-        self.assertEquals(intervention.hits, 0)  # don't increment the counter on POSTs
+        # don't increment the counter on POSTs
+        self.assertEquals(intervention.hits, 0)
 
     def test_target_url_redirect_when_already_visited(self):
+        """This is a request for an intervention in wave *2*.  In the
+        fixtures, this wave is associated with someone having
+        previously visited the questionnaire page."
+
+        """
         expected = ('{}/practice/A83050/'
                     '?utm_source=rct1&utm_campaign=wave2&utm_medium=email'
                     '#ktt9_antibiotics'.format(settings.OP_HOST))
         client = Client()
         response = client.get('/b/A83050')
+        self.assertRedirects(response, expected, fetch_redirect_response=False)
+
+    def test_target_url_redirect_when_already_visited_in_other_wave(self):
+        """This is a request for an intervention in wave *1*.  In the
+        fixtures, wave *2* is associated with someone having
+        previously visited the questionnaire page."
+
+        """
+        expected = ('{}/practice/A83050/'
+                    '?utm_source=rct1&utm_campaign=wave1&utm_medium=email'
+                    '#ktt9_antibiotics'.format(settings.OP_HOST))
+        client = Client()
+        response = client.get('/a/A83050')
         self.assertRedirects(response, expected, fetch_redirect_response=False)
 
     def test_click_count(self):
