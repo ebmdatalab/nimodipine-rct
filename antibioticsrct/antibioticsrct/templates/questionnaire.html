@@ -18,6 +18,9 @@
           <p><b>Did the message we sent give you new information about
             your prescribing?</b>
           </p>
+          {% if lp_focus %}
+            <input type="hidden" name="lp_focus" value="1">
+          {% endif %}
           <input type="submit" name="survey_response" value="Yes" class="btn btn-default">
           <input type="submit" name="survey_response" value="No" class="btn btn-default">
         </form>

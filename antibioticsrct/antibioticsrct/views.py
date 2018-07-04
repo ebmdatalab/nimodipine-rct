@@ -60,7 +60,7 @@ def fax_receipt(request):
         return HttpResponse('OK')
 
 
-def measure_redirect(request, code, practice_id):
+def measure_redirect(request, code, practice_id, lp_focus=False):
     method, wave = decode(code)
     intervention = Intervention.objects.get(
         method=method, wave=wave, practice_id=practice_id)
@@ -76,7 +76,12 @@ def measure_redirect(request, code, practice_id):
         intervention.hits += 1
         intervention.save()
         if intervention.contact.total_hits() == 1:
-            return render(request, 'questionnaire.html')
+            return render(
+                request, 'questionnaire.html', {'lp_focus': lp_focus})
+    if lp_focus:
+        # A special URL that drills down to the individual "low
+        # priority" measures
+        return redirect(intervention.get_target_url(lp_focus=True))
     return redirect(intervention.get_target_url())
 
 
@@ -106,15 +111,29 @@ def intervention_message(request, intervention_id):
     else:
         template = "intervention_a_{}.html".format(intervention.wave)
         if intervention.wave == '3':
-            md = intervention.metadata
+            lp_focus_url = "op2.org.uk{}".format(
+                intervention.get_absolute_url(lp_focus=True))
+            lp_focus_url = '<a href="http://{}">{}</a>'.format(
+                lp_focus_url, lp_focus_url)
+            context['lp_focus_url'] = SafeText(lp_focus_url)
+            md = intervention.metadata  # generated in the generate_wave command
             if md['total_savings']:
                 context['total_savings'] = round(md['total_savings'])
+            if 'lp_spend' in md:
+                # We assume all spend on LP stuff can be stopped. This
+                # is an overestimate: Only 14 of them are "don't use"
+                # recommendations and the others would require some
+                # kind of switch.
+                context['cost_savings'] = round(md['lp_spend'])
             if md['cost_savings']:
                 context['cost_savings'] = round(md['cost_savings'])
             context['measure_comparison'] = get_measure_comparison(intervention.measure_id, context)
     with tempfile.NamedTemporaryFile(suffix='.png') as chart_file:
         url = "/practice/{}/".format(intervention.practice_id)
-        selector = '#' + intervention.measure_id
+        if intervention.measure_id == 'low-priority':
+            selector = '#' + 'lpzomnibus'
+        else:
+            selector = '#' + intervention.measure_id
         encoded_image = grab_image(url, chart_file.name, selector)
     with open(os.path.join(settings.BASE_DIR, 'antibioticsrct', 'static', 'header.png'), 'rb') as img:
         header_image = base64.b64encode(img.read()).decode('ascii')

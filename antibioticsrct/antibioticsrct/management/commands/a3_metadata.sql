@@ -1,504 +1,77 @@
 -- Allocation SQL designed by RCT author - see discussion here
--- https://github.com/ebmdatalab/antibiotics-rct/issues/6
+-- https://github.com/ebmdatalab/antibiotics-rct/issues/6 and later
+-- rethinking here
+-- https://github.com/ebmdatalab/antibiotics-rct/issues/23
 
 -- Find the measure, measure savings, and total savings for each
 -- practice in a sample table of practices, compared to 10th centile,
 -- for all of the measures where we have calculated potential savings.
 -- The date range is hard coded for the third intervention, Nov-April.
-WITH
-  savings AS (
-  SELECT
-    practice,
-    measure,
-    cost_savings,
-    spend,
-    SUM(cost_savings) OVER (PARTITION BY practice) AS total_savings,
-    ROW_NUMBER() OVER (PARTITION BY practice ORDER BY cost_savings DESC) AS savings_rank -- use row number so there will only be a single row per practice numbered "1"
-  FROM
-    tmp_eu.{allocation_table} p
-  LEFT JOIN (
-    SELECT
-      'ace' AS measure,
-      practice_id,
-      AVG(percentile) AS avg_percentile,
-      SUM(numerator) AS numerator,
-      SUM(denominator) AS denominator,
-      SUM(cost_savings_10) AS cost_savings,
-      SUM(COALESCE(num_cost,
-          0)) AS spend
-    FROM
-      `ebmdatalab.measures.practice_data_ace`
-    WHERE
-      month BETWEEN '2017-11-01'
-      AND '2018-04-01'
-    GROUP BY
-      practice_id
-    UNION ALL
-    SELECT
-      'arb' AS measure,
-      practice_id,
-      AVG(percentile) AS avg_percentile,
-      SUM(numerator) AS numerator,
-      SUM(denominator) AS denominator,
-      SUM(cost_savings_10) AS cost_savings,
-      SUM(COALESCE(num_cost,
-          0)) AS spend
-    FROM
-      `ebmdatalab.measures.practice_data_arb`
-    WHERE
-      month BETWEEN '2017-11-01'
-      AND '2018-04-01'
-    GROUP BY
-      practice_id
-    UNION ALL
-    SELECT
-      'quetiapine' AS measure,
-      practice_id,
-      AVG(percentile) AS avg_percentile,
-      SUM(numerator) AS numerator,
-      SUM(denominator) AS denominator,
-      SUM(cost_savings_10) AS cost_savings,
-      SUM(COALESCE(num_cost,
-          0)) AS spend
-    FROM
-      `ebmdatalab.measures.practice_data_quetiapine`
-    WHERE
-      month BETWEEN '2017-11-01'
-      AND '2018-04-01'
-    GROUP BY
-      practice_id
-    UNION ALL
-    SELECT
-      'keppra' AS measure,
-      practice_id,
-      AVG(percentile) AS avg_percentile,
-      SUM(numerator) AS numerator,
-      SUM(denominator) AS denominator,
-      SUM(cost_savings_10) AS cost_savings,
-      SUM(COALESCE(num_cost,
-          0)) AS spend
-    FROM
-      `ebmdatalab.measures.practice_data_keppra`
-    WHERE
-      month BETWEEN '2017-11-01'
-      AND '2018-04-01'
-    GROUP BY
-      practice_id
-    UNION ALL
-    SELECT
-      'desogestrel' AS measure,
-      practice_id,
-      AVG(percentile) AS avg_percentile,
-      SUM(numerator) AS numerator,
-      SUM(denominator) AS denominator,
-      SUM(cost_savings_10) AS cost_savings,
-      SUM(COALESCE(num_cost,
-          0)) AS spend
-    FROM
-      `ebmdatalab.measures.practice_data_desogestrel`
-    WHERE
-      month BETWEEN '2017-11-01'
-      AND '2018-04-01'
-    GROUP BY
-      practice_id
-    UNION ALL
-    SELECT
-      'ppi' AS measure,
-      practice_id,
-      AVG(percentile) AS avg_percentile,
-      SUM(numerator) AS numerator,
-      SUM(denominator) AS denominator,
-      SUM(cost_savings_10) AS cost_savings,
-      SUM(COALESCE(num_cost,
-          0)) AS spend
-    FROM
-      `ebmdatalab.measures.practice_data_ppi`
-    WHERE
-      month BETWEEN '2017-11-01'
-      AND '2018-04-01'
-    GROUP BY
-      practice_id
-      --UNION ALL
-      --SELECT  'statins' as measure, practice_id, AVG(percentile) AS avg_percentile, SUM(numerator) as numerator, SUM(denominator) AS denominator, SUM(cost_savings_10) AS cost_savings, SUM(COALESCE(num_cost,0)) AS spend FROM `ebmdatalab.measures.practice_data_statins`
-      --WHERE month BETWEEN '2017-11-01' AND '2018-04-01'
-      --GROUP BY practice_id
-    UNION ALL
-    SELECT
-      'lyrica' AS measure,
-      practice_id,
-      AVG(percentile) AS avg_percentile,
-      SUM(numerator) AS numerator,
-      SUM(denominator) AS denominator,
-      SUM(cost_savings_10) AS cost_savings,
-      SUM(COALESCE(num_cost,
-          0)) AS spend
-    FROM
-      `ebmdatalab.measures.practice_data_lyrica`
-    WHERE
-      month BETWEEN '2017-11-01'
-      AND '2018-04-01'
-    GROUP BY
-      practice_id) s
-  ON
-    p.practice = s.practice_id
-    AND cost_savings > 300 ),
-  -- non-cost measures ----------------------------------------------------------------------------
-  measures AS (
-  SELECT
-    p.practice,
-    m.measure AS non_cost_measure,
-    m.avg_percentile,
-    m.numerator,
-    m.denominator,
-    m.measure,
-    ROW_NUMBER() OVER (PARTITION BY p.practice ORDER BY m.avg_percentile DESC) AS percentile_rank
-  FROM
-    tmp_eu.{allocation_table} p
-  LEFT JOIN (
-    SELECT
-      'ciclosporin' AS measure,
-      practice_id,
-      AVG(percentile) AS avg_percentile,
-      SUM(numerator) AS numerator,
-      SUM(denominator) AS denominator
-    FROM
-      `ebmdatalab.measures.practice_data_ciclosporin`
-    WHERE
-      month BETWEEN '2017-11-01'
-      AND '2018-04-01'
-    GROUP BY
-      practice_id
-    UNION ALL
-    SELECT
-      'coproxamol' AS measure,
-      practice_id,
-      AVG(percentile) AS avg_percentile,
-      SUM(numerator) AS numerator,
-      SUM(denominator) AS denominator
-    FROM
-      `ebmdatalab.measures.practice_data_coproxamol`
-    WHERE
-      month BETWEEN '2017-11-01'
-      AND '2018-04-01'
-    GROUP BY
-      practice_id
-    UNION ALL
-    SELECT
-      'desogestrel' AS measure,
-      practice_id,
-      AVG(percentile) AS avg_percentile,
-      SUM(numerator) AS numerator,
-      SUM(denominator) AS denominator
-    FROM
-      `ebmdatalab.measures.practice_data_desogestrel`
-    WHERE
-      month BETWEEN '2017-11-01'
-      AND '2018-04-01'
-    GROUP BY
-      practice_id
-    UNION ALL
-    SELECT
-      'diltiazem' AS measure,
-      practice_id,
-      AVG(percentile) AS avg_percentile,
-      SUM(numerator) AS numerator,
-      SUM(denominator) AS denominator
-    FROM
-      `ebmdatalab.measures.practice_data_diltiazem`
-    WHERE
-      month BETWEEN '2017-11-01'
-      AND '2018-04-01'
-    GROUP BY
-      practice_id
-    UNION ALL
-    SELECT
-      'dipyridamole' AS measure,
-      practice_id,
-      AVG(percentile) AS avg_percentile,
-      SUM(numerator) AS numerator,
-      SUM(denominator) AS denominator
-    FROM
-      `ebmdatalab.measures.practice_data_dipyridamole`
-    WHERE
-      month BETWEEN '2017-11-01'
-      AND '2018-04-01'
-    GROUP BY
-      practice_id
-    UNION ALL
-    SELECT
-      'fungal' AS measure,
-      practice_id,
-      AVG(percentile) AS avg_percentile,
-      SUM(numerator) AS numerator,
-      SUM(denominator) AS denominator
-    FROM
-      `ebmdatalab.measures.practice_data_fungal`
-    WHERE
-      month BETWEEN '2017-11-01'
-      AND '2018-04-01'
-    GROUP BY
-      practice_id
-    UNION ALL
-    SELECT
-      'glaucoma' AS measure,
-      practice_id,
-      AVG(percentile) AS avg_percentile,
-      SUM(numerator) AS numerator,
-      SUM(denominator) AS denominator
-    FROM
-      `ebmdatalab.measures.practice_data_glaucoma`
-    WHERE
-      month BETWEEN '2017-11-01'
-      AND '2018-04-01'
-    GROUP BY
-      practice_id
-    UNION ALL
-    SELECT
-      'icsdose' AS measure,
-      practice_id,
-      AVG(percentile) AS avg_percentile,
-      SUM(numerator) AS numerator,
-      SUM(denominator) AS denominator
-    FROM
-      `ebmdatalab.measures.practice_data_icsdose`
-    WHERE
-      month BETWEEN '2017-11-01'
-      AND '2018-04-01'
-    GROUP BY
-      practice_id
-    UNION ALL
-    SELECT
-      'ktt12_diabetes_insulin' AS measure,
-      practice_id,
-      AVG(percentile) AS avg_percentile,
-      SUM(numerator) AS numerator,
-      SUM(denominator) AS denominator
-    FROM
-      `ebmdatalab.measures.practice_data_ktt12_diabetes_insulin`
-    WHERE
-      month BETWEEN '2017-11-01'
-      AND '2018-04-01'
-    GROUP BY
-      practice_id
-    UNION ALL
-    SELECT
-      'ktt13_nsaids_ibuprofen' AS measure,
-      practice_id,
-      AVG(percentile) AS avg_percentile,
-      SUM(numerator) AS numerator,
-      SUM(denominator) AS denominator
-    FROM
-      `ebmdatalab.measures.practice_data_ktt13_nsaids_ibuprofen`
-    WHERE
-      month BETWEEN '2017-11-01'
-      AND '2018-04-01'
-    GROUP BY
-      practice_id
-    UNION ALL
-    SELECT
-      'lipid_modifying_drugs' AS measure,
-      practice_id,
-      AVG(percentile) AS avg_percentile,
-      SUM(numerator) AS numerator,
-      SUM(denominator) AS denominator
-    FROM
-      `ebmdatalab.measures.practice_data_ktt3_lipid_modifying_drugs`
-    WHERE
-      month BETWEEN '2017-11-01'
-      AND '2018-04-01'
-    GROUP BY
-      practice_id
-    UNION ALL
-    SELECT
-      'methotrexate' AS measure,
-      practice_id,
-      AVG(percentile) AS avg_percentile,
-      SUM(numerator) AS numerator,
-      SUM(denominator) AS denominator
-    FROM
-      `ebmdatalab.measures.practice_data_methotrexate`
-    WHERE
-      month BETWEEN '2017-11-01'
-      AND '2018-04-01'
-    GROUP BY
-      practice_id
-    UNION ALL
-    SELECT
-      'nebivolol' AS measure,
-      practice_id,
-      AVG(percentile) AS avg_percentile,
-      SUM(numerator) AS numerator,
-      SUM(denominator) AS denominator
-    FROM
-      `ebmdatalab.measures.practice_data_nebivolol`
-    WHERE
-      month BETWEEN '2017-11-01'
-      AND '2018-04-01'
-    GROUP BY
-      practice_id
-    UNION ALL
-    SELECT
-      'opioidome' AS measure,
-      practice_id,
-      AVG(percentile) AS avg_percentile,
-      SUM(numerator) AS numerator,
-      SUM(denominator) AS denominator
-    FROM
-      `ebmdatalab.measures.practice_data_opioidome`
-    WHERE
-      month BETWEEN '2017-11-01'
-      AND '2018-04-01'
-    GROUP BY
-      practice_id
-    UNION ALL
-    SELECT
-      'opioidper1000' AS measure,
-      practice_id,
-      AVG(percentile) AS avg_percentile,
-      SUM(numerator) AS numerator,
-      SUM(denominator) AS denominator
-    FROM
-      `ebmdatalab.measures.practice_data_opioidper1000`
-    WHERE
-      month BETWEEN '2017-11-01'
-      AND '2018-04-01'
-    GROUP BY
-      practice_id
-    UNION ALL
-    SELECT
-      'opioidspercent' AS measure,
-      practice_id,
-      AVG(percentile) AS avg_percentile,
-      SUM(numerator) AS numerator,
-      SUM(denominator) AS denominator
-    FROM
-      `ebmdatalab.measures.practice_data_opioidspercent`
-    WHERE
-      month BETWEEN '2017-11-01'
-      AND '2018-04-01'
-    GROUP BY
-      practice_id
-    UNION ALL
-    SELECT
-      'ppidose' AS measure,
-      practice_id,
-      AVG(percentile) AS avg_percentile,
-      SUM(numerator) AS numerator,
-      SUM(denominator) AS denominator
-    FROM
-      `ebmdatalab.measures.practice_data_ppidose`
-    WHERE
-      month BETWEEN '2017-11-01'
-      AND '2018-04-01'
-    GROUP BY
-      practice_id
-    UNION ALL
-    SELECT
-      'saba' AS measure,
-      practice_id,
-      AVG(percentile) AS avg_percentile,
-      SUM(numerator) AS numerator,
-      SUM(denominator) AS denominator
-    FROM
-      `ebmdatalab.measures.practice_data_saba`
-    WHERE
-      month BETWEEN '2017-11-01'
-      AND '2018-04-01'
-    GROUP BY
-      practice_id
-    UNION ALL
-    SELECT
-      'silver' AS measure,
-      practice_id,
-      AVG(percentile) AS avg_percentile,
-      SUM(numerator) AS numerator,
-      SUM(denominator) AS denominator
-    FROM
-      `ebmdatalab.measures.practice_data_silver`
-    WHERE
-      month BETWEEN '2017-11-01'
-      AND '2018-04-01'
-    GROUP BY
-      practice_id
-    UNION ALL
-    SELECT
-      'solublepara' AS measure,
-      practice_id,
-      AVG(percentile) AS avg_percentile,
-      SUM(numerator) AS numerator,
-      SUM(denominator) AS denominator
-    FROM
-      `ebmdatalab.measures.practice_data_solublepara`
-    WHERE
-      month BETWEEN '2017-11-01'
-      AND '2018-04-01'
-    GROUP BY
-      practice_id
-    UNION ALL
-    SELECT
-      'statinintensity' AS measure,
-      practice_id,
-      AVG(percentile) AS avg_percentile,
-      SUM(numerator) AS numerator,
-      SUM(denominator) AS denominator
-    FROM
-      `ebmdatalab.measures.practice_data_statinintensity`
-    WHERE
-      month BETWEEN '2017-11-01'
-      AND '2018-04-01'
-    GROUP BY
-      practice_id
-    UNION ALL
-    SELECT
-      'tramadol' AS measure,
-      practice_id,
-      AVG(percentile) AS avg_percentile,
-      SUM(numerator) AS numerator,
-      SUM(denominator) AS denominator
-    FROM
-      `ebmdatalab.measures.practice_data_tramadol`
-    WHERE
-      month BETWEEN '2017-11-01'
-      AND '2018-04-01'
-    GROUP BY
-      practice_id
-    UNION ALL
-    SELECT
-      'vitb' AS measure,
-      practice_id,
-      AVG(percentile) AS avg_percentile,
-      SUM(numerator) AS numerator,
-      SUM(denominator) AS denominator
-    FROM
-      `ebmdatalab.measures.practice_data_vitb`
-    WHERE
-      month BETWEEN '2017-11-01'
-      AND '2018-04-01'
-    GROUP BY
-      practice_id ) m
-  ON
-    p.practice = m.practice_id
-  WHERE
-    numerator > 6 )
-SELECT
-  s.practice,
-  s.cost_savings,
-  s.spend,
-  s.total_savings,
-  COALESCE(s.measure,
-    m.non_cost_measure) AS measure,
-  m.numerator,
-  m.denominator,
-  m.avg_percentile
-FROM
-  savings s
+
+WITH savings AS (
+
+SELECT p.practice_id, s.measure AS cost_measure, s.cost_savings, s.spend, SUM(s.cost_savings) OVER (PARTITION BY p.practice_id) AS total_savings,
+ROW_NUMBER() OVER (PARTITION BY p.practice_id ORDER BY s.cost_savings DESC) AS savings_rank -- use row number so there will only be a single row per practice numbered "1"
+
+FROM ebmdatalab.helen.practice_allocations_final p
+
 LEFT JOIN
-  measures m
-ON
-  s.practice = m.practice
-  AND m.percentile_rank = 1
-WHERE
-  savings_rank =1
-ORDER BY
-  cost_savings,
-  non_cost_measure
+(SELECT 'ace' as measure, practice_id, AVG(percentile) AS avg_percentile, SUM(numerator) as numerator, SUM(denominator) AS denominator, SUM(cost_savings_10) AS cost_savings, SUM(COALESCE(num_cost,0)) AS spend FROM `ebmdatalab.measures.practice_data_ace`
+WHERE month BETWEEN '2017-11-01' AND '2018-04-01'
+GROUP BY practice_id
+
+UNION ALL
+SELECT  'arb' as measure, practice_id, AVG(percentile) AS avg_percentile, SUM(numerator) as numerator, SUM(denominator) AS denominator, SUM(cost_savings_10) AS cost_savings, SUM(COALESCE(num_cost,0)) AS spend FROM `ebmdatalab.measures.practice_data_arb`
+WHERE month BETWEEN '2017-11-01' AND '2018-04-01'
+GROUP BY practice_id
+
+UNION ALL
+SELECT  'quetiapine' as measure, practice_id, AVG(percentile) AS avg_percentile, SUM(numerator) as numerator, SUM(denominator) AS denominator, SUM(cost_savings_10) AS cost_savings, SUM(COALESCE(num_cost,0)) AS spend FROM `ebmdatalab.measures.practice_data_quetiapine`
+WHERE month BETWEEN '2017-11-01' AND '2018-04-01'
+GROUP BY practice_id
+
+UNION ALL
+SELECT  'keppra' as measure, practice_id, AVG(percentile) AS avg_percentile, SUM(numerator) as numerator, SUM(denominator) AS denominator, SUM(cost_savings_10) AS cost_savings, SUM(COALESCE(num_cost,0)) AS spend FROM `ebmdatalab.measures.practice_data_keppra`
+WHERE month BETWEEN '2017-11-01' AND '2018-04-01'
+GROUP BY practice_id
+
+UNION ALL
+SELECT  'desogestrel' as measure, practice_id, AVG(percentile) AS avg_percentile, SUM(numerator) as numerator, SUM(denominator) AS denominator, SUM(cost_savings_10) AS cost_savings, SUM(COALESCE(num_cost,0)) AS spend FROM `ebmdatalab.measures.practice_data_desogestrel`
+WHERE month BETWEEN '2017-11-01' AND '2018-04-01'
+GROUP BY practice_id
+
+UNION ALL
+SELECT  'ppi' as measure, practice_id, AVG(percentile) AS avg_percentile, SUM(numerator) as numerator, SUM(denominator) AS denominator, SUM(cost_savings_10) AS cost_savings, SUM(COALESCE(num_cost,0)) AS spend FROM `ebmdatalab.measures.practice_data_ppi`
+WHERE month BETWEEN '2017-11-01' AND '2018-04-01'
+GROUP BY practice_id
+
+
+UNION ALL
+SELECT  'lyrica' as measure, practice_id, AVG(percentile) AS avg_percentile, SUM(numerator) as numerator, SUM(denominator) AS denominator, SUM(cost_savings_10) AS cost_savings, SUM(COALESCE(num_cost,0)) AS spend FROM `ebmdatalab.measures.practice_data_lyrica`
+WHERE month BETWEEN '2017-11-01' AND '2018-04-01'
+GROUP BY practice_id) s
+ON p.practice_id = s.practice_id AND cost_savings > 50
+WHERE allocation="I" ),
+
+--- lp measures --------------------------------------------------------------------------------
+
+lp AS (
+SELECT  'low-priority' as measure, practice_id, AVG(percentile) AS avg_percentile, SUM(numerator) as numerator, SUM(denominator) AS denominator, AVG(calc_value) AS calc_value FROM `ebmdatalab.measures.practice_data_lpzomnibus`
+WHERE month BETWEEN '2017-11-01' AND '2018-04-01'
+GROUP BY practice_id)
+
+---------------------------------------------------------------------------
+
+SELECT s.*, lp.numerator AS lp_spend, lp.calc_value/1000 AS lp_cost_per_person, prac.total_list_size,
+s.cost_savings/prac.total_list_size AS measures_savings_per_person, total_savings/prac.total_list_size AS total_savings_per_person,
+CASE WHEN  s.total_savings/prac.total_list_size > 0.05 AND total_savings > 250  THEN s.cost_measure
+ELSE "low-priority" END AS measure,
+CASE WHEN  s.total_savings/prac.total_list_size > 0.05 AND total_savings > 250  THEN "cost_measure"
+ELSE "low-priority" END AS selected_measure_type
+FROM savings s
+LEFT JOIN lp ON s.practice_id = lp.practice_id
+LEFT JOIN `ebmdatalab.hscic.practice_statistics` prac ON s.practice_id = prac.practice AND CAST(prac.month AS DATE) =   '2018-01-01'
+WHERE savings_rank =1
+
+
+ORDER BY total_savings
