@@ -103,14 +103,10 @@ class Intervention(models.Model):
         # add Google Analytics tracking
         querystring = "utm_source=nimodipine&utm_medium={}".format(
             self.get_method_display().lower())
-        target_url = "{}/practice/{}/?{}".format(
+        target_url = "{}/measure/nimodipine/practice/{}/?{}".format(
             settings.OP_HOST,
             self.practice_id,
             querystring)
-        # Highlight the measure being talked about. XXX I think we
-        # should probably send them to the only-measure-on-the-page
-        # view
-        target_url += '#nimodipine'  # XXX
         return target_url
 
     def mail_logs(self):

@@ -73,7 +73,7 @@ class ViewTestCase(TestCase):
         a practice which has never previously had any vists, we
         redirect to the practice page.
         """
-        expected = ('{}/practice/A81025/'
+        expected = ('{}/measure/nimodipine/practice/A81025/'
                     '?utm_source=nimodipine&utm_medium=post'.format(settings.OP_HOST))
         client = Client()
         response = client.post('/p/A81025', {'survey_response': 'Yes'})
@@ -90,9 +90,8 @@ class ViewTestCase(TestCase):
         previously visited the questionnaire page."
 
         """
-        expected = ('{}/practice/A83050/'
-                    '?utm_source=rct1&utm_campaign=wave2&utm_medium=email'
-                    '#ktt9_antibiotics'.format(settings.OP_HOST))
+        expected = ('{}/measure/nimodipine/practice/A83050/'
+                    '?utm_source=nimodipine&utm_medium=post'.format(settings.OP_HOST))
         client = Client()
         response = client.get('/p/A83050')
         self.assertRedirects(response, expected, fetch_redirect_response=False)
