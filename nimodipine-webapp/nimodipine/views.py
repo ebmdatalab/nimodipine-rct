@@ -20,7 +20,6 @@ import requests
 
 from common.utils import grab_image
 from nimodipine.models import Intervention
-from nimodipine.models import get_measure_data
 
 logger = logging.getLogger(__name__)
 

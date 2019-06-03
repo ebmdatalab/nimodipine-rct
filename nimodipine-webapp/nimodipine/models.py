@@ -198,16 +198,3 @@ class MailLog(models.Model):
 
     def __str__(self):
         return "{}: <{}> {}".format(self.timestampe, self.recipient, self.event_type)
-
-
-measure_data = {}
-
-def get_measure_data():
-    global measure_data
-    if not measure_data:
-        csv_path = os.path.join(settings.BASE_DIR, 'antibioticsrct', 'measures_advice.csv')
-        with open(csv_path) as csv_file:
-            reader = csv.DictReader(csv_file)
-            for row in reader:
-                measure_data[row['short_title']] = row['compiled_explanation']
-    return measure_data
