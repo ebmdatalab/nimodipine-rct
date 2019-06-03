@@ -1,7 +1,6 @@
 import base64
 import logging
 import os
-import re
 import tempfile
 
 from django.conf import settings
@@ -10,15 +9,9 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
 from django.shortcuts import render
-from django.template import Context
-from django.template import Template
-from django.template.loader import render_to_string
 from django.utils.safestring import SafeText
 from django.views.decorators.csrf import csrf_exempt
 
-import requests
-
-from common.utils import grab_image
 from nimodipine.models import Intervention
 
 logger = logging.getLogger(__name__)
