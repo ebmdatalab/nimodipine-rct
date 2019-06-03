@@ -10,7 +10,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('nimodipine', '0007_auto_20180427_1034'),
+        ('nimodipine', '0002_auto_20190603_1323'),
     ]
     if settings.CREATE_MAILLOG_TABLE:
         operations = [

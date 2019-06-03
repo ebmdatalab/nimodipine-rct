@@ -65,6 +65,6 @@ Send the faxes and emails:
 
 
 ## Other notes
-
+* In order to facilitation integration with openprescribing, the app connects to (and creates tables in) the existing openprescribing database. This already has a MailLog model, so there is a warty migration (`0003_maillog.py` which is only run in test/dev environments)
 * Generating wave 3 for intervention A requires custom wording, which is inserted in the view. This is in a CSV in the source code, which was downloaded from [this Google Sheet](https://docs.google.com/spreadsheets/d/1Yx9_dWnjscN6FNfes5Q3LT2E2yRdYbQVOY1Q-aZRFQw/edit?usp=drive_web&ouid=112987570757514537466)
 * Mailgun setup for fax - add a route `match_recipient("fax@openprescribing.net") -> forward("http://op2.org.uk/fax_receipt")`

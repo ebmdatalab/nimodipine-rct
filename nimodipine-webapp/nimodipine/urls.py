@@ -1,6 +1,6 @@
 from django.urls import path, re_path
 from django.contrib import admin
-from antibioticsrct import views
+from nimodipine import views
 
 urlpatterns = [
     path('fax_receipt', views.fax_receipt, name='views.fax_receipt'),

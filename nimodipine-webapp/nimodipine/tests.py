@@ -17,7 +17,7 @@ class ModelTestCase(TestCase):
 
     def test_url_generation(self):
         intervention = Intervention.objects.get(pk=1)
-        self.assertEqual(intervention.get_absolute_url(), '/a/A83050')
+        self.assertEqual(intervention.get_absolute_url(), '/e/A83050')
 
     def test_normalised_fax(self):
         expectations = [
@@ -65,7 +65,7 @@ class ViewTestCase(TestCase):
     fixtures = ['intervention_contacts', 'interventions']
     def test_target_url_questionnaire(self):
         client = Client()
-        response = client.get('/a/A81025')  # No questionnaire hits in any wave
+        response = client.get('/p/A81025')  # No questionnaire hits in any wave
         self.assertTemplateUsed(response, 'questionnaire.html')
 
     def test_target_url_questionnaire_post(self):
@@ -74,12 +74,12 @@ class ViewTestCase(TestCase):
         redirect to the practice page.
         """
         expected = ('{}/practice/A81025/'
-                    '?utm_source=rct1&utm_campaign=wave1&utm_medium=email'
-                    '#ktt9_antibiotics'.format(settings.OP_HOST))
+                    '?utm_source=nimodipine&utm_medium=post'.format(settings.OP_HOST))
         client = Client()
-        response = client.post('/a/A81025', {'survey_response':'Yes'})
+        response = client.post('/p/A81025', {'survey_response': 'Yes'})
         self.assertRedirects(response, expected, fetch_redirect_response=False)
-        intervention = Intervention.objects.get(practice_id='A81025', method='e', wave='1')
+        intervention = Intervention.objects.get(
+            practice_id='A81025', method='p')
         self.assertTrue(intervention.contact.survey_response)
         # don't increment the counter on POSTs
         self.assertEquals(intervention.hits, 0)
@@ -94,50 +94,19 @@ class ViewTestCase(TestCase):
                     '?utm_source=rct1&utm_campaign=wave2&utm_medium=email'
                     '#ktt9_antibiotics'.format(settings.OP_HOST))
         client = Client()
-        response = client.get('/b/A83050')
-        self.assertRedirects(response, expected, fetch_redirect_response=False)
-
-    def test_target_url_redirect_when_already_visited_in_other_wave(self):
-        """This is a request for an intervention in wave *1*.  In the
-        fixtures, wave *2* is associated with someone having
-        previously visited the questionnaire page."
-
-        """
-        expected = ('{}/practice/A83050/'
-                    '?utm_source=rct1&utm_campaign=wave1&utm_medium=email'
-                    '#ktt9_antibiotics'.format(settings.OP_HOST))
-        client = Client()
-        response = client.get('/a/A83050')
+        response = client.get('/p/A83050')
         self.assertRedirects(response, expected, fetch_redirect_response=False)
 
     def test_click_count(self):
-        Client().get('/a/A83050/')
+        Client().get('/e/A83050/')
         intervention = Intervention.objects.get(pk=1)
         self.assertEqual(intervention.hits, 1)
 
-    @patch('nimodipine.views.grab_image')
-    def test_intervention_message_template(self, mock_image):
-        img_str = '*** base64 encoded image ***'
-        mock_image.return_value = img_str
-        expectations = [
-            (1, 'intervention_a_1.html'),
-            (3, 'intervention_a_2.html'),
-            (4, 'intervention_a_3.html'),
-            (5, 'intervention_b.html'),
-            (6, 'intervention_b.html')
-        ]
-        for pk, template in expectations:
-            intervention = Intervention.objects.get(pk=pk)
-            response = Client().get("/msg/{}".format(pk))
-            self.assertEqual(response.status_code, 200)
-            self.assertTemplateUsed(response, template)
-            self.assertEquals(response.context['intervention'], intervention)
-            self.assertEquals(response.context['encoded_image'], img_str)
 
     def test_fax_receipt_success(self):
         data = {
             'DestinationFax': '00441642260897',
-            'Subject': 'message about your prescribing - 1',
+            'Subject': 'message about your prescribing',
             'Status': '0',
         }
         response = Client().post('/fax_receipt', data)
@@ -148,7 +117,7 @@ class ViewTestCase(TestCase):
     def test_fax_receipt_fail(self):
         data = {
             'DestinationFax': '00441642260897',
-            'Subject': 'message about your prescribing - 1',
+            'Subject': 'message about your prescribing',
             'Status': '1',
         }
         response = Client().post('/fax_receipt', data)
@@ -159,7 +128,7 @@ class ViewTestCase(TestCase):
     def test_unknown_intervention_fax_receipt(self):
         data = {
             'DestinationFax': '12345',
-            'Subject': 'message about your prescribing - 1',
+            'Subject': 'message about your prescribing',
             'Status': '0',
         }
         response = Client().post('/fax_receipt', data)
@@ -177,10 +146,7 @@ class InterventionCommandTestCase(TestCase):
         opts = {'allocations': allocations, 'contacts': contacts}
         call_command('create_interventions', *args, **opts)
 
-        # 3 waves of email, fax, and post for 2 non-control practices
-        self.assertEqual(Intervention.objects.count(), 18)
-        # Final email, fax, and post for 2 non-control practices
-        self.assertEqual(len(Intervention.objects.filter(wave='3')), 6)
+        self.assertEqual(Intervention.objects.count(), 6)
 
         # Check contact details
         self.assertEqual(Intervention.objects.first().contact.name, "THE SALTSCAR SURGERY")
@@ -205,7 +171,7 @@ class EmailCommandTestCase(TestCase):
         from django.core.mail import outbox
         intervention_fixtures = os.path.join(
             settings.BASE_DIR, 'nimodipine/fixtures/interventions/')
-        msg_path = os.path.join(intervention_fixtures, 'wave1', 'email', 'A83050')
+        msg_path = os.path.join(intervention_fixtures, 'email', 'A83050')
         with self.settings(DATA_DIR=intervention_fixtures):
             self.assertFalse(Intervention.objects.get(pk=1).sent)
             send_email_message(msg_path)
@@ -215,14 +181,14 @@ class EmailCommandTestCase(TestCase):
             self.assertEqual(outbox[0].to, ['simon.neil@nhs.net'])
             self.assertEqual(
                 outbox[0].subject,
-                'Information about your prescribing from OpenPrescribing.net')
+                'Information about your nimodipine prescribing from OpenPrescribing.net')
 
     def test_email_dry_run(self):
         from nimodipine.management.commands.send_messages import send_email_message
         from django.core.mail import outbox
         intervention_fixtures = os.path.join(
             settings.BASE_DIR, 'nimodipine/fixtures/interventions/')
-        msg_path = os.path.join(intervention_fixtures, 'wave1', 'email', 'A83050')
+        msg_path = os.path.join(intervention_fixtures, 'email', 'A83050')
         with self.settings(DATA_DIR=intervention_fixtures):
             send_email_message(msg_path, dry_run=True)
             self.assertEqual(len(outbox), 0)
@@ -237,7 +203,7 @@ class FaxCommandTestCase(TestCase):
         mock_interfax.return_value = mock_interfax_instance
         intervention_fixtures = os.path.join(
             settings.BASE_DIR, 'nimodipine/fixtures/interventions/')
-        msg_path = os.path.join(intervention_fixtures, 'wave1', 'fax', 'A83050')
+        msg_path = os.path.join(intervention_fixtures, 'fax', 'A83050')
         with self.settings(DATA_DIR=intervention_fixtures):
             self.assertFalse(Intervention.objects.get(pk=2).sent)
             send_fax_message(msg_path)
@@ -249,7 +215,7 @@ class FaxCommandTestCase(TestCase):
                 page_header='To: {To} From: {From} Pages: {TotalPages}',
                 page_orientation='portrait',
                 page_size='A4',
-                reference='about your prescribing - 1',
+                reference='about your nimodipine prescribing',
                 rendering='greyscale',
                 reply_address=settings.FAX_FROM_EMAIL,
                 resolution='fine')
@@ -261,7 +227,7 @@ class FaxCommandTestCase(TestCase):
         mock_interfax.return_value = mock_interfax_instance
         intervention_fixtures = os.path.join(
             settings.BASE_DIR, 'nimodipine/fixtures/interventions/')
-        msg_path = os.path.join(intervention_fixtures, 'wave1', 'fax', 'A83050')
+        msg_path = os.path.join(intervention_fixtures, 'fax', 'A83050')
         with self.settings(DATA_DIR=intervention_fixtures):
             send_fax_message(msg_path, dry_run=True)
             to = "j"

@@ -41,7 +41,6 @@ class Command(BaseCommand):
                         if a['allocation'] != 'con':  # not a control
                             for method in methods:
                                 Intervention.objects.create(
-                                    intervention=a['group_ab'],
                                     method=method,
                                     practice_id=a['practice_id'],
                                     contact_id=a['practice_id'],

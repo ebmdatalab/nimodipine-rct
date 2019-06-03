@@ -13,7 +13,6 @@ from django.urls import reverse
 from anymail.signals import EventType
 
 from common.utils import nhs_titlecase
-from common.utils import encode
 from common.utils import not_empty
 
 
@@ -85,9 +84,7 @@ class Intervention(models.Model):
             recipient = self.contact.fax
         else:
             recipient = self.contact.name
-        return "wave {}, intervention {}, method {}, to {} ({})".format(
-            self.wave,
-            self.intervention,
+        return "method {}, to {} ({})".format(
             self.get_method_display().lower(),
             self.practice_id,
             "contactable" if self.contactable() else "uncontactable"
@@ -113,7 +110,7 @@ class Intervention(models.Model):
         # Highlight the measure being talked about. XXX I think we
         # should probably send them to the only-measure-on-the-page
         # view
-        target_url += '#' + self.measure_id
+        target_url += '#nimodipine'  # XXX
         return target_url
 
     def mail_logs(self):
@@ -136,13 +133,11 @@ class Intervention(models.Model):
             found = self.mail_logs()
             if found:
                 if found.filter(event_type='opened'):
-                    print("{},{},{}".format(self.practice_id, self.wave)
-
+                    print("{},{}".format(self.practice_id))
 
     def message_dir(self):
         location = os.path.join(
             settings.DATA_DIR,
-            "wave" + self.wave,
             self.get_method_display().lower(),
             self.practice_id
         )

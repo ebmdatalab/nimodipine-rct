@@ -5,7 +5,7 @@
     "fields": {
       "metadata": {},
       "recipient": "simon.neil@NHS.net",
-      "tags": ["wave1", "nimodipine"],
+      "tags": ["nimodipine"],
       "reject_reason": null,
       "event_type": "delivered",
       "timestamp": null
@@ -17,7 +17,7 @@
     "fields": {
       "metadata": {},
       "recipient": "simon.neil@NHS.net",
-      "tags": ["wave2", "nimodipine"],
+      "tags": ["nimodipine"],
       "reject_reason": null,
       "event_type": "bounced",
       "timestamp": null
@@ -29,7 +29,7 @@
     "fields": {
       "metadata": {},
       "recipient": "simon.neil@NHS.net",
-      "tags": ["wave3", "nimodipine"],
+      "tags": ["nimodipine"],
       "reject_reason": null,
       "event_type": "clicked",
       "timestamp": null
@@ -41,7 +41,7 @@
     "fields": {
       "metadata": {},
       "recipient": "simon.neil2@NHS.net",
-      "tags": ["wave1", "tofurct"],
+      "tags": ["tofurct"],
       "reject_reason": null,
       "event_type": "delivered",
       "timestamp": null
