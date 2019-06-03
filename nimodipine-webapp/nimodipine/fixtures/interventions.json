@@ -1,0 +1,95 @@
+[
+  {
+    "model": "nimodipine.intervention",
+    "pk": 1,
+    "fields": {
+      "created_date": "2018-04-17",
+      "intervention": "A",
+      "wave": "1",
+      "method": "e",
+      "practice_id": "A83050",
+      "measure_id": "ktt9_antibiotics",
+      "contact_id": "A83050"
+    }
+  },
+  {
+    "model": "nimodipine.intervention",
+    "pk": 2,
+    "fields": {
+      "created_date": "2018-04-17",
+      "intervention": "A",
+      "wave": "1",
+      "method": "f",
+      "practice_id": "A83050",
+      "measure_id": "ktt9_antibiotics",
+      "contact_id": "A83050"
+    }
+  },
+  {
+    "model": "nimodipine.intervention",
+    "pk": 3,
+    "fields": {
+      "created_date": "2018-04-17",
+      "intervention": "A",
+      "wave": "2",
+      "method": "e",
+      "practice_id": "A83050",
+      "hits": 1,
+      "measure_id": "ktt9_antibiotics",
+      "contact_id": "A83050"
+    }
+  },
+  {
+    "model": "nimodipine.intervention",
+    "pk": 4,
+    "fields": {
+      "created_date": "2018-04-17",
+      "intervention": "A",
+      "wave": "3",
+      "method": "e",
+      "practice_id": "A83050",
+      "measure_id": "ktt9_antibiotics",
+      "contact_id": "A83050",
+      "metadata": {"total_savings": 1, "cost_savings": 1}
+    }
+  },
+  {
+    "model": "nimodipine.intervention",
+    "pk": 5,
+    "fields": {
+      "created_date": "2018-04-17",
+      "intervention": "B",
+      "wave": "1",
+      "method": "e",
+      "practice_id": "A81025",
+      "measure_id": "ktt9_antibiotics",
+      "contact_id": "A81025"
+    }
+  },
+  {
+    "model": "nimodipine.intervention",
+    "pk": 6,
+    "fields": {
+      "created_date": "2018-04-17",
+      "intervention": "B",
+      "wave": "2",
+      "method": "e",
+      "practice_id": "A81025",
+      "measure_id": "ktt9_antibiotics",
+      "contact_id": "A81025"
+    }
+  },
+  {
+    "model": "nimodipine.intervention",
+    "pk": 7,
+    "fields": {
+      "created_date": "2018-04-17",
+      "intervention": "B",
+      "wave": "1",
+      "method": "f",
+      "practice_id": "A81025",
+      "measure_id": "ktt9_antibiotics",
+      "contact_id": "A81025"
+    }
+  }
+]

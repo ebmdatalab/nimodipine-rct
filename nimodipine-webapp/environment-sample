@@ -1,0 +1,11 @@
+export DB_NAME=openprescribing
+export DB_USER=xxx
+export DB_PASS=xxx
+export DB_HOST=localhost
+export SECRET_KEY=xxx
+export GOOGLE_APPLICATION_CREDENTIALS=/home/fred/google-credentials.json
+export MAILGUN_API_KEY=xxx
+export MAILGUN_SENDER_DOMAIN=openprescribing.net
+export INTERFAX_USER=embdatalab
+export INTERFAX_PASS=xxx
+export NIMODIPINE_DEBUG=True

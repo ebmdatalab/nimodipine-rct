@@ -1,0 +1,34 @@
+[
+  {
+    "model": "nimodipine.interventioncontact",
+    "pk": "A83050",
+    "fields": {
+      "name": "THE DOVECOT SURGERY",
+      "address1": "THE HEALTH CENTRE",
+      "address2": "LAWSON STREET",
+      "address3": "STOCKTON ON TEES",
+      "address4": "CLEVELAND",
+      "postcode": "TS18 1HU",
+      "email": "simon.neil@nhs.net",
+      "fax": "01642 260897",
+      "normalised_fax": "00441642260897",
+      "blacklisted": false
+    }
+  },
+  {
+    "model": "nimodipine.interventioncontact",
+    "pk": "A81025",
+    "fields": {
+      "name": "THE OTHER DOVECOT SURGERY",
+      "address1": "THE HEALTH CENTRE",
+      "address2": "LAWSON STREET",
+      "address3": "STOCKTON ON TEES",
+      "address4": "CLEVELAND",
+      "postcode": "TS18 1HU",
+      "email": "simon.neil2@nhs.net",
+      "fax": "01642 260898",
+      "normalised_fax": "00441642260898",
+      "blacklisted": false
+    }
+  }
+]

@@ -1,0 +1,50 @@
+[
+  {
+    "model": "nimodipine.maillog",
+    "pk": 1,
+    "fields": {
+      "metadata": {},
+      "recipient": "simon.neil@NHS.net",
+      "tags": ["wave1", "nimodipine"],
+      "reject_reason": null,
+      "event_type": "delivered",
+      "timestamp": null
+    }
+  },
+  {
+    "model": "nimodipine.maillog",
+    "pk": 2,
+    "fields": {
+      "metadata": {},
+      "recipient": "simon.neil@NHS.net",
+      "tags": ["wave2", "nimodipine"],
+      "reject_reason": null,
+      "event_type": "bounced",
+      "timestamp": null
+    }
+  },
+  {
+    "model": "nimodipine.maillog",
+    "pk": 3,
+    "fields": {
+      "metadata": {},
+      "recipient": "simon.neil@NHS.net",
+      "tags": ["wave3", "nimodipine"],
+      "reject_reason": null,
+      "event_type": "clicked",
+      "timestamp": null
+    }
+  },
+  {
+    "model": "nimodipine.maillog",
+    "pk": 4,
+    "fields": {
+      "metadata": {},
+      "recipient": "simon.neil2@NHS.net",
+      "tags": ["wave1", "tofurct"],
+      "reject_reason": null,
+      "event_type": "delivered",
+      "timestamp": null
+    }
+  }
+]
