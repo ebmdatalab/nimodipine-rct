@@ -6,8 +6,8 @@ from fabric.api import task, env
 from fabric.contrib.files import exists
 from fabric.context_managers import cd
 
-git_project = 'antibiotics-rct'
-django_app = 'antibioticsrct'
+git_project = 'nimodipine-web'
+django_app = 'nimodipine'
 env.hosts = ['web2.openprescribing.net']
 env.forward_agent = True
 env.colorize_errors = True
@@ -15,8 +15,8 @@ env.user = 'hello'
 
 
 environments = {
-    'live': 'antibioticsrct',
-    'staging': 'antibioticsrct-staging',
+    'live': 'nimodipine',
+    'staging': 'nimodipine-staging',
 }
 
 def make_directory():
@@ -82,7 +82,7 @@ def deploy(environment, branch='master', git_only=False):
     with cd(env.path):
         print(env.path)
         # We can use all the same connection details as the main app
-        with prefix("source /etc/profile.d/antibioticsrct_%s.sh" % env.environment):
+        with prefix("source /etc/profile.d/nimodipine_%s.sh" % env.environment):
             venv_init()
             update_from_git(branch)
             if not git_only:

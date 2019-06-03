@@ -1,5 +1,5 @@
-upstream antibioticsrct-staging {
-    server unix:/tmp/gunicorn-antibioticsrct-staging.sock fail_timeout=0;
+upstream nimodipine-staging {
+    server unix:/tmp/gunicorn-nimodipine-staging.sock fail_timeout=0;
     keepalive 60;
 }
 
@@ -11,8 +11,8 @@ server {
     resolver 1.1.1.1 8.8.4.4 valid=300s;
     resolver_timeout 5s;
 
-    access_log /webapps/openprescribing/logs/antibioticsrct-staging-access.log;
-    error_log /webapps/openprescribing/logs/antibioticsrct-staging-error.log;
+    access_log /webapps/openprescribing/logs/nimodipine-staging-access.log;
+    error_log /webapps/openprescribing/logs/nimodipine-staging-error.log;
 
     client_max_body_size 200M;
 
@@ -24,11 +24,11 @@ server {
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header Host $http_host;
 
-        proxy_pass http://antibioticsrct-staging;
+        proxy_pass http://nimodipine-staging;
     }
 
     location /static {
-        alias   /var/www/antibioticsrct-staging/antibiotics-rct/antibioticsrct/collected_static/;
+        alias   /var/www/nimodipine-staging/nimodipine-web/nimodipine/collected_static/;
         expires max;
         access_log off;
     }
