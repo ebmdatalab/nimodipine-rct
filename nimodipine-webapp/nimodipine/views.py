@@ -84,10 +84,18 @@ def intervention_message(request, intervention_id):
         show_header_to = False
     template = 'intervention.html'
     with tempfile.NamedTemporaryFile(suffix='.png') as chart_file:
-        # XXX we don't do this any more, just draw on an existing chart
-        encoded_image = make_chart(intervention.contact.percentile)  # or something
-        # this was grab_image(url, chart_file.name, selector)
-    with open(os.path.join(settings.BASE_DIR, 'nimodipine', 'static',  'header.png'), 'rb') as img:
+        # XXX draw chart here
+        with open(os.path.join(
+                settings.BASE_DIR,
+                'nimodipine',
+                'static',
+                'test.png'), 'rb') as img:
+            encoded_image = base64.b64encode(img.read()).decode('ascii')
+    with open(os.path.join(
+            settings.BASE_DIR,
+            'nimodipine',
+            'static',
+            'header.png'), 'rb') as img:
         header_image = base64.b64encode(img.read()).decode('ascii')
     with open(os.path.join(settings.BASE_DIR, 'nimodipine', 'static',  'footer.png'), 'rb') as img:
         footer_image = base64.b64encode(img.read()).decode('ascii')

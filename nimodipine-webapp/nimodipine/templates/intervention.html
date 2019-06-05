@@ -1,0 +1,30 @@
+{% extends '_base.html' %}
+
+{% block content %}
+{% include '_header.html' %}
+
+<p><strong>Your practice is an outlier for nimodipine prescribing over the last three months.</strong></p>
+
+<table border="0" cellpadding="0" cellspacing="0">
+  <tr><td style="margin-right:10px" width="30%">
+    Here’s how <span class="your-practice">your practice</span> compares to <span class="other-practices">other practices</span> in England on nimodipine tablets prescribed in the last 3 months:
+  </td>
+<td>
+  <img alt="" src="data:image/png;base64,{{ encoded_image }}">
+</td>
+</tr>
+</table>
+
+<p>The only indication in the BNF for the prescription of nimodipine is in the prevention of ischaemic neurological defects following aneurysmal subarachnoid haemorrhage. The course length is 21 days but most patients will complete the course while admitted or be discharged with the remainder. Extension of this course in primary care may be due to error or miscommunication.</p>
+
+<p>You can learn more about how your prescription rates for nimodipine compare to other practices at {{ intervention_url }}</p>
+
+<P>Please let us know if you are aware of any reasons why your practice may be prescribing longer courses of nimodipine at <a href="mailto:hello@op2.org.uk">hello@op2.org.uk</a>.</p>
+
+<p class="feedback">This letter uses data from OpenPrescribing, a free, publicly-funded service created by researchers in the University of Oxford to make national prescribing data more useful to GPs.
+</p>
+
+<p style="color: red">This is a one-off communication. Please let us know if you have any feedback.</p>
+
+  {% include '_footer.html' %}
+{% endblock %}

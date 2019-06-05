@@ -151,6 +151,22 @@ class InterventionCommandTestCase(TestCase):
         self.assertEqual(Intervention.objects.first().contact.name, "THE SALTSCAR SURGERY")
 
 
+class WaveGenerationCommandTestCase(TestCase):
+    fixtures = ['intervention_contacts', 'interventions']
+    @patch('nimodipine.management.commands.generate_wave.requests')
+    def test_generate_wave(self, mock_request):
+        args = []
+        opts = {'method': 'e'}
+        mock_request.get = Client().get
+        mock_request.codes.ok = 200
+        call_command('generate_wave', *args, **opts)
+        intervention = Intervention.objects.first()
+        path = intervention.message_path()
+        expected = 'You can learn more about how your prescription rates for nimodipine compare to other practices at <a href="http://op2.org.uk/e/{practice_id}">op2.org.uk/e/{practice_id}</a>'.format(practice_id=intervention.practice_id)
+        email = open(path, "r").read()
+        self.assertIn(expected, email)
+
+
 class EmailCommandTestCase(TestCase):
     fixtures = ['intervention_contacts', 'interventions']
     def test_email_from_html(self):

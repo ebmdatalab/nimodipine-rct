@@ -114,7 +114,9 @@ class Command(BaseCommand):
                 response = requests.get(message_url)
                 if response.status_code != requests.codes.ok:
                     raise Exception("bad response when trying to get {}".format(message_url))
-                html = Premailer(response.text, cssutils_logging_level=logging.ERROR).transform()
+                html = Premailer(
+                    response.content.decode('utf-8'),
+                    cssutils_logging_level=logging.ERROR).transform()
                 with open(destination, 'w') as f:
                     f.write(html)
                 intervention.generated = True
