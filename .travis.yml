@@ -16,11 +16,11 @@ env:
     - INTERFAX_USER=embdatalab
     - INTERFAX_PASS=xxx
 install:
-- pip install -r antibioticsrct/requirements.txt
+- pip install -r nimodipine-webapp/requirements.txt
 before_script:
 - psql -c 'create database openprescribing_test;' -U postgres
 script:
-- cd antibioticsrct && python manage.py test
+- cd nimodipine-webapp && python manage.py test
 notifications:
   email:
   - tech@ebmdatalab.net
