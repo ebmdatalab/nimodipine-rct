@@ -1,0 +1,11 @@
+gunicorn
+Django
+psycopg2-binary
+requests
+titlecase
+google-cloud-bigquery
+premailer
+html2text
+django-anymail[mailgun]
+jupyter
+interfax
