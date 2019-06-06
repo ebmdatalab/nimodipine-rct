@@ -14,7 +14,7 @@ cssselect==1.0.3          # via premailer
 cssutils==1.0.2           # via premailer
 decorator==4.3.0          # via ipython, traitlets
 django-anymail[mailgun]==2.2
-django==2.0.5
+django==2.2.2
 entrypoints==0.2.3        # via nbconvert
 google-api-core==1.1.1    # via google-cloud-bigquery, google-cloud-core
 google-auth==1.4.1        # via google-api-core
@@ -67,6 +67,7 @@ rsa==3.4.2                # via google-auth
 send2trash==1.5.0         # via notebook
 simplegeneric==0.8.1      # via ipython
 six==1.11.0               # via bleach, django-anymail, google-api-core, google-auth, google-resumable-media, html5lib, prompt-toolkit, protobuf, python-dateutil, traitlets
+sqlparse==0.3.0           # via django
 terminado==0.8.1          # via notebook
 testpath==0.3.1           # via nbconvert
 titlecase==0.12.0
