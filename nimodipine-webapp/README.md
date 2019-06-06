@@ -1,7 +1,8 @@
-This is a Django application to track interventions in our Antibiotics RCT.
+This is a Django application to track interventions in our nimodipine
+study.
 
 Each intervention is to a single practice, by fax, post, and
-email. All practices get all three each month, for 3 months.
+email. All practices get all three contact methods.
 
 The intervention takes the form of a letter telling them hopefully
 interesting things, with a URL for them to follow.
@@ -18,11 +19,11 @@ website, along with Google Analytics tracking tags.
 
 There are management scripts to :
 
-* generate skeleton interventions based on an allocation spreadsheet
-  (run once only at the start of the RCT) (`create_interventions`)
+* generate skeleton interventions based on a contact spreadsheet
+  (run once only at the start of the study) (`create_interventions`)
 
-* generate letters for each intervention (e.g. all postal letters for
-  wave 1) (`generate_wave`)
+* generate communication for each intervention (i.e. all postal
+  letters, all emails, all faxes) (`generate_wave`)
 
 * send the email and fax letters via third party services
   (`send_messages`)
@@ -37,34 +38,34 @@ Set up the Django app (`pip install` etc; there is a `fabfile` for
 deploying to our pet server, and a `environment-sample` file that
 should be sourced before running
 
-Create interventions (once only at start of RCT). The allocation CSV is
-generated from the jupyter notebook in the same folder.  The contacts
-CSV is a download of a tab of [this Google Sheet](https://docs.google.com/spreadsheets/d/1iVtlo-qGaK9KT35FaX94Gu0azei-TLIZZI52TZWvxMg).
+Create interventions (once only at start of the study). The practices to
+contact are generated based on practices with persistent and recent
+(if low-level) nimodipine prescribing, using a notebook in this
+repository.  This is used to create a spreadsheet of contacts which
+should be committed to this repository when generated for the study.
+The spreadsheet must be in the format described in #2.  Interventions
+for post, email and fax are then generated thus:
 
-    python manage.py create_interventions --allocations=../allocation\ and\ analysis/practice_allocations.csv  --contacts=../allocation\ and\ analysis/practices.csv
+    python manage.py create_interventions --contacts=../allocation\ and\ analysis/practices.csv
 
-Once at the start of each wave (as soon as possible following a
-monthly import to OpenPrescribing), create all the letters for that
-wave:
+Then pre-generate files for each of the contact methods for review:
 
-    python manage.py generate_wave --wave=1 --method=p
-    python manage.py generate_wave --wave=1 --method=f
-    python manage.py generate_wave --wave=1 --method=e
+    python manage.py generate_wave --method=p
+    python manage.py generate_wave --method=f
+    python manage.py generate_wave --method=e
 
-When a wave has been generated, archive it in github. On `largeweb2` it's in `/mnt/database/antibiotics-rct-data/` -- you can just do a `git commit -am "wave <n> letters" && git push`
-
+When a wave has been generated, archive it in this repository.
 
 When the postal letters have been sent, manually mark them as such:
 
     Intervention.objects.filter(wave='1', method='p').update(sent=True)
 
-Send the faxes and emails:
+Sending the faxes and emails automatically handings them being marked as set:
 
     python manage.py send_messages --wave=1 --method=email
     python manage.py send_messages --wave=1 --method=fax
 
 
 ## Other notes
-* In order to facilitation integration with openprescribing, the app connects to (and creates tables in) the existing openprescribing database. This already has a MailLog model, so there is a warty migration (`0003_maillog.py` which is only run in test/dev environments)
-* Generating wave 3 for intervention A requires custom wording, which is inserted in the view. This is in a CSV in the source code, which was downloaded from [this Google Sheet](https://docs.google.com/spreadsheets/d/1Yx9_dWnjscN6FNfes5Q3LT2E2yRdYbQVOY1Q-aZRFQw/edit?usp=drive_web&ouid=112987570757514537466)
+* In order to facilitate integration with openprescribing, the app connects to (and creates tables in) the existing openprescribing database. This already has a MailLog model, so there is a warty migration (`0003_maillog.py` which is only run in test/dev environments)
 * Mailgun setup for fax - add a route `match_recipient("fax@openprescribing.net") -> forward("http://op2.org.uk/fax_receipt")`

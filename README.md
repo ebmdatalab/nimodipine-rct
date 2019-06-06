@@ -35,5 +35,5 @@ https://github.com/ebmdatalab/antibiotics-rct/, which was an RCT about
 antibiotics prescribing.
 
 The code for generating and sending interventions is a Django app
-in the `antibioticsrct` subfolder. See the `README.md` there for
+in the `nimodipine-web` subfolder. See the `README.md` there for
 further details.
