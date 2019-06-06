@@ -12,7 +12,7 @@ class Command(BaseCommand):
     help = '''Load interventions from practice contact list'''
 
     def add_arguments(self, parser):
-        parser.add_argument('--contacts')
+        parser.add_argument('--contacts', required=True)
 
     def handle(self, *args, **options):
         methods = [x[0] for x in Intervention.METHOD_CHOICES]
