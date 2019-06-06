@@ -48,10 +48,11 @@ def combine_letters():
 
     """
     inputs = find('letter.pdf', settings.DATA_DIR)
-    subprocess.check_call([
-        "gs", "-q", "-sPAPERSIZE=letter", "-dNOPAUSE",
-        "-dBATCH", "-sDEVICE=pdfwrite",
-        "-sOutputFile={}/combined_letters.pdf".format(settings.DATA_DIR)] + inputs)
+    if inputs:
+        subprocess.check_call([
+            "gs", "-q", "-sPAPERSIZE=letter", "-dNOPAUSE",
+            "-dBATCH", "-sDEVICE=pdfwrite",
+            "-sOutputFile={}/combined_letters.pdf".format(settings.DATA_DIR)] + inputs)
 
 
 def count_expected():
