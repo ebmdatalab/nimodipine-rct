@@ -9,10 +9,9 @@ from nimodipine.models import InterventionContact
 
 
 class Command(BaseCommand):
-    help = '''Load interventions from practice allocations'''
+    help = '''Load interventions from practice contact list'''
 
     def add_arguments(self, parser):
-        parser.add_argument('--allocations')
         parser.add_argument('--contacts')
 
     def handle(self, *args, **options):
@@ -33,15 +32,9 @@ class Command(BaseCommand):
                             email=contact['merged emails'],
                             fax=contact['merged faxes'],
                         )
-            if options['allocations']:
-                # We don't delete allocations. They can not be changed
-                # following the start of the RCT.
-                with open(options['allocations'], 'r') as f:
-                    for a in csv.DictReader(f):
-                        if a['allocation'] != 'con':  # not a control
-                            for method in methods:
-                                Intervention.objects.create(
-                                    method=method,
-                                    practice_id=a['practice_id'],
-                                    contact_id=a['practice_id'],
-                                )
+                        for method in methods:
+                            Intervention.objects.create(
+                                method=method,
+                                practice_id=contact['practice'],
+                                contact_id=contact['practice'],
+                            )

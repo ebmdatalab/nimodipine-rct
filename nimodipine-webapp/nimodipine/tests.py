@@ -137,18 +137,18 @@ class ViewTestCase(TestCase):
 
 class InterventionCommandTestCase(TestCase):
     def test_create_interventions(self):
-        allocations = os.path.join(
-            settings.BASE_DIR, 'nimodipine/fixtures/allocations.csv')
         contacts = os.path.join(
             settings.BASE_DIR, 'nimodipine/fixtures/contacts.csv')
         args = []
-        opts = {'allocations': allocations, 'contacts': contacts}
+        opts = {'contacts': contacts}
         call_command('create_interventions', *args, **opts)
 
-        self.assertEqual(Intervention.objects.count(), 6)
-
-        # Check contact details
-        self.assertEqual(Intervention.objects.first().contact.name, "THE SALTSCAR SURGERY")
+        self.assertEqual(Intervention.objects.count(), 9)
+        self.assertEqual(Intervention.objects.filter(method='e').count(), 3)
+        self.assertEqual(Intervention.objects.filter(method='f').count(), 3)
+        self.assertEqual(Intervention.objects.filter(method='p').count(), 3)
+        self.assertEqual(Intervention.objects.filter(
+            contact__name="THE DOVECOT SURGERY").count(), 3)
 
 
 class WaveGenerationCommandTestCase(TestCase):
