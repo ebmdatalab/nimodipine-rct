@@ -67,5 +67,6 @@ Sending the faxes and emails automatically handings them being marked as set:
 
 
 ## Other notes
+* You should ensure an Arial or Liberation Sans TrueType font is installed on your system, so the words in the generated charts look nice. On Debian, `apt-get install ttf-liberation`.
 * In order to facilitate integration with openprescribing, the app connects to (and creates tables in) the existing openprescribing database. This already has a MailLog model, so there is a warty migration (`0003_maillog.py` which is only run in test/dev environments)
 * Mailgun setup for fax - add a route `match_recipient("fax@openprescribing.net") -> forward("http://op2.org.uk/fax_receipt")`

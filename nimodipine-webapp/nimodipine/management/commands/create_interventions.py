@@ -37,4 +37,5 @@ class Command(BaseCommand):
                                 method=method,
                                 practice_id=contact['practice'],
                                 contact_id=contact['practice'],
+                                metadata={'value': contact['value']}
                             )

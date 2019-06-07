@@ -6,7 +6,8 @@
       "created_date": "2018-04-17",
       "method": "e",
       "practice_id": "A83050",
-      "contact_id": "A83050"
+      "contact_id": "A83050",
+      "metadata": {"value": 10}
     }
   },
   {
@@ -16,7 +17,8 @@
       "created_date": "2018-04-17",
       "method": "f",
       "practice_id": "A83050",
-      "contact_id": "A83050"
+      "contact_id": "A83050",
+      "metadata": {"value": 20}
     }
   },
   {
@@ -27,7 +29,8 @@
       "method": "p",
       "practice_id": "A83050",
       "hits": 1,
-      "contact_id": "A83050"
+      "contact_id": "A83050",
+      "metadata": {"value": 30}
     }
   },
   {
@@ -37,7 +40,8 @@
       "created_date": "2018-04-17",
       "method": "p",
       "practice_id": "A81025",
-      "contact_id": "A81025"
+      "contact_id": "A81025",
+      "metadata": {"value": 40}
     }
   },
   {
@@ -47,7 +51,8 @@
       "created_date": "2018-04-19",
       "method": "e",
       "practice_id": "A81025",
-      "contact_id": "A81025"
+      "contact_id": "A81025",
+      "metadata": {"value": 50}
     }
   }
 

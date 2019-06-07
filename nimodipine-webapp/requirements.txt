@@ -49,6 +49,7 @@ pandocfilters==1.4.2      # via nbconvert
 parso==0.2.0              # via jedi
 pexpect==4.5.0            # via ipython
 pickleshare==0.7.4        # via ipython
+pillow==6.0.0
 premailer==3.2.0
 prompt-toolkit==1.0.15    # via ipython, jupyter-console
 protobuf==3.5.2.post1     # via google-api-core, googleapis-common-protos
