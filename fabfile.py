@@ -32,8 +32,7 @@ def pip_install():
     with prefix("source /var/www/%s/venv/bin/activate" % env.app):
         # We have to bootstrap pip this way because of issues in the Debian-provided python3.4
         # In python 3.6 we could remove the --without-pip above.
-        run("wget https://bootstrap.pypa.io/get-pip.py && python get-pip.py")
-        run("rm get-pip.py*")
+        run("if [ ! $(command -v pip) ]; then wget https://bootstrap.pypa.io/get-pip.py && python get-pip.py; rm get-pip.py; fi")
         run("pip install -q -r %s/%s/requirements.txt" % (git_project, django_app))
 
 
@@ -52,9 +51,8 @@ def setup_nginx():
         "%s/%s/deploy/setup_nginx.sh %s %s"
         % (git_project, django_app, env.path, env.environment)
     )
-    # https://stackoverflow.com/a/33881057/559140
+    # Not working? See https://stackoverflow.com/a/33881057/559140
     sudo(
-        "/etc/init.d/supervisor force-stop && "
         "/etc/init.d/supervisor stop && "
         "/etc/init.d/supervisor start"
     )
