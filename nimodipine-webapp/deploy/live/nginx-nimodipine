@@ -28,7 +28,7 @@ server {
     }
 
     location /static {
-        alias   /var/www/nimodipine/nimodipine-web/nimodipine/collected_static/;
+        alias   /var/www/nimodipine/nimodipine-rct/nimodipine-webapp/collected_static/;
         expires max;
         access_log off;
     }

@@ -2,8 +2,8 @@
 
 set -e
 
-supervisorconf=$1/nimodipine-web/nimodipine/deploy/$2/supervisor-nimodipine.conf
-nginxconf=$1/nimodipine-web/nimodipine/deploy/$2/nginx-nimodipine
+supervisorconf=$1/nimodipine-rct/nimodipine-webapp/deploy/$2/supervisor-nimodipine.conf
+nginxconf=$1/nimodipine-rct/nimodipine-webapp/deploy/$2/nginx-nimodipine
 
 if [ ! -f $supervisorconf ] || [ ! -f $nginxconf ]; then
     echo "Unable to find $supervisorconf or $nginxconf!"

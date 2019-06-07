@@ -6,8 +6,8 @@ from fabric.api import task, env
 from fabric.contrib.files import exists
 from fabric.context_managers import cd
 
-git_project = "nimodipine-web"
-django_app = "nimodipine"
+git_project = "nimodipine-rct"
+django_app = "nimodipine-webapp"
 env.hosts = ["web2.openprescribing.net"]
 env.forward_agent = True
 env.colorize_errors = True
@@ -30,7 +30,6 @@ def venv_init():
 
 def pip_install():
     with prefix("source /var/www/%s/venv/bin/activate" % env.app):
-        sudo("chmod  g+w %s" % env.path)
         # We have to bootstrap pip this way because of issues in the Debian-provided python3.4
         # In python 3.6 we could remove the --without-pip above.
         run("wget https://bootstrap.pypa.io/get-pip.py && python get-pip.py")
