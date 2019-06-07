@@ -39,28 +39,24 @@ class InterventionContact(models.Model):
         return nhs_titlecase(self.name)
 
     def total_hits(self):
-        return self.intervention_set.aggregate(Sum('hits'))['hits__sum']
+        return self.intervention_set.aggregate(Sum("hits"))["hits__sum"]
 
     def save(self, *args, **kwargs):
         fax_number = re.sub(r"[^0-9]", "", self.fax)
         if fax_number and re.search(r"[0-9]{8}", fax_number):
-            if fax_number[:2] != '00':
-                if fax_number[0] == '0':
+            if fax_number[:2] != "00":
+                if fax_number[0] == "0":
                     fax_number = fax_number[1:]
-                if fax_number[:2] == '44':
-                    fax_number = '00' + fax_number
+                if fax_number[:2] == "44":
+                    fax_number = "00" + fax_number
                 else:
-                    fax_number = '0044' + fax_number
+                    fax_number = "0044" + fax_number
         self.normalised_fax = fax_number
         super(InterventionContact, self).save(*args, **kwargs)
 
 
 class Intervention(models.Model):
-    METHOD_CHOICES = (
-        ('e', 'Email'),
-        ('p', 'Post'),
-        ('f', 'Fax'),
-    )
+    METHOD_CHOICES = (("e", "Email"), ("p", "Post"), ("f", "Fax"))
     created_date = models.DateField(default=date.today)
     method = models.CharField(max_length=1, choices=METHOD_CHOICES)
     practice_id = models.CharField(max_length=6)
@@ -72,81 +68,78 @@ class Intervention(models.Model):
     contact = models.ForeignKey(InterventionContact, on_delete=models.CASCADE)
 
     class Meta:
-        unique_together = ('method', 'practice_id')
-        ordering = ['created_date', 'method', 'practice_id']
+        unique_together = ("method", "practice_id")
+        ordering = ["created_date", "method", "practice_id"]
 
     def __str__(self):
         # Wondering what get_method_display is? See
         # https://docs.djangoproject.com/en/2.0/ref/models/instances/#django.db.models.Model.get_FOO_display
-        if self.method == 'e':
+        if self.method == "e":
             recipient = self.contact.email
-        elif self.method == 'f':
+        elif self.method == "f":
             recipient = self.contact.fax
         else:
             recipient = self.contact.name
         return "method {}, to {} ({})".format(
             self.get_method_display().lower(),
             self.practice_id,
-            "contactable" if self.contactable() else "uncontactable"
+            "contactable" if self.contactable() else "uncontactable",
         )
 
     def contactable(self):
-        if self.method == 'p':
+        if self.method == "p":
             return True
         return not_empty(self.contact.email)
 
     def get_absolute_url(self):
-        return reverse(
-            'views.intervention', args=[self.method, self.practice_id])
+        return reverse("views.intervention", args=[self.method, self.practice_id])
 
     def get_target_url(self):
         # add Google Analytics tracking
         querystring = "utm_source=nimodipine&utm_medium={}".format(
-            self.get_method_display().lower())
+            self.get_method_display().lower()
+        )
         target_url = "{}/measure/nimodipine/practice/{}/?{}".format(
-            settings.OP_HOST,
-            self.practice_id,
-            querystring)
+            settings.OP_HOST, self.practice_id, querystring
+        )
         return target_url
 
     def mail_logs(self):
         return MailLog.objects.filter(
-            tags__contained_by=['nimodipine'],
-            recipient__iexact=self.contact.email)
+            tags__contained_by=["nimodipine"], recipient__iexact=self.contact.email
+        )
 
     def set_receipt(self):
-        if self.method == 'e':
+        if self.method == "e":
             found = self.mail_logs()
             if found:
-                if found.filter(event_type='delivered'):
+                if found.filter(event_type="delivered"):
                     self.receipt = True
-                elif found.filter(event_type__in=['bounced', 'rejected']):
+                elif found.filter(event_type__in=["bounced", "rejected"]):
                     self.receipt = False
                 self.save()
 
     def get_opened(self):
-        if self.method == 'e':
+        if self.method == "e":
             found = self.mail_logs()
             if found:
-                if found.filter(event_type='opened'):
+                if found.filter(event_type="opened"):
                     print("{},{}".format(self.practice_id))
 
     def message_dir(self):
         location = os.path.join(
-            settings.DATA_DIR,
-            self.get_method_display().lower(),
-            self.practice_id
+            settings.DATA_DIR, self.get_method_display().lower(), self.practice_id
         )
         os.makedirs(location, exist_ok=True)
         return location
 
     def message_path(self):
-        if self.method == 'p':
-            filename = 'letter.pdf'
-        elif self.method == 'f':
-            filename = 'fax.pdf'
-        elif self.method == 'e':
-            filename = 'email.html'
+        if self.method == "p":
+            filename = "letter.pdf"
+        elif self.method == "f":
+            filename = "fax.pdf"
+        elif self.method == "e":
+            filename = "email.html"
         return os.path.join(self.message_dir(), filename)
 
     def is_generated(self):
@@ -156,10 +149,8 @@ class Intervention(models.Model):
             else:
                 raise Exception(
                     "Intervention {} supposedly generated "
-                    "but no file at {}".format(
-                        self,
-                        self.message_path()
-                    ))
+                    "but no file at {}".format(self, self.message_path())
+                )
 
 
 # Copied from openprescribing, where this model is created via mailgun
@@ -168,23 +159,20 @@ class MailLog(models.Model):
     EVENT_TYPE_CHOICES = [
         (value, value)
         for name, value in vars(EventType).items()
-        if not name.startswith('_')]
+        if not name.startswith("_")
+    ]
     metadata = JSONField(null=True, blank=True)
     recipient = models.CharField(max_length=254, db_index=True)
-    tags = ArrayField(
-        models.CharField(max_length=100, db_index=True),
-        null=True
-    )
+    tags = ArrayField(models.CharField(max_length=100, db_index=True), null=True)
     reject_reason = models.CharField(max_length=15, null=True, blank=True)
     event_type = models.CharField(
-        max_length=15,
-        choices=EVENT_TYPE_CHOICES,
-        db_index=True)
+        max_length=15, choices=EVENT_TYPE_CHOICES, db_index=True
+    )
     timestamp = models.DateTimeField(null=True, blank=True)
     # message = models.ForeignKey(EmailMessage, null=True, db_constraint=False)
 
     class Meta:
-        db_table = 'frontend_maillog'
+        db_table = "frontend_maillog"
         managed = False
 
     def __str__(self):
