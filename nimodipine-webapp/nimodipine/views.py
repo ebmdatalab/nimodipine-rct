@@ -135,7 +135,17 @@ def make_chart(practice_value):
         'chart.png')
     im = Image.open(base_image_path)
     d = ImageDraw.Draw(im)
-    fnt = ImageFont.truetype('arial.ttf', 14)
+    try:
+        fnt = ImageFont.truetype('arial.ttf', 14)
+    except OSError:  # font not installed
+        try:
+            # Use Free version of Arial
+            fnt = ImageFont.truetype('LiberationSans-Regular.ttf', 14)
+        except OSError:
+            # fallback to anything
+            logger.warn("Falling back to default font for drawing charts")
+            fnt = ImageFont.load_default()
+
     blue_text = "97% of practices \n(0 tablets per 1000 patients)"
     red_text = "Your practice\n({} tablets per 1000 patients)".format(
         practice_value)
