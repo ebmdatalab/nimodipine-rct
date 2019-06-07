@@ -9,34 +9,73 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('nimodipine', '0002_auto_20190603_1323'),
-    ]
+    dependencies = [("nimodipine", "0002_auto_20190603_1323")]
     if settings.CREATE_MAILLOG_TABLE:
         operations = [
             migrations.CreateModel(
-                name='MailLog',
+                name="MailLog",
                 fields=[
-                    ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                    ('metadata', django.contrib.postgres.fields.jsonb.JSONField(blank=True, null=True)),
-                    ('recipient', models.CharField(db_index=True, max_length=254)),
-                    ('tags', django.contrib.postgres.fields.ArrayField(base_field=models.CharField(db_index=True, max_length=100), null=True, size=None)),
-                    ('reject_reason', models.CharField(blank=True, max_length=15, null=True)),
-                    ('event_type', models.CharField(choices=[('delivered', 'delivered'), ('inbound_failed', 'inbound_failed'), ('queued', 'queued'), ('failed', 'failed'), ('clicked', 'clicked'), ('sent', 'sent'), ('autoresponded', 'autoresponded'), ('unknown', 'unknown'), ('subscribed', 'subscribed'), ('opened', 'opened'), ('rejected', 'rejected'), ('complained', 'complained'), ('unsubscribed', 'unsubscribed'), ('bounced', 'bounced'), ('inbound', 'inbound'), ('deferred', 'deferred')], db_index=True, max_length=15)),
-                    ('timestamp', models.DateTimeField(blank=True, null=True)),
+                    (
+                        "id",
+                        models.AutoField(
+                            auto_created=True,
+                            primary_key=True,
+                            serialize=False,
+                            verbose_name="ID",
+                        ),
+                    ),
+                    (
+                        "metadata",
+                        django.contrib.postgres.fields.jsonb.JSONField(
+                            blank=True, null=True
+                        ),
+                    ),
+                    ("recipient", models.CharField(db_index=True, max_length=254)),
+                    (
+                        "tags",
+                        django.contrib.postgres.fields.ArrayField(
+                            base_field=models.CharField(db_index=True, max_length=100),
+                            null=True,
+                            size=None,
+                        ),
+                    ),
+                    (
+                        "reject_reason",
+                        models.CharField(blank=True, max_length=15, null=True),
+                    ),
+                    (
+                        "event_type",
+                        models.CharField(
+                            choices=[
+                                ("delivered", "delivered"),
+                                ("inbound_failed", "inbound_failed"),
+                                ("queued", "queued"),
+                                ("failed", "failed"),
+                                ("clicked", "clicked"),
+                                ("sent", "sent"),
+                                ("autoresponded", "autoresponded"),
+                                ("unknown", "unknown"),
+                                ("subscribed", "subscribed"),
+                                ("opened", "opened"),
+                                ("rejected", "rejected"),
+                                ("complained", "complained"),
+                                ("unsubscribed", "unsubscribed"),
+                                ("bounced", "bounced"),
+                                ("inbound", "inbound"),
+                                ("deferred", "deferred"),
+                            ],
+                            db_index=True,
+                            max_length=15,
+                        ),
+                    ),
+                    ("timestamp", models.DateTimeField(blank=True, null=True)),
                 ],
-                options={
-                    'db_table': 'frontend_maillog',
-                },
-            ),
+                options={"db_table": "frontend_maillog"},
+            )
         ]
     else:
         operations = [
             migrations.CreateModel(
-                name='MailLog',
-                fields=[],
-                options={
-                    'db_table': 'delete_me',
-                },
-            ),
+                name="MailLog", fields=[], options={"db_table": "delete_me"}
+            )
         ]
