@@ -1,7 +1,12 @@
 import base64
+from io import BytesIO
 import logging
 import os
 import tempfile
+
+from PIL import Image
+from PIL import ImageDraw
+from PIL import ImageFont
 
 from django.conf import settings
 from django.http import HttpResponse
@@ -83,14 +88,7 @@ def intervention_message(request, intervention_id):
     else:
         show_header_to = False
     template = 'intervention.html'
-    with tempfile.NamedTemporaryFile(suffix='.png') as chart_file:
-        # XXX draw chart here
-        with open(os.path.join(
-                settings.BASE_DIR,
-                'nimodipine',
-                'static',
-                'test.png'), 'rb') as img:
-            encoded_image = base64.b64encode(img.read()).decode('ascii')
+    encoded_image = make_chart(intervention.metadata['value'])
     with open(os.path.join(
             settings.BASE_DIR,
             'nimodipine',
@@ -116,3 +114,78 @@ def intervention_message(request, intervention_id):
         request,
         template,
         context=context)
+
+
+def make_chart(practice_value):
+    """Draw lines on a pre-made chart pointing to a peak (always in the
+    same place), and a point on the axis (variable).
+
+    Args:
+       practice_value: numeric value that will be plotted on x-axis
+
+    Returns:
+       base64-encoded image
+
+    """
+    # set up chart, dimensions
+    base_image_path = os.path.join(
+        settings.BASE_DIR,
+        'nimodipine',
+        'static',
+        'chart.png')
+    im = Image.open(base_image_path)
+    d = ImageDraw.Draw(im)
+    fnt = ImageFont.truetype('arial.ttf', 14)
+    blue_text = "97% of practices \n(0 tablets per 1000 patients)"
+    red_text = "Your practice\n({} tablets per 1000 patients)".format(
+        practice_value)
+    x_axis_origin_coords = (51,   226)
+    x_axis_end_coords = (364, 226)
+    x_axis_width = x_axis_end_coords[0] - x_axis_origin_coords[0]
+    x_axis_max = 80  # The value at the extreme end of X-axis
+    blue_line_coords = (60, 30)  # coords of pointer to the peak in the chart
+
+    practice_x = x_axis_origin_coords[0] + int((float(practice_value) / x_axis_max * x_axis_width))
+    practice_coords = (practice_x, x_axis_origin_coords[1])
+    # Arrived at by trial-and-error, so red text never overflows right edge of chart:
+    red_text_max_x = 170
+    red_text_min_x = blue_line_coords[0]
+
+    def arrow(d, arrow_end, feather_end, fill="red", width=1):
+        if arrow_end[0] == feather_end[0]:
+            orientation = "vertical"
+        elif arrow_end[1] == feather_end[1]:
+            orientation = "horizontal"
+        else:
+            raise BaseException("Must be horizontal or vertical")
+
+        d.line((arrow_end, feather_end), fill=fill, width=width)
+        if orientation == "vertical":
+            d.line((arrow_end, (arrow_end[0]-5, arrow_end[1]-5)), fill=fill, width=width)
+            d.line((arrow_end, (arrow_end[0]+5, arrow_end[1]-5)), fill=fill, width=width)
+        else:
+            d.line((arrow_end, (arrow_end[0]+5, arrow_end[1]-5)), fill=fill, width=width)
+            d.line((arrow_end, (arrow_end[0]+5, arrow_end[1]+5)), fill=fill, width=width)
+
+    # Draw line pointing at peak
+    blue_line_feather_end_coords = (blue_line_coords[0] + 60, blue_line_coords[1])
+    blue_text_coords = (blue_line_feather_end_coords[0] + 5, blue_line_feather_end_coords[1] - 6)
+    arrow(d, blue_line_coords, blue_line_feather_end_coords, fill="blue")
+    d.text(blue_text_coords, blue_text, font=fnt, fill="blue")
+
+    # Draw line pointing at practice
+    red_line_feather_end_coords = (practice_coords[0], practice_coords[1]-25)
+    red_text_x = red_line_feather_end_coords[0]-20
+    if red_text_x < red_text_min_x:
+        red_text_x = red_text_min_x
+    elif red_text_x > red_text_max_x:
+        red_text_x = red_text_max_x
+    red_text_coords = (red_text_x, red_line_feather_end_coords[1]-40)
+    arrow(d, practice_coords, red_line_feather_end_coords)
+    d.text(red_text_coords, red_text, font=fnt, fill="red")
+
+    # Render image to base64-encoding
+    mock_file = BytesIO()
+    im.save(mock_file, 'png')
+    mock_file.seek(0)
+    return base64.b64encode(mock_file.read()).decode('ascii')

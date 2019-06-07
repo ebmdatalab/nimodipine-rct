@@ -9,3 +9,4 @@ html2text
 django-anymail[mailgun]
 jupyter
 interfax
+pillow
