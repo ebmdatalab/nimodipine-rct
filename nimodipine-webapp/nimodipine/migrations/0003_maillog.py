@@ -74,8 +74,4 @@ class Migration(migrations.Migration):
             )
         ]
     else:
-        operations = [
-            migrations.CreateModel(
-                name="MailLog", fields=[], options={"db_table": "delete_me"}
-            )
-        ]
+        pass
