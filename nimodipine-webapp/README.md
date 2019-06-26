@@ -32,6 +32,13 @@ There are management scripts to :
   intervention letters, and the other describing the results of the
   interstitial questionnaire (`generate_report`)
 
+# Installation
+
+* Install [phantomjs](https://github.com/ariya/phantomjs/releases/tag/2.1.1) at `/usr/local/bin/phantomjs`
+* Set up a virtualenvironment and install `requirements.txt`
+* Create a postgres database `openprescribing`
+* `./manage.py migrate`
+
 # Typical workflow
 
 Set up the Django app (`pip install` etc; there is a `fabfile` for
