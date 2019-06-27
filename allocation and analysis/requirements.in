@@ -1,0 +1,4 @@
+pandas
+pandas-gbq
+seaborn
+ipykernel  # for virtualenv support in jupyter
