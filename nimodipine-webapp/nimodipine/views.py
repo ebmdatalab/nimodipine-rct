@@ -148,11 +148,11 @@ def make_chart(practice_value):
 
     blue_text = "99% of practices \n(0 tablets per 1000 patients)"
     red_text = "Your practice\n({} tablets per 1000 patients)".format(round(float(practice_value)))
-    x_axis_origin_coords = (72, 228)
-    x_axis_end_coords = (385, 228)
+    x_axis_origin_coords = (69, 224)
+    x_axis_end_coords = (388, 224)
     x_axis_width = x_axis_end_coords[0] - x_axis_origin_coords[0]
-    x_axis_max = 244  # The value at the extreme end of X-axis
-    blue_line_coords = (74, 21)  # coords of pointer to the peak in the chart
+    x_axis_max = 240  # The value at the extreme end of X-axis
+    blue_line_coords = (77, 17)  # coords of pointer to the peak in the chart
 
     practice_x = x_axis_origin_coords[0] + int(
         (float(practice_value) / x_axis_max * x_axis_width)
