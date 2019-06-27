@@ -148,8 +148,8 @@ def make_chart(practice_value):
 
     blue_text = "99% of practices \n(0 tablets per 1000 patients)"
     red_text = "Your practice\n({} tablets per 1000 patients)".format(round(float(practice_value)))
-    x_axis_origin_coords = (69, 224)
-    x_axis_end_coords = (388, 224)
+    x_axis_origin_coords = (69, 223)
+    x_axis_end_coords = (388, 223)
     x_axis_width = x_axis_end_coords[0] - x_axis_origin_coords[0]
     x_axis_max = 240  # The value at the extreme end of X-axis
     blue_line_coords = (77, 17)  # coords of pointer to the peak in the chart
@@ -160,7 +160,7 @@ def make_chart(practice_value):
     practice_coords = (practice_x, x_axis_origin_coords[1])
     # Arrived at by trial-and-error, so red text never overflows right edge of chart:
     red_text_max_x = 180
-    red_text_min_x = blue_line_coords[0]
+    red_text_min_x = blue_line_coords[0] + 2
 
     def arrow(d, arrow_end, feather_end, fill="red", width=1):
         if arrow_end[0] == feather_end[0]:
