@@ -16,7 +16,7 @@ cssutils==1.0.2           # via premailer
 decorator==4.4.0          # via ipython, traitlets
 defusedxml==0.6.0         # via nbconvert
 django-anymail[mailgun]==6.0.1
-django==2.2.2
+django==2.2.10
 entrypoints==0.3          # via nbconvert
 google-api-core==1.13.0   # via google-cloud-core
 google-auth==1.6.3        # via google-api-core
@@ -82,4 +82,4 @@ webencodings==0.5.1       # via bleach
 widgetsnbextension==3.4.2  # via ipywidgets
 
 # The following packages are considered to be unsafe in a requirements file:
-# setuptools==41.0.1        # via google-api-core, ipython, jsonschema, protobuf
+# setuptools
