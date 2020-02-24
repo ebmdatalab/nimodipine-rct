@@ -6,7 +6,7 @@
 #
 attrs==19.1.0             # via jsonschema
 backcall==0.1.0           # via ipython
-bleach==3.1.0             # via nbconvert
+bleach==3.1.1             # via nbconvert
 cached-property==1.5.1    # via interfax
 cachetools==3.1.1         # via google-auth, premailer
 certifi==2019.6.16        # via requests
@@ -82,4 +82,4 @@ webencodings==0.5.1       # via bleach
 widgetsnbextension==3.4.2  # via ipywidgets
 
 # The following packages are considered to be unsafe in a requirements file:
-# setuptools==41.0.1        # via google-api-core, ipython, jsonschema, protobuf
+# setuptools
