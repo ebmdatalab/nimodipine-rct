@@ -1,0 +1,47 @@
+name: "nimodipine-rct CI"
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+env:
+  DB_NAME: openprescribing
+  DB_USER: postgres
+  DB_PASS: postgres
+  DB_HOST: localhost
+  SECRET_KEY: xxx
+  MAILGUN_API_KEY: xxx
+  MAILGUN_SENDER_DOMAIN: openprescribing.net
+  INTERFAX_USER: embdatalab
+  INTERFAX_PASS: xxx
+
+jobs:
+  unit_test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.5'
+      - name: Install dependencies
+        run: pip install -r nimodipine-webapp/requirements.txt
+      - name: "Unit tests"
+        run: cd nimodipine-webapp && python manage.py test
