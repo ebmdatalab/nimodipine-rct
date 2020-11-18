@@ -43,7 +43,7 @@ jobs:
           python-version: '3.5'
       - name: Install dependencies
         run: pip install -r nimodipine-webapp/requirements.txt
-      - name: Create database
-        run: psql -c 'create database openprescribing_test;' -U postgres
+      # - name: Create database
+      #   run: psql -c 'create database openprescribing_test;' -U postgres
       - name: "Unit tests"
         run: cd nimodipine-webapp && python manage.py test
